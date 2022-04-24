@@ -89,7 +89,8 @@ class BankRepositoryIntegrationTest : KoinTest {
         fun `should save an existing bank`() = runBlocking {
             val bank = getJmsBank(
                 jmsTopic = TestContainerObjectMother.BANK_JMS_TOPIC,
-                name = "NewBankName"
+                name = "NewBankName",
+                groups = listOf(TestContainerObjectMother.getFirstGroup())
             )
 
             val result: Bank = classUnderTest.save(entry = bank)
@@ -100,7 +101,10 @@ class BankRepositoryIntegrationTest : KoinTest {
 
         @Test
         fun `should save a bank when no existing bank is in db`() = runBlocking {
-            val bank = getJmsBank(jmsTopic = "newBank")
+            val bank = getJmsBank(
+                jmsTopic = "newBank",
+                groups = listOf(TestContainerObjectMother.getFirstGroup())
+            )
 
             val result: Bank = classUnderTest.save(entry = bank)
 

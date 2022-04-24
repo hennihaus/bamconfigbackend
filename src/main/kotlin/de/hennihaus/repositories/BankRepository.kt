@@ -5,6 +5,8 @@ import de.hennihaus.configurations.MongoConfiguration.BANK_COLLECTION
 import de.hennihaus.configurations.MongoConfiguration.GROUP_COLLECTION
 import de.hennihaus.configurations.MongoConfiguration.ID_FIELD
 import de.hennihaus.models.Bank
+import de.hennihaus.plugins.NotFoundException
+import de.hennihaus.services.BankServiceImpl
 import de.hennihaus.utils.toObjectId
 import org.koin.core.annotation.Single
 import org.litote.kmongo.SetTo
@@ -107,6 +109,8 @@ class BankRepository(private val db: CoroutineDatabase) : Repository<Bank, Strin
                 )
             )
         )
-        return entry
+        return getById(id = entry.jmsTopic) ?: throw NotFoundException(
+            message = BankServiceImpl.ID_MESSAGE
+        )
     }
 }

@@ -31,6 +31,7 @@ import org.litote.kmongo.id.toId
 class TaskRepositoryIntegrationTest : KoinTest {
 
     private val mongoContainer = MongoContainer.INSTANCE
+    private val bankRepository: BankRepository by inject()
     private val classUnderTest: TaskRepository by inject()
 
     @JvmField
@@ -91,9 +92,11 @@ class TaskRepositoryIntegrationTest : KoinTest {
     inner class Save {
         @Test
         fun `should save an existing task`() = runBlocking {
+            bankRepository.save(entry = TestContainerObjectMother.getSparkasseBank())
             val task = getAsynchronousBankTask(
                 id = TestContainerObjectMother.TASK_OBJECT_ID.toId(),
-                title = "New title"
+                title = "New title",
+                banks = listOf(TestContainerObjectMother.getSparkasseBank())
             )
 
             val result: Task = classUnderTest.save(entry = task)
@@ -104,7 +107,11 @@ class TaskRepositoryIntegrationTest : KoinTest {
 
         @Test
         fun `should save a task when no existing bank is in db`() = runBlocking {
-            val task = getAsynchronousBankTask(id = ObjectId().toId())
+            bankRepository.save(entry = TestContainerObjectMother.getSparkasseBank())
+            val task = getAsynchronousBankTask(
+                id = ObjectId().toId(),
+                banks = listOf(TestContainerObjectMother.getSparkasseBank())
+            )
 
             val result: Task = classUnderTest.save(entry = task)
 

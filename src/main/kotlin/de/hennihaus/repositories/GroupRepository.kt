@@ -3,6 +3,9 @@ package de.hennihaus.repositories
 import com.mongodb.client.model.UpdateOptions
 import de.hennihaus.configurations.MongoConfiguration.GROUP_COLLECTION
 import de.hennihaus.models.Group
+import de.hennihaus.plugins.NotFoundException
+import de.hennihaus.services.GroupServiceImpl
+import de.hennihaus.utils.toObjectId
 import org.bson.types.ObjectId
 import org.koin.core.annotation.Single
 import org.litote.kmongo.coroutine.CoroutineCollection
@@ -21,7 +24,9 @@ class GroupRepository(private val db: CoroutineDatabase) : Repository<Group, Obj
             target = entry,
             options = UpdateOptions().upsert(true)
         )
-        return entry
+        return getById(id = entry.id.toString().toObjectId { it }) ?: throw NotFoundException(
+            message = GroupServiceImpl.ID_MESSAGE
+        )
     }
 
     suspend fun getGroupByUsername(username: String): Group? = col.findOne(
