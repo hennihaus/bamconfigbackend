@@ -26,7 +26,6 @@ jobs:
         id: tag-version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
           DEFAULT_BUMP: minor
           RELEASE_BRANCHES: master
 
