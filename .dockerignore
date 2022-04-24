@@ -1,0 +1,10 @@
+.gradle
+.idea
+build
+gradle
+out
+.gitignore
+.git
+bamconfigbackend.iml
+gradlew
+gradlew.bat
