@@ -7,6 +7,9 @@ import de.hennihaus.configurations.MongoConfiguration.ID_FIELD
 import de.hennihaus.configurations.MongoConfiguration.TASK_COLLECTION
 import de.hennihaus.models.Bank
 import de.hennihaus.models.Task
+import de.hennihaus.plugins.NotFoundException
+import de.hennihaus.services.TaskServiceImpl
+import de.hennihaus.utils.toObjectId
 import org.bson.types.ObjectId
 import org.koin.core.annotation.Single
 import org.litote.kmongo.MongoOperator.`in`
@@ -176,6 +179,8 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
                 )
             )
         )
-        return entry
+        return getById(id = entry.id.toString().toObjectId { it }) ?: throw NotFoundException(
+            message = TaskServiceImpl.ID_MESSAGE
+        )
     }
 }
