@@ -149,3 +149,7 @@ testing {
 val integrationTestImplementation: Configuration by configurations.getting {
     extendsFrom(configurations.testImplementation.get())
 }
+
+tasks.check {
+    dependsOn(testing.suites.named("integrationTest"))
+}
