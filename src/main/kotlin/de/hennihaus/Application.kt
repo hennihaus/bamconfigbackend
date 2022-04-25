@@ -17,9 +17,9 @@ fun main(args: Array<String>) = EngineMain.main(args)
 fun Application.module(
     koinModules: List<Module> = listOf(defaultModule, mongoModule)
 ) {
+    configureCors()
     configureDependencyInjection(koinModules = koinModules)
     configureRouting()
-    configureCors()
     configureErrorHandling()
     configureMonitoring()
 }
