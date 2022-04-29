@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 
-class StringUtilTest {
+class StringUtilsTest {
 
     @Test
     fun `should convert a string to an ObjectId`() = runBlocking {
@@ -25,7 +25,7 @@ class StringUtilTest {
 
     @Test
     fun `should call passed operation with ObjectId`() = runBlocking {
-        mockkObject(StringUtilTest)
+        mockkObject(StringUtilsTest)
         every { testOperation(any()) } returns ObjectId(TEST_ID_STRING)
 
         TEST_ID_STRING.toObjectId { testOperation(it) }

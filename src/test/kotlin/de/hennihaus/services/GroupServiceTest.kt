@@ -28,10 +28,17 @@ import org.junit.jupiter.api.Test
 class GroupServiceTest {
 
     private val repository = mockk<GroupRepository>()
-    private val classUnderTest = GroupServiceImpl(repository = repository)
+    private val stats = mockk<StatsServiceImpl>()
+    private val classUnderTest = GroupServiceImpl(repository = repository, stats = stats)
 
     @BeforeEach
-    fun init() = clearAllMocks()
+    fun init() {
+        clearAllMocks()
+        coEvery { stats.setHasPassed(group = any()) }
+            .returns(returnValue = getFirstGroup())
+            .andThen(returnValue = getSecondGroup())
+            .andThen(returnValue = getThirdGroup())
+    }
 
     @Nested
     inner class GetAllGroups {
@@ -50,7 +57,12 @@ class GroupServiceTest {
                 getSecondGroup(),
                 getThirdGroup()
             )
-            coVerify(exactly = 1) { repository.getAll() }
+            coVerifySequence {
+                repository.getAll()
+                stats.setHasPassed(group = getFirstGroup())
+                stats.setHasPassed(group = getSecondGroup())
+                stats.setHasPassed(group = getThirdGroup())
+            }
         }
 
         @Test
@@ -61,6 +73,7 @@ class GroupServiceTest {
 
             result should beInstanceOf<Exception>()
             coVerify(exactly = 1) { repository.getAll() }
+            coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
         }
     }
 
@@ -74,7 +87,10 @@ class GroupServiceTest {
             val result: Group = classUnderTest.getGroupById(id = id)
 
             result shouldBe getFirstGroup()
-            coVerify(exactly = 1) { repository.getById(id = withArg { it shouldBe ObjectId(id) }) }
+            coVerifySequence {
+                repository.getById(id = ObjectId(id))
+                stats.setHasPassed(group = getFirstGroup())
+            }
         }
 
         @Test
@@ -87,6 +103,7 @@ class GroupServiceTest {
             result should beInstanceOf<NotFoundException>()
             result.message shouldBe GroupServiceImpl.ID_MESSAGE
             coVerify(exactly = 1) { repository.getById(id = withArg { it shouldBe ObjectId(id) }) }
+            coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
         }
     }
 
@@ -247,18 +264,22 @@ class GroupServiceTest {
             val result: Group = classUnderTest.createGroup(group = testGroup)
 
             result shouldBe testGroup
-            coVerify(exactly = 1) { repository.save(entry = withArg { it shouldBe testGroup }) }
+            coVerifySequence {
+                stats.setHasPassed(group = getFirstGroup())
+                repository.save(entry = getFirstGroup())
+            }
         }
 
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
             val testGroup: Group = getFirstGroup()
-            coEvery { repository.save(entry = any()) } throws Exception()
+            coEvery { stats.setHasPassed(group = any()) } throws Exception()
 
             val result = shouldThrow<Exception> { classUnderTest.createGroup(group = testGroup) }
 
             result should beInstanceOf<Exception>()
-            coVerify(exactly = 1) { repository.save(entry = withArg { it shouldBe testGroup }) }
+            coVerify(exactly = 1) { stats.setHasPassed(group = getFirstGroup()) }
+            coVerify(exactly = 0) { repository.save(entry = any()) }
         }
     }
 
@@ -272,18 +293,22 @@ class GroupServiceTest {
             val result: Group = classUnderTest.updateGroup(group = testGroup)
 
             result shouldBe testGroup
-            coVerify(exactly = 1) { repository.save(entry = withArg { it shouldBe testGroup }) }
+            coVerifySequence {
+                stats.setHasPassed(group = getFirstGroup())
+                repository.save(entry = getFirstGroup())
+            }
         }
 
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
             val testGroup: Group = getFirstGroup()
-            coEvery { repository.save(entry = any()) } throws Exception()
+            coEvery { stats.setHasPassed(group = any()) } throws Exception()
 
             val result = shouldThrow<Exception> { classUnderTest.updateGroup(group = testGroup) }
 
             result should beInstanceOf<Exception>()
-            coVerify(exactly = 1) { repository.save(entry = withArg { it shouldBe testGroup }) }
+            coVerify(exactly = 1) { stats.setHasPassed(group = getFirstGroup()) }
+            coVerify(exactly = 0) { repository.save(entry = any()) }
         }
     }
 
@@ -330,8 +355,9 @@ class GroupServiceTest {
 
             result shouldBe getFirstGroup(stats = ZERO_STATS)
             coVerifySequence {
-                repository.getById(id = withArg { it shouldBe ObjectId(id) })
-                repository.save(entry = withArg { it shouldBe getFirstGroup(stats = ZERO_STATS) })
+                repository.getById(id = ObjectId(id))
+                stats.setHasPassed(group = getFirstGroup(stats = ZERO_STATS))
+                repository.save(entry = getFirstGroup(stats = ZERO_STATS))
             }
         }
 
@@ -344,7 +370,8 @@ class GroupServiceTest {
 
             result should beInstanceOf<NotFoundException>()
             result.message shouldBe GroupServiceImpl.ID_MESSAGE
-            coVerify(exactly = 1) { repository.getById(id = withArg { it shouldBe ObjectId(id) }) }
+            coVerify(exactly = 1) { repository.getById(id = ObjectId(id)) }
+            coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
             coVerify(exactly = 0) { repository.save(entry = any()) }
         }
     }

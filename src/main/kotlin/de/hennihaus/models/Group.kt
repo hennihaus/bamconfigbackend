@@ -17,4 +17,5 @@ data class Group(
     val jmsTopic: String,
     val students: List<String>,
     val stats: Map<String, Int>,
+    val hasPassed: Boolean,
 )

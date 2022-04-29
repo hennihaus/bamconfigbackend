@@ -22,6 +22,7 @@ object TestContainerObjectMother {
         "volksbank" to 0,
         "commerzbank" to 0
     )
+    const val GROUP_HAS_PASSED = false
 
     const val BANK_JMS_TOPIC = "sparkasse"
     const val BANK_JMS_NAME = "Sparkasse"
@@ -45,7 +46,8 @@ object TestContainerObjectMother {
         password = GROUP_PASSWORD,
         jmsTopic = GROUP_JMS_TOPIC,
         students = GROUP_STUDENTS,
-        stats = GROUP_STATS
+        stats = GROUP_STATS,
+        hasPassed = GROUP_HAS_PASSED
     )
 
     fun getSparkasseBank() = Bank(

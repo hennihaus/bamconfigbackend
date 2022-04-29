@@ -1,6 +1,9 @@
 package de.hennihaus.services
 
 import de.hennihaus.models.Task
+import de.hennihaus.objectmothers.GroupObjectMother.getFirstGroup
+import de.hennihaus.objectmothers.GroupObjectMother.getSecondGroup
+import de.hennihaus.objectmothers.GroupObjectMother.getThirdGroup
 import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask
@@ -25,10 +28,17 @@ import org.junit.jupiter.api.Test
 class TaskServiceTest {
 
     private val repository = mockk<TaskRepository>()
-    private val classUnderTest = TaskServiceImpl(repository)
+    private val stats = mockk<StatsServiceImpl>()
+    private val classUnderTest = TaskServiceImpl(repository = repository, stats = stats)
 
     @BeforeEach
-    fun init() = clearAllMocks()
+    fun init() {
+        clearAllMocks()
+        coEvery { stats.setHasPassed(group = any()) }
+            .returns(returnValue = getFirstGroup())
+            .andThen(returnValue = getSecondGroup())
+            .andThen(returnValue = getThirdGroup())
+    }
 
     @Nested
     inner class GetAllTasks {
@@ -47,7 +57,12 @@ class TaskServiceTest {
                 getSynchronousBankTask(step = 2),
                 getAsynchronousBankTask(step = 3)
             )
-            coVerify(exactly = 1) { repository.getAll() }
+            coVerifySequence {
+                repository.getAll()
+                stats.setHasPassed(group = getFirstGroup())
+                stats.setHasPassed(group = getSecondGroup())
+                stats.setHasPassed(group = getThirdGroup())
+            }
         }
 
         @Test
@@ -58,6 +73,7 @@ class TaskServiceTest {
 
             result should beInstanceOf<Exception>()
             coVerify(exactly = 1) { repository.getAll() }
+            coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
         }
     }
 
@@ -65,13 +81,18 @@ class TaskServiceTest {
     inner class GetTaskById {
         @Test
         fun `should return task when id is in database`() = runBlocking {
-            val id = getSchufaTask().id.toString()
-            coEvery { repository.getById(id = any()) } returns getSchufaTask()
+            val id = getAsynchronousBankTask().id.toString()
+            coEvery { repository.getById(id = any()) } returns getAsynchronousBankTask()
 
             val result: Task = classUnderTest.getTaskById(id = id)
 
-            result shouldBe getSchufaTask()
-            coVerify(exactly = 1) { repository.getById(id = withArg { it shouldBe ObjectId(id) }) }
+            result shouldBe getAsynchronousBankTask()
+            coVerifySequence {
+                repository.getById(id = ObjectId(id))
+                stats.setHasPassed(group = getFirstGroup())
+                stats.setHasPassed(group = getSecondGroup())
+                stats.setHasPassed(group = getThirdGroup())
+            }
         }
 
         @Test
@@ -83,7 +104,8 @@ class TaskServiceTest {
 
             result should beInstanceOf<NotFoundException>()
             result.message shouldBe TaskServiceImpl.ID_MESSAGE
-            coVerify(exactly = 1) { repository.getById(id = withArg { it shouldBe ObjectId(id) }) }
+            coVerify(exactly = 1) { repository.getById(id = ObjectId(id)) }
+            coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
         }
     }
 
@@ -91,21 +113,24 @@ class TaskServiceTest {
     inner class PatchTask {
         @Test
         fun `should just update title, description and parameters from a task`() = runBlocking {
-            val id = getSchufaTask().id.toString()
-            val task = getSynchronousBankTask(
-                title = getSchufaTask().title,
-                description = getSchufaTask().description,
-                parameters = getSchufaTask().parameters
+            val id = getAsynchronousBankTask().id.toString()
+            val task = getSchufaTask(
+                title = getAsynchronousBankTask().title,
+                description = getAsynchronousBankTask().description,
+                parameters = getAsynchronousBankTask().parameters
             )
-            coEvery { repository.getById(id = any()) } returns getSchufaTask()
-            coEvery { repository.save(entry = any()) } returns getSchufaTask()
+            coEvery { repository.getById(id = any()) } returns getAsynchronousBankTask()
+            coEvery { repository.save(entry = any()) } returns getAsynchronousBankTask()
 
             val result: Task = classUnderTest.patchTask(id = id, task = task)
 
-            result shouldBe getSchufaTask()
+            result shouldBe getAsynchronousBankTask()
             coVerifySequence {
-                repository.getById(id = withArg { it shouldBe ObjectId(id) })
-                repository.save(entry = withArg { getSchufaTask() })
+                repository.getById(id = ObjectId(id))
+                repository.save(entry = getAsynchronousBankTask())
+                stats.setHasPassed(group = getFirstGroup())
+                stats.setHasPassed(group = getSecondGroup())
+                stats.setHasPassed(group = getThirdGroup())
             }
         }
 

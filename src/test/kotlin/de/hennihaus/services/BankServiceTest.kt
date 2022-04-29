@@ -4,6 +4,9 @@ import de.hennihaus.models.Bank
 import de.hennihaus.objectmothers.BankObjectMother.getJmsBank
 import de.hennihaus.objectmothers.BankObjectMother.getSchufaBank
 import de.hennihaus.objectmothers.BankObjectMother.getVBank
+import de.hennihaus.objectmothers.GroupObjectMother.getFirstGroup
+import de.hennihaus.objectmothers.GroupObjectMother.getSecondGroup
+import de.hennihaus.objectmothers.GroupObjectMother.getThirdGroup
 import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.repositories.BankRepository
 import io.kotest.assertions.throwables.shouldThrow
@@ -25,10 +28,17 @@ import org.junit.jupiter.api.Test
 class BankServiceTest {
 
     private val repository = mockk<BankRepository>()
-    private val classUnderTest = BankServiceImpl(repository = repository)
+    private val stats = mockk<StatsServiceImpl>()
+    private val classUnderTest = BankServiceImpl(repository = repository, stats = stats)
 
     @BeforeEach
-    fun init() = clearAllMocks()
+    fun init() {
+        clearAllMocks()
+        coEvery { stats.setHasPassed(group = any()) }
+            .returns(returnValue = getFirstGroup())
+            .andThen(returnValue = getSecondGroup())
+            .andThen(returnValue = getThirdGroup())
+    }
 
     @Nested
     inner class GetAllBanks {
@@ -47,7 +57,12 @@ class BankServiceTest {
                 getVBank(),
                 getJmsBank()
             )
-            coVerify(exactly = 1) { repository.getAll() }
+            coVerifySequence {
+                repository.getAll()
+                stats.setHasPassed(group = getFirstGroup())
+                stats.setHasPassed(group = getSecondGroup())
+                stats.setHasPassed(group = getThirdGroup())
+            }
         }
 
         @Test
@@ -58,6 +73,7 @@ class BankServiceTest {
 
             result should beInstanceOf<Exception>()
             coVerify(exactly = 1) { repository.getAll() }
+            coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
         }
     }
 
@@ -65,13 +81,18 @@ class BankServiceTest {
     inner class GetBankByJmsTopic {
         @Test
         fun `should return bank when jmsTopic is in database`() = runBlocking {
-            val jmsTopic = getSchufaBank().jmsTopic
-            coEvery { repository.getById(id = any()) } returns getSchufaBank()
+            val jmsTopic = getJmsBank().jmsTopic
+            coEvery { repository.getById(id = any()) } returns getJmsBank()
 
             val result: Bank = classUnderTest.getBankByJmsTopic(jmsTopic = jmsTopic)
 
-            result shouldBe getSchufaBank()
-            coVerify(exactly = 1) { repository.getById(id = withArg { it shouldBe jmsTopic }) }
+            result shouldBe getJmsBank()
+            coVerifySequence {
+                repository.getById(id = jmsTopic)
+                stats.setHasPassed(group = getFirstGroup())
+                stats.setHasPassed(group = getSecondGroup())
+                stats.setHasPassed(group = getThirdGroup())
+            }
         }
 
         @Test
@@ -83,7 +104,8 @@ class BankServiceTest {
 
             result shouldBe instanceOf<NotFoundException>()
             result.message shouldBe BankServiceImpl.ID_MESSAGE
-            coVerify(exactly = 1) { repository.getById(id = withArg { it shouldBe jmsTopic }) }
+            coVerify(exactly = 1) { repository.getById(id = jmsTopic) }
+            coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
         }
     }
 
