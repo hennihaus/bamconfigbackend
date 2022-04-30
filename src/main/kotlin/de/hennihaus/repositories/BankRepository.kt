@@ -1,10 +1,9 @@
 package de.hennihaus.repositories
 
 import com.mongodb.client.model.UpdateOptions
-import de.hennihaus.configurations.MongoConfiguration.BANK_COLLECTION
-import de.hennihaus.configurations.MongoConfiguration.GROUP_COLLECTION
 import de.hennihaus.configurations.MongoConfiguration.ID_FIELD
 import de.hennihaus.models.Bank
+import de.hennihaus.models.Group
 import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.services.BankServiceImpl
 import de.hennihaus.utils.toObjectId
@@ -23,10 +22,10 @@ import org.litote.kmongo.set
 class BankRepository(private val db: CoroutineDatabase) : Repository<Bank, String> {
 
     override val col: CoroutineCollection<Bank>
-        get() = db.getCollection(BANK_COLLECTION)
+        get() = db.getCollection()
 
     /**
-     * db.banks.aggregate([
+     * db.bank.aggregate([
      *      {
      *          $match: {
      *              _id: "<ID>"
@@ -34,7 +33,7 @@ class BankRepository(private val db: CoroutineDatabase) : Repository<Bank, Strin
      *      },
      *      {
      *          $lookup: {
-     *              from: "groups",
+     *              from: "group",
      *              localField: "groups",
      *              foreignField: "_id",
      *              as: "groups",
@@ -48,19 +47,19 @@ class BankRepository(private val db: CoroutineDatabase) : Repository<Bank, Strin
                 filter = Bank::jmsTopic eq id
             ),
             lookup(
-                from = GROUP_COLLECTION,
-                localField = GROUP_COLLECTION,
+                from = Group::class.simpleName?.lowercase() as String,
+                localField = Bank::groups.name,
                 foreignField = ID_FIELD,
-                newAs = GROUP_COLLECTION
+                newAs = Bank::groups.name
             )
         ).first()
     }
 
     /**
-     * db.banks.aggregate([
+     * db.bank.aggregate([
      *      {
      *          $lookup: {
-     *              from: "groups",
+     *              from: "group",
      *              localField: "groups",
      *              foreignField: "_id",
      *              as: "groups",
@@ -71,16 +70,16 @@ class BankRepository(private val db: CoroutineDatabase) : Repository<Bank, Strin
     override suspend fun getAll(): List<Bank> {
         return col.aggregate<Bank>(
             lookup(
-                from = GROUP_COLLECTION,
-                localField = GROUP_COLLECTION,
+                from = Group::class.simpleName?.lowercase() as String,
+                localField = Bank::groups.name,
                 foreignField = ID_FIELD,
-                newAs = GROUP_COLLECTION
+                newAs = Bank::groups.name
             )
         ).toList()
     }
 
     /**
-     * db.banks.updateOne(
+     * db.bank.updateOne(
      *      {
      *          _id: "<ID>"
      *      },

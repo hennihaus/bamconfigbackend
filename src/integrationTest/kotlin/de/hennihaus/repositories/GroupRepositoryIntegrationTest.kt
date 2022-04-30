@@ -3,7 +3,6 @@ package de.hennihaus.repositories
 import de.hennihaus.configurations.MongoConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.MongoConfiguration.DATABASE_NAME
 import de.hennihaus.configurations.MongoConfiguration.DATABASE_PORT
-import de.hennihaus.configurations.MongoConfiguration.GROUP_COLLECTION
 import de.hennihaus.models.Group
 import de.hennihaus.objectmothers.GroupObjectMother.getFirstGroup
 import de.hennihaus.objectmothers.TestContainerObjectMother
@@ -101,7 +100,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
             result shouldBe group
             getKoin()
                 .get<CoroutineDatabase>()
-                .getCollection<Group>(collectionName = GROUP_COLLECTION)
+                .getCollection<Group>()
                 .findOneById(id = ObjectId(group.id.toString())) shouldBe group
         }
 
@@ -114,7 +113,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
             result shouldBe group
             getKoin()
                 .get<CoroutineDatabase>()
-                .getCollection<Group>(collectionName = GROUP_COLLECTION)
+                .getCollection<Group>()
                 .findOneById(id = ObjectId(group.id.toString())) shouldBe group
         }
     }

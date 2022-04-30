@@ -1,11 +1,9 @@
 package de.hennihaus.repositories
 
 import com.mongodb.client.model.UpdateOptions
-import de.hennihaus.configurations.MongoConfiguration.BANK_COLLECTION
-import de.hennihaus.configurations.MongoConfiguration.GROUP_COLLECTION
 import de.hennihaus.configurations.MongoConfiguration.ID_FIELD
-import de.hennihaus.configurations.MongoConfiguration.TASK_COLLECTION
 import de.hennihaus.models.Bank
+import de.hennihaus.models.Group
 import de.hennihaus.models.Task
 import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.services.TaskServiceImpl
@@ -32,10 +30,10 @@ import org.litote.kmongo.variableDefinition
 class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, ObjectId> {
 
     override val col: CoroutineCollection<Task>
-        get() = db.getCollection(TASK_COLLECTION)
+        get() = db.getCollection()
 
     /**
-     * db.tasks.aggregate([
+     * db.task.aggregate([
      *      {
      *          $match: {
      *              _id: "<ID>"
@@ -43,7 +41,7 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
      *      },
      *      {
      *          $lookup: {
-     *              from: "banks",
+     *              from: "bank",
      *              let: {
      *                  bank_ids: "$banks"
      *              },
@@ -57,7 +55,7 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
      *                  },
      *                  {
      *                      $lookup: {
-     *                          from: "groups",
+     *                          from: "group",
      *                          localField: "groups",
      *                          foreignField: "_id",
      *                          as: "groups"
@@ -75,7 +73,7 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
                 filter = Task::id eq id.toId()
             ),
             lookup(
-                from = BANK_COLLECTION,
+                from = Bank::class.simpleName?.lowercase() as String,
                 let = listOf(
                     Task::banks.variableDefinition()
                 ),
@@ -87,10 +85,10 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
                         )
                     ),
                     lookup(
-                        from = GROUP_COLLECTION,
-                        localField = GROUP_COLLECTION,
+                        from = Group::class.simpleName?.lowercase() as String,
+                        localField = Bank::groups.name,
                         foreignField = ID_FIELD,
-                        newAs = GROUP_COLLECTION
+                        newAs = Bank::groups.name
                     )
                 )
             )
@@ -98,10 +96,10 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
     }
 
     /**
-     * db.tasks.aggregate([
+     * db.task.aggregate([
      *      {
      *          $lookup: {
-     *              from: "banks",
+     *              from: "bank",
      *              let: {
      *                  bank_ids: "$banks"
      *              },
@@ -115,14 +113,14 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
      *                  },
      *                  {
      *                      $lookup: {
-     *                          from: "groups",
+     *                          from: "group",
      *                          localField: "groups",
      *                          foreignField: "_id",
      *                          as: "groups"
      *                      }
      *                  }
      *              ],
-     *              as: "banks"
+     *              as: "bank"
      *          }
      *      }
      * ]);
@@ -130,7 +128,7 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
     override suspend fun getAll(): List<Task> {
         return col.aggregate<Task>(
             lookup(
-                from = BANK_COLLECTION,
+                from = Bank::class.simpleName as String,
                 let = listOf(
                     Task::banks.variableDefinition()
                 ),
@@ -142,10 +140,10 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
                         )
                     ),
                     lookup(
-                        from = GROUP_COLLECTION,
-                        localField = GROUP_COLLECTION,
+                        from = Group::class.simpleName?.lowercase() as String,
+                        localField = Bank::groups.name,
                         foreignField = ID_FIELD,
-                        newAs = GROUP_COLLECTION
+                        newAs = Bank::groups.name
                     )
                 )
             )
