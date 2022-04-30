@@ -8,14 +8,17 @@ import org.koin.core.annotation.Single
 import org.litote.kmongo.id.toId
 
 @Single
-class GroupServiceImpl(private val repository: GroupRepository) : GroupService {
+class GroupServiceImpl(private val repository: GroupRepository, private val stats: StatsService) : GroupService {
 
-    override suspend fun getAllGroups(): List<Group> = repository.getAll().sortedBy { it.username }
+    override suspend fun getAllGroups(): List<Group> = repository.getAll()
+        .sortedBy { it.username }
+        .map { stats.setHasPassed(group = it) }
 
     override suspend fun getGroupById(id: String): Group {
-        return id.toObjectId {
+        val group = id.toObjectId {
             repository.getById(id = it) ?: throw NotFoundException(message = ID_MESSAGE)
         }
+        return stats.setHasPassed(group = group)
     }
 
     override suspend fun checkUsername(id: String, username: String): Boolean {
@@ -36,9 +39,13 @@ class GroupServiceImpl(private val repository: GroupRepository) : GroupService {
         }
     }
 
-    override suspend fun createGroup(group: Group): Group = repository.save(entry = group)
+    override suspend fun createGroup(group: Group): Group = stats.setHasPassed(group = group).let {
+        repository.save(entry = it)
+    }
 
-    override suspend fun updateGroup(group: Group): Group = repository.save(entry = group)
+    override suspend fun updateGroup(group: Group): Group = stats.setHasPassed(group = group).let {
+        repository.save(entry = it)
+    }
 
     override suspend fun deleteGroupById(id: String) {
         id.toObjectId { objectId ->
@@ -50,6 +57,7 @@ class GroupServiceImpl(private val repository: GroupRepository) : GroupService {
         return id.toObjectId { objectId ->
             repository.getById(id = objectId)
                 ?.let { it.copy(stats = it.stats.mapValues { ZERO_REQUESTS }) }
+                ?.let { stats.setHasPassed(group = it) }
                 ?.also { repository.save(entry = it) }
                 ?: throw NotFoundException(message = ID_MESSAGE)
         }

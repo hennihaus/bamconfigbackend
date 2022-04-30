@@ -1,7 +1,6 @@
 package de.hennihaus.repositories
 
 import com.mongodb.client.model.UpdateOptions
-import de.hennihaus.configurations.MongoConfiguration.GROUP_COLLECTION
 import de.hennihaus.models.Group
 import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.services.GroupServiceImpl
@@ -17,7 +16,7 @@ import org.litote.kmongo.eq
 class GroupRepository(private val db: CoroutineDatabase) : Repository<Group, ObjectId> {
 
     override val col: CoroutineCollection<Group>
-        get() = db.getCollection(GROUP_COLLECTION)
+        get() = db.getCollection()
 
     override suspend fun save(entry: Group): Group {
         col.updateOne(

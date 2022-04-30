@@ -6,12 +6,16 @@ import de.hennihaus.repositories.BankRepository
 import org.koin.core.annotation.Single
 
 @Single
-class BankServiceImpl(private val repository: BankRepository) : BankService {
+class BankServiceImpl(private val repository: BankRepository, private val stats: StatsService) : BankService {
 
-    override suspend fun getAllBanks(): List<Bank> = repository.getAll()
+    override suspend fun getAllBanks(): List<Bank> = repository.getAll().map {
+        it.copy(groups = it.groups.map { group -> stats.setHasPassed(group = group) })
+    }
 
-    override suspend fun getBankByJmsTopic(jmsTopic: String): Bank =
-        repository.getById(jmsTopic) ?: throw NotFoundException(ID_MESSAGE)
+    override suspend fun getBankByJmsTopic(jmsTopic: String): Bank {
+        val bank = repository.getById(jmsTopic) ?: throw NotFoundException(ID_MESSAGE)
+        return bank.copy(groups = bank.groups.map { group -> stats.setHasPassed(group = group) })
+    }
 
     override suspend fun updateBank(bank: Bank): Bank = repository.save(bank)
 

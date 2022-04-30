@@ -8,6 +8,7 @@ import org.litote.kmongo.id.toId
 object GroupObjectMother {
 
     private const val DEFAULT_PASSWORD = "0123456789"
+    private const val DEFAULT_HAS_PASSED = false
     private val DEFAULT_STUDENTS = listOf(
         "Angelar Merkel",
         "Max Mustermann",
@@ -25,14 +26,16 @@ object GroupObjectMother {
         password: String = DEFAULT_PASSWORD,
         jmsTopic: String = "ResponseLoanBrokerGruppe01",
         students: List<String> = DEFAULT_STUDENTS,
-        stats: Map<String, Int> = ZERO_STATS
+        stats: Map<String, Int> = ZERO_STATS,
+        hasPassed: Boolean = DEFAULT_HAS_PASSED
     ) = Group(
         id = id,
         username = username,
         password = password,
         jmsTopic = jmsTopic,
         students = students,
-        stats = stats
+        stats = stats,
+        hasPassed = hasPassed
     )
 
     fun getSecondGroup(
@@ -41,14 +44,16 @@ object GroupObjectMother {
         password: String = DEFAULT_PASSWORD,
         jmsTopic: String = "ResponseLoanBrokerGruppe02",
         students: List<String> = DEFAULT_STUDENTS,
-        stats: Map<String, Int> = ZERO_STATS
+        stats: Map<String, Int> = ZERO_STATS,
+        hasPassed: Boolean = DEFAULT_HAS_PASSED
     ) = Group(
         id = id,
         username = username,
         password = password,
         jmsTopic = jmsTopic,
         students = students,
-        stats = stats
+        stats = stats,
+        hasPassed = hasPassed
     )
 
     fun getThirdGroup(
@@ -57,13 +62,15 @@ object GroupObjectMother {
         password: String = DEFAULT_PASSWORD,
         jmsTopic: String = "ResponseLoanBrokerGruppe03",
         students: List<String> = DEFAULT_STUDENTS,
-        stats: Map<String, Int> = ZERO_STATS
+        stats: Map<String, Int> = ZERO_STATS,
+        hasPassed: Boolean = DEFAULT_HAS_PASSED
     ) = Group(
         id = id,
         username = username,
         password = password,
         jmsTopic = jmsTopic,
         students = students,
-        stats = stats
+        stats = stats,
+        hasPassed = hasPassed
     )
 }

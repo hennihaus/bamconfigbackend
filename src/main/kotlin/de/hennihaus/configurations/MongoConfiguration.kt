@@ -12,10 +12,6 @@ object MongoConfiguration {
     const val DATABASE_HOST = "ktor.mongodb.host"
     const val DATABASE_PORT = "ktor.mongodb.port"
 
-    const val GROUP_COLLECTION = "groups"
-    const val BANK_COLLECTION = "banks"
-    const val TASK_COLLECTION = "tasks"
-
     const val ID_FIELD = "_id"
 
     val mongoModule = module {
