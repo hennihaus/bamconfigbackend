@@ -1,4 +1,4 @@
-package de.hennihaus.testutils
+package de.hennihaus.containers
 
 import de.hennihaus.models.Bank
 import de.hennihaus.models.Group
@@ -14,7 +14,7 @@ object MongoContainer {
 
     private const val IMAGE_NAME = "hennihaus/bamconfigdb"
     private const val IMAGE_VERSION = "latest"
-    private const val MONGO_PORT = 27017
+    private const val MONGO_PORT = 27_017
 
     const val DATABASE_NAME = "businessintegration"
 
@@ -28,19 +28,25 @@ object MongoContainer {
         )
     }
 
-    fun resetState() {
+    /**
+     * Necessary to execute @BeforeEach methods without return type in a single method expression
+     */
+    @Suppress("OptionalUnit")
+    fun resetState(): Unit = runBlocking {
         resetEntity<Group>()
         resetEntity<Bank>()
         resetEntity<Task>()
     }
 
     private fun startMongoContainer() = GenericContainer<Nothing>("$IMAGE_NAME:$IMAGE_VERSION").apply {
-        withExposedPorts(MONGO_PORT)
+        exposedPorts = listOf(
+            MONGO_PORT
+        )
         setWaitStrategy(Wait.forListeningPort())
         start()
     }
 
-    private inline fun <reified T : Any> resetEntity() = runBlocking {
+    private suspend inline fun <reified T : Any> resetEntity() {
         val entries: List<Document> = state[T::class.simpleName]!!
         val col = getKoin().get<CoroutineDatabase>()
             .getCollection<Document>(collectionName = T::class.simpleName!!.lowercase())

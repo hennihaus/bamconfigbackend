@@ -15,6 +15,7 @@ import de.hennihaus.services.GroupService
 import de.hennihaus.services.GroupServiceImpl.Companion.ID_MESSAGE
 import de.hennihaus.testutils.KtorTestBuilder.testApplication
 import de.hennihaus.testutils.testClient
+import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
@@ -58,8 +59,7 @@ class GroupRoutesTest {
 
             val response = testClient.get("/groups")
 
-            response.status shouldBe HttpStatusCode.OK
-            println(response.bodyAsText())
+            response shouldHaveStatus HttpStatusCode.OK
             response.body<List<Group>>().shouldContainExactly(
                 getFirstGroup(),
                 getSecondGroup(),
@@ -74,7 +74,7 @@ class GroupRoutesTest {
 
             val response = client.get("/groups")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.bodyAsText() shouldBe """
                 [
                 ]
@@ -88,7 +88,7 @@ class GroupRoutesTest {
 
             val response = testClient.get("/groups")
 
-            response.status shouldBe HttpStatusCode.InternalServerError
+            response shouldHaveStatus HttpStatusCode.InternalServerError
             response.body<ExceptionResponse>() shouldBe getInternalServerErrorResponse()
             coVerify(exactly = 1) { groupService.getAllGroups() }
         }
@@ -103,7 +103,7 @@ class GroupRoutesTest {
 
             val response = testClient.get("/groups/$id")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.body<Group>() shouldBe getFirstGroup()
             coVerify(exactly = 1) { groupService.getGroupById(id = id) }
         }
@@ -115,7 +115,7 @@ class GroupRoutesTest {
 
             val response = testClient.get("/groups/$id")
 
-            response.status shouldBe HttpStatusCode.NotFound
+            response shouldHaveStatus HttpStatusCode.NotFound
             response.body<ExceptionResponse>() shouldBe getGroupNotFoundErrorResponse()
             coVerify(exactly = 1) { groupService.getGroupById(id = id) }
         }
@@ -130,7 +130,7 @@ class GroupRoutesTest {
 
             val response = testClient.get("/groups/$id/$username/username")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.bodyAsText() shouldBe true.toString()
             coVerify(exactly = 1) { groupService.checkUsername(id = id.toString(), username = username) }
         }
@@ -143,7 +143,7 @@ class GroupRoutesTest {
 
             val response = testClient.get("/groups/$id/$username/username")
 
-            response.status shouldBe HttpStatusCode.BadRequest
+            response shouldHaveStatus HttpStatusCode.BadRequest
             response.body<ExceptionResponse>() shouldBe getInvalidIdErrorResponse()
             coVerify(exactly = 1) { groupService.checkUsername(id = id, username = username) }
         }
@@ -158,7 +158,7 @@ class GroupRoutesTest {
 
             val response = testClient.get("/groups/$id/$password/password")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.bodyAsText() shouldBe true.toString()
             coVerify(exactly = 1) { groupService.checkPassword(id = id.toString(), password = password) }
         }
@@ -171,7 +171,7 @@ class GroupRoutesTest {
 
             val response = testClient.get("/groups/$id/$password/password")
 
-            response.status shouldBe HttpStatusCode.BadRequest
+            response shouldHaveStatus HttpStatusCode.BadRequest
             response.body<ExceptionResponse>() shouldBe getInvalidIdErrorResponse()
             coVerify(exactly = 1) { groupService.checkPassword(id = id, password = password) }
         }
@@ -186,7 +186,7 @@ class GroupRoutesTest {
 
             val response = testClient.get("/groups/$id/$jmsTopic/jmsTopic")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.bodyAsText() shouldBe true.toString()
             coVerify(exactly = 1) { groupService.checkJmsTopic(id = id.toString(), jmsTopic = jmsTopic) }
         }
@@ -199,7 +199,7 @@ class GroupRoutesTest {
 
             val response = testClient.get("/groups/$id/$jmsTopic/jmsTopic")
 
-            response.status shouldBe HttpStatusCode.BadRequest
+            response shouldHaveStatus HttpStatusCode.BadRequest
             response.body<ExceptionResponse>() shouldBe getInvalidIdErrorResponse()
             coVerify(exactly = 1) { groupService.checkJmsTopic(id = id, jmsTopic = jmsTopic) }
         }
@@ -210,16 +210,16 @@ class GroupRoutesTest {
         @Test
         fun `should return 201 and a group when successfully created`() = testApplication(mockModule = mockModule) {
             val testGroup = getFirstGroup()
-            coEvery { groupService.createGroup(group = any()) } returns testGroup
+            coEvery { groupService.saveGroup(group = any()) } returns testGroup
 
             val response = testClient.post("/groups") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testGroup)
             }
 
-            response.status shouldBe HttpStatusCode.Created
+            response shouldHaveStatus HttpStatusCode.Created
             response.body<Group>() shouldBe testGroup
-            coVerify(exactly = 1) { groupService.createGroup(group = testGroup) }
+            coVerify(exactly = 1) { groupService.saveGroup(group = testGroup) }
         }
 
         @Test
@@ -231,8 +231,8 @@ class GroupRoutesTest {
                 setBody(body = invalidInput)
             }
 
-            response.status shouldBe HttpStatusCode.InternalServerError
-            coVerify(exactly = 0) { groupService.createGroup(group = any()) }
+            response shouldHaveStatus HttpStatusCode.InternalServerError
+            coVerify(exactly = 0) { groupService.saveGroup(group = any()) }
         }
     }
 
@@ -241,16 +241,16 @@ class GroupRoutesTest {
         @Test
         fun `should return 200 and a updated group`() = testApplication(mockModule = mockModule) {
             val testGroup = getFirstGroup()
-            coEvery { groupService.updateGroup(group = any()) } returns testGroup
+            coEvery { groupService.saveGroup(group = any()) } returns testGroup
 
             val response = testClient.put("/groups/${testGroup.id}") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testGroup)
             }
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.body<Group>() shouldBe testGroup
-            coVerify(exactly = 1) { groupService.updateGroup(group = testGroup) }
+            coVerify(exactly = 1) { groupService.saveGroup(group = testGroup) }
         }
 
         @Test
@@ -262,8 +262,8 @@ class GroupRoutesTest {
                 setBody(body = invalidInput)
             }
 
-            response.status shouldBe HttpStatusCode.InternalServerError
-            coVerify(exactly = 0) { groupService.updateGroup(group = any()) }
+            response shouldHaveStatus HttpStatusCode.InternalServerError
+            coVerify(exactly = 0) { groupService.saveGroup(group = any()) }
         }
     }
 
@@ -276,7 +276,7 @@ class GroupRoutesTest {
 
             val response = testClient.delete("/groups/$id")
 
-            response.status shouldBe HttpStatusCode.NoContent
+            response shouldHaveStatus HttpStatusCode.NoContent
             response.bodyAsText() shouldBe ""
             coVerify(exactly = 1) { groupService.deleteGroupById(id = id) }
         }
@@ -288,7 +288,7 @@ class GroupRoutesTest {
 
             val response = testClient.delete("/groups/$id")
 
-            response.status shouldBe HttpStatusCode.NotFound
+            response shouldHaveStatus HttpStatusCode.NotFound
             response.body<ExceptionResponse>() shouldBe getGroupNotFoundErrorResponse()
             coVerify(exactly = 1) { groupService.deleteGroupById(id = id) }
         }
@@ -303,7 +303,7 @@ class GroupRoutesTest {
 
             val response = testClient.delete("/groups/$id/stats")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.body<Group>() shouldBe getFirstGroup()
             coVerify(exactly = 1) { groupService.resetStats(id = id) }
         }
@@ -315,7 +315,7 @@ class GroupRoutesTest {
 
             val response = testClient.delete("/groups/$id/stats")
 
-            response.status shouldBe HttpStatusCode.NotFound
+            response shouldHaveStatus HttpStatusCode.NotFound
             response.body<ExceptionResponse>() shouldBe getGroupNotFoundErrorResponse()
             coVerify(exactly = 1) { groupService.resetStats(id = id) }
         }

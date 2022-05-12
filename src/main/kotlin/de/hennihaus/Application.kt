@@ -1,5 +1,6 @@
 package de.hennihaus
 
+import de.hennihaus.configurations.BrokerConfiguration.brokerModule
 import de.hennihaus.configurations.MongoConfiguration.mongoModule
 import de.hennihaus.plugins.configureCors
 import de.hennihaus.plugins.configureDependencyInjection
@@ -15,7 +16,7 @@ fun main(args: Array<String>) = EngineMain.main(args)
 
 @Suppress("unused")
 fun Application.module(
-    koinModules: List<Module> = listOf(defaultModule, mongoModule)
+    koinModules: List<Module> = listOf(defaultModule, mongoModule, brokerModule)
 ) {
     configureCors()
     configureDependencyInjection(koinModules = koinModules)

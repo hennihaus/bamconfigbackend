@@ -1,0 +1,29 @@
+{
+  "request": {
+    "mbean": "org.apache.activemq:brokerName=localhost,type=Broker",
+    "attribute": "Queues",
+    "type": "read"
+  },
+  "value": [
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=jmsBankA,destinationType=Queue,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ResponseLoanBrokerGruppe01,destinationType=Queue,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.DLQ,destinationType=Queue,type=Broker"
+    },
+    {
+      "objectName": "jmsBankA"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=jmsBankA"
+    },
+    {
+      "objectName": "jmsBankA,destinationType=Queue,type=Broker"
+    }
+  ],
+  "timestamp": 1651986553,
+  "status": 200
+}

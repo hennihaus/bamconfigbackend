@@ -13,6 +13,7 @@ import de.hennihaus.services.BankService
 import de.hennihaus.services.BankServiceImpl.Companion.ID_MESSAGE
 import de.hennihaus.testutils.KtorTestBuilder.testApplication
 import de.hennihaus.testutils.testClient
+import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
@@ -53,7 +54,7 @@ class BankRoutesTest {
 
             val response = testClient.get("/banks")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.body<List<Bank>>().shouldContainExactly(
                 getSchufaBank(),
                 getVBank(),
@@ -68,7 +69,7 @@ class BankRoutesTest {
 
             val response = client.get("/banks")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.bodyAsText() shouldBe """
                 [
                 ]
@@ -82,7 +83,7 @@ class BankRoutesTest {
 
             val response = testClient.get("/banks")
 
-            response.status shouldBe HttpStatusCode.InternalServerError
+            response shouldHaveStatus HttpStatusCode.InternalServerError
             response.body<ExceptionResponse>() shouldBe getInternalServerErrorResponse()
             coVerify(exactly = 1) { bankService.getAllBanks() }
         }
@@ -97,7 +98,7 @@ class BankRoutesTest {
 
             val response = testClient.get("/banks/$jmsTopic")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.body<Bank>() shouldBe getSchufaBank()
             coVerify(exactly = 1) { bankService.getBankByJmsTopic(jmsTopic = jmsTopic) }
         }
@@ -109,7 +110,7 @@ class BankRoutesTest {
 
             val response = testClient.get("/banks/$jmsTopic")
 
-            response.status shouldBe HttpStatusCode.NotFound
+            response shouldHaveStatus HttpStatusCode.NotFound
             response.body<ExceptionResponse>() shouldBe getBankNotFoundErrorResponse()
             coVerify(exactly = 1) { bankService.getBankByJmsTopic(jmsTopic = jmsTopic) }
         }
@@ -120,16 +121,16 @@ class BankRoutesTest {
         @Test
         fun `should return 200 and a list of updated banks`() = testApplication(mockModule = mockModule) {
             val testBanks = listOf(getSchufaBank(), getVBank(), getSchufaBank())
-            coEvery { bankService.updateAllBanks(banks = any()) } returns testBanks
+            coEvery { bankService.saveAllBanks(banks = any()) } returns testBanks
 
             val response = testClient.put("/banks") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testBanks)
             }
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.body<List<Bank>>().shouldContainExactly(expected = testBanks)
-            coVerify(exactly = 1) { bankService.updateAllBanks(banks = testBanks) }
+            coVerify(exactly = 1) { bankService.saveAllBanks(banks = testBanks) }
         }
 
         @Test
@@ -141,8 +142,8 @@ class BankRoutesTest {
                 setBody(body = invalidInput)
             }
 
-            response.status shouldBe HttpStatusCode.InternalServerError
-            coVerify(exactly = 0) { bankService.updateAllBanks(banks = any()) }
+            response shouldHaveStatus HttpStatusCode.InternalServerError
+            coVerify(exactly = 0) { bankService.saveAllBanks(banks = any()) }
         }
     }
 
@@ -151,16 +152,16 @@ class BankRoutesTest {
         @Test
         fun `should return 200 and an updated bank`() = testApplication(mockModule = mockModule) {
             val testBank = getSchufaBank()
-            coEvery { bankService.updateBank(bank = any()) } returns testBank
+            coEvery { bankService.saveBank(bank = any()) } returns testBank
 
             val response = testClient.put("/banks/${testBank.jmsTopic}") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testBank)
             }
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.body<Bank>() shouldBe testBank
-            coVerify(exactly = 1) { bankService.updateBank(bank = testBank) }
+            coVerify(exactly = 1) { bankService.saveBank(bank = testBank) }
         }
 
         @Test
@@ -172,8 +173,8 @@ class BankRoutesTest {
                 setBody(body = invalidInput)
             }
 
-            response.status shouldBe HttpStatusCode.InternalServerError
-            coVerify(exactly = 0) { bankService.updateBank(bank = any()) }
+            response shouldHaveStatus HttpStatusCode.InternalServerError
+            coVerify(exactly = 0) { bankService.saveBank(bank = any()) }
         }
     }
 }

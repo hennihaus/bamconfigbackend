@@ -7,7 +7,7 @@ import de.hennihaus.models.RatingLevel
 import org.bson.types.ObjectId
 import org.litote.kmongo.id.toId
 
-object TestContainerObjectMother {
+object MongoContainerObjectMother {
     val GROUP_OBJECT_ID = ObjectId("61376f0750f6a6dfcd3b39a7")
     const val GROUP_USERNAME = "Gruppe01"
     const val GROUP_PASSWORD = "lkhNqstcxs"

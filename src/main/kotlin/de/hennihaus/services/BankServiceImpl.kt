@@ -17,9 +17,9 @@ class BankServiceImpl(private val repository: BankRepository, private val stats:
         return bank.copy(groups = bank.groups.map { group -> stats.setHasPassed(group = group) })
     }
 
-    override suspend fun updateBank(bank: Bank): Bank = repository.save(bank)
+    override suspend fun saveBank(bank: Bank): Bank = repository.save(bank)
 
-    override suspend fun updateAllBanks(banks: List<Bank>): List<Bank> = banks.map { updateBank(it) }
+    override suspend fun saveAllBanks(banks: List<Bank>): List<Bank> = banks.map { saveBank(it) }
 
     companion object {
         internal const val ID_MESSAGE = "No Bank for given ID found!"

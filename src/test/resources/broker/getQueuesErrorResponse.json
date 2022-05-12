@@ -1,0 +1,10 @@
+{
+  "request": {
+    "mbean": "org.apache.activemq:brokerName=localhost,type=Broker",
+    "attribute": "Queues(java.lang.String)",
+    "type": "read"
+  },
+  "error_type": "javax.management.AttributeNotFoundException",
+  "error": "javax.management.AttributeNotFoundException : No such attribute: Queues(java.lang.String)",
+  "status": 404
+}

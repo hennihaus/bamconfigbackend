@@ -110,13 +110,13 @@ class BankServiceTest {
     }
 
     @Nested
-    inner class UpdateBank {
+    inner class SaveBank {
         @Test
-        fun `should return and update a bank`() = runBlocking {
+        fun `should return and save a bank`() = runBlocking {
             val testBank: Bank = getSchufaBank()
             coEvery { repository.save(entry = any()) } returns testBank
 
-            val result: Bank = classUnderTest.updateBank(bank = testBank)
+            val result: Bank = classUnderTest.saveBank(bank = testBank)
 
             result shouldBe testBank
             coVerify(exactly = 1) { repository.save(entry = withArg { it shouldBe testBank }) }
@@ -127,7 +127,7 @@ class BankServiceTest {
             val testBank: Bank = getSchufaBank()
             coEvery { repository.save(entry = any()) } throws Exception()
 
-            val result = shouldThrow<Exception> { classUnderTest.updateBank(bank = testBank) }
+            val result = shouldThrow<Exception> { classUnderTest.saveBank(bank = testBank) }
 
             result should beInstanceOf<Exception>()
             coVerify(exactly = 1) { repository.save(entry = withArg { it shouldBe testBank }) }
@@ -135,13 +135,13 @@ class BankServiceTest {
     }
 
     @Nested
-    inner class UpdateAllBanks {
+    inner class SaveAllBanks {
         @Test
-        fun `should return and update all banks`() = runBlocking {
+        fun `should return and save all banks`() = runBlocking {
             val testBanks = listOf(getSchufaBank(), getVBank(), getJmsBank())
             coEvery { repository.save(entry = any()) } returns getSchufaBank() andThen getVBank() andThen getJmsBank()
 
-            val result: List<Bank> = classUnderTest.updateAllBanks(banks = testBanks)
+            val result: List<Bank> = classUnderTest.saveAllBanks(banks = testBanks)
 
             result.shouldContainExactly(expected = testBanks)
             coVerifySequence {
@@ -156,7 +156,7 @@ class BankServiceTest {
             val testBanks = listOf(getSchufaBank(), getVBank(), getJmsBank())
             coEvery { repository.save(entry = any()) } throws Exception()
 
-            val result = shouldThrow<Exception> { classUnderTest.updateAllBanks(banks = testBanks) }
+            val result = shouldThrow<Exception> { classUnderTest.saveAllBanks(banks = testBanks) }
 
             result should beInstanceOf<Exception>()
             coVerify(exactly = 1) {
