@@ -1,0 +1,13 @@
+{
+  "request": {
+    "mbean": "org.apache.activemq:brokerName=localhost,name=JMS,service=JobScheduler,type=Broker",
+    "arguments": [
+      "test"
+    ],
+    "type": "exec",
+    "operation": "removeAllJobs()"
+  },
+  "error_type": "java.lang.IllegalArgumentException",
+  "error": "java.lang.IllegalArgumentException : Invalid number of operation arguments. Operation removeAllJobs() on org.apache.activemq:brokerName=localhost,name=JMS,service=JobScheduler,type=Broker requires 0 parameters, not 1 as given",
+  "status": 400
+}

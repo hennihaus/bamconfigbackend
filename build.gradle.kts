@@ -1,3 +1,4 @@
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import kotlinx.kover.api.CoverageEngine
 import kotlinx.kover.api.VerificationValueType
 
@@ -47,7 +48,9 @@ dependencies {
     val ktorVersion: String by project
     val logbackVersion: String by project
     val kmongoVersion: String by project
+    val passayVersion: String by project
     val kotestVersion: String by project
+    val kotestKtorVersion: String by project
     val mockkVersion: String by project
     val junitVersion: String by project
     val koinVersion: String by project
@@ -61,15 +64,20 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-cors-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
-    implementation("io.ktor:ktor-server-resources:$ktorVersion")
+    implementation("io.ktor:ktor-server-status-pages-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-resources-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-cio-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktorVersion")
 
     // ktor client plugins
-    testImplementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-resources-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
+    testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
 
     // koin plugins
     compileOnly("io.insert-koin:koin-ktor:$koinVersion")
@@ -83,9 +91,13 @@ dependencies {
     implementation("org.litote.kmongo:kmongo-coroutine-serialization:$kmongoVersion")
     implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
 
+    // utility plugins
+    implementation("org.passay:passay:$passayVersion")
+
     // test plugins
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-ktor:$kotestKtorVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
@@ -99,6 +111,14 @@ ktlint {
 
 detekt {
     config = files("config/detekt/detekt.yml")
+    source = source.from(
+        DetektExtension.DEFAULT_SRC_DIR_JAVA,
+        DetektExtension.DEFAULT_TEST_SRC_DIR_JAVA,
+        "src/integrationTest/java",
+        DetektExtension.DEFAULT_SRC_DIR_KOTLIN,
+        DetektExtension.DEFAULT_TEST_SRC_DIR_KOTLIN,
+        "src/integrationTest/kotlin",
+    )
 }
 
 tasks.init {

@@ -15,6 +15,7 @@ import de.hennihaus.services.TaskService
 import de.hennihaus.services.TaskServiceImpl.Companion.ID_MESSAGE
 import de.hennihaus.testutils.KtorTestBuilder.testApplication
 import de.hennihaus.testutils.testClient
+import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
@@ -56,7 +57,7 @@ class TaskRoutesTest {
 
             val response = testClient.get("/tasks")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.body<List<Task>>().shouldContainExactly(
                 getSchufaTask(),
                 getSynchronousBankTask(),
@@ -71,7 +72,7 @@ class TaskRoutesTest {
 
             val response = client.get("/tasks")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.bodyAsText() shouldBe """
                 [
                 ]
@@ -85,7 +86,7 @@ class TaskRoutesTest {
 
             val response = testClient.get("/tasks")
 
-            response.status shouldBe HttpStatusCode.InternalServerError
+            response shouldHaveStatus HttpStatusCode.InternalServerError
             response.body<ExceptionResponse>() shouldBe getInternalServerErrorResponse()
             coVerify(exactly = 1) { taskService.getAllTasks() }
         }
@@ -100,7 +101,7 @@ class TaskRoutesTest {
 
             val response = testClient.get("/tasks/$id")
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.body<Task>() shouldBe getSchufaTask()
             coVerify(exactly = 1) { taskService.getTaskById(id = id) }
         }
@@ -112,7 +113,7 @@ class TaskRoutesTest {
 
             val response = testClient.get("/tasks/$id")
 
-            response.status shouldBe HttpStatusCode.NotFound
+            response shouldHaveStatus HttpStatusCode.NotFound
             response.body<ExceptionResponse>() shouldBe getTaskNotFoundErrorResponse()
             coVerify(exactly = 1) { taskService.getTaskById(id = id) }
         }
@@ -130,7 +131,7 @@ class TaskRoutesTest {
                 setBody(body = testTask)
             }
 
-            response.status shouldBe HttpStatusCode.OK
+            response shouldHaveStatus HttpStatusCode.OK
             response.body<Task>() shouldBe testTask
             coVerify(exactly = 1) { taskService.patchTask(id = testTask.id.toString(), task = testTask) }
         }
@@ -146,7 +147,7 @@ class TaskRoutesTest {
                 setBody(body = testTask)
             }
 
-            response.status shouldBe HttpStatusCode.BadRequest
+            response shouldHaveStatus HttpStatusCode.BadRequest
             response.body<ExceptionResponse>() shouldBe getInvalidIdErrorResponse()
             coVerify(exactly = 1) { taskService.patchTask(id = id, task = testTask) }
         }

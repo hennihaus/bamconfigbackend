@@ -1,0 +1,50 @@
+{
+  "request": {
+    "mbean": "org.apache.activemq:brokerName=localhost,type=Broker",
+    "attribute": "Topics",
+    "type": "read"
+  },
+  "value": [
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.Connection,destinationType=Topic,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.Consumer.Queue.ActiveMQ.DLQ,destinationType=Topic,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.Consumer.Queue.jmsBankA,destinationType=Topic,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.MasterBroker,destinationType=Topic,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.MessageDLQd.Queue.jmsBankA,destinationType=Topic,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.MessageDLQd.Queue.ResponseLoanBrokerGruppe01,destinationType=Topic,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.Producer.Queue.jmsBankA,destinationType=Topic,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.Producer.Queue.ResponseLoanBrokerGruppe01,destinationType=Topic,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.Queue,destinationType=Topic,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.Topic,destinationType=Topic,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=jmsBankA,destinationType=Topic,type=Broker"
+    },
+    {
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=jmsBankA"
+    },
+    {
+      "objectName": "jmsBankA,destinationType=Topic,type=Broker"
+    }
+  ],
+  "timestamp": 1651989304,
+  "status": 200
+}

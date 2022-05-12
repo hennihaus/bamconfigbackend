@@ -1,11 +1,11 @@
 package de.hennihaus.repositories
 
 import de.hennihaus.configurations.MongoConfiguration
+import de.hennihaus.containers.MongoContainer
 import de.hennihaus.models.Task
+import de.hennihaus.objectmothers.MongoContainerObjectMother
 import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
-import de.hennihaus.objectmothers.TestContainerObjectMother
 import de.hennihaus.plugins.initKoin
-import de.hennihaus.testutils.MongoContainer
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ints.shouldBeGreaterThanOrEqual
@@ -57,7 +57,7 @@ class TaskRepositoryIntegrationTest : KoinTest {
     inner class GetById {
         @Test
         fun `should find a task by id`() = runBlocking {
-            val id = TestContainerObjectMother.TASK_OBJECT_ID
+            val id = MongoContainerObjectMother.TASK_OBJECT_ID
 
             val result: Task? = classUnderTest.getById(id = id)
 
@@ -92,11 +92,11 @@ class TaskRepositoryIntegrationTest : KoinTest {
     inner class Save {
         @Test
         fun `should save an existing task`() = runBlocking {
-            bankRepository.save(entry = TestContainerObjectMother.getSparkasseBank())
+            bankRepository.save(entry = MongoContainerObjectMother.getSparkasseBank())
             val task = getAsynchronousBankTask(
-                id = TestContainerObjectMother.TASK_OBJECT_ID.toId(),
+                id = MongoContainerObjectMother.TASK_OBJECT_ID.toId(),
                 title = "New title",
-                banks = listOf(TestContainerObjectMother.getSparkasseBank())
+                banks = listOf(MongoContainerObjectMother.getSparkasseBank())
             )
 
             val result: Task = classUnderTest.save(entry = task)
@@ -107,10 +107,10 @@ class TaskRepositoryIntegrationTest : KoinTest {
 
         @Test
         fun `should save a task when no existing bank is in db`() = runBlocking {
-            bankRepository.save(entry = TestContainerObjectMother.getSparkasseBank())
+            bankRepository.save(entry = MongoContainerObjectMother.getSparkasseBank())
             val task = getAsynchronousBankTask(
                 id = ObjectId().toId(),
-                banks = listOf(TestContainerObjectMother.getSparkasseBank())
+                banks = listOf(MongoContainerObjectMother.getSparkasseBank())
             )
 
             val result: Task = classUnderTest.save(entry = task)
@@ -124,7 +124,7 @@ class TaskRepositoryIntegrationTest : KoinTest {
     inner class DeleteById {
         @Test
         fun `should return true one task was deleted by id`() = runBlocking {
-            val id = TestContainerObjectMother.TASK_OBJECT_ID
+            val id = MongoContainerObjectMother.TASK_OBJECT_ID
 
             val result: Boolean = classUnderTest.deleteById(id = id)
 

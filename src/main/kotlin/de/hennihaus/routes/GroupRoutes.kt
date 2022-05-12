@@ -72,7 +72,7 @@ private fun Route.checkJmsTopic(): Route = get<Groups.Id.CheckJmsTopic> { reques
 private fun Route.createGroup(): Route = post<Groups> {
     val groupService = getKoin().get<GroupService>()
     call.respond(
-        message = groupService.createGroup(
+        message = groupService.saveGroup(
             group = call.receive()
         ),
         status = HttpStatusCode.Created
@@ -82,7 +82,7 @@ private fun Route.createGroup(): Route = post<Groups> {
 private fun Route.updateGroup(): Route = put<Groups.Id> {
     val groupService = getKoin().get<GroupService>()
     call.respond(
-        message = groupService.updateGroup(
+        message = groupService.saveGroup(
             group = call.receive()
         )
     )
