@@ -7,6 +7,10 @@ import org.litote.kmongo.id.toId
 
 object GroupObjectMother {
 
+    private const val SCHUFA_BANK = "schufa"
+    private const val V_BANK = "vbank"
+    private const val JMS_BANK_A = "jmsBankA"
+
     private const val DEFAULT_PASSWORD = "0123456789"
     private const val DEFAULT_HAS_PASSED = false
     private val DEFAULT_STUDENTS = listOf(
@@ -15,9 +19,14 @@ object GroupObjectMother {
         "Thomas Müller"
     )
     val ZERO_STATS = mapOf(
-        "schufa" to 0,
-        "vbank" to 0,
-        "jmsBankA" to 0
+        SCHUFA_BANK to 0,
+        V_BANK to 0,
+        JMS_BANK_A to 0
+    )
+    val NON_ZERO_STATS = mapOf(
+        SCHUFA_BANK to 1,
+        V_BANK to 1,
+        JMS_BANK_A to 1
     )
 
     fun getFirstGroup(

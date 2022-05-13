@@ -34,7 +34,7 @@ private fun Route.getBankByJmsTopic() = get<Banks.JmsTopic> { request ->
 private fun Route.updateAllBanks() = put<Banks> {
     val bankService = getKoin().get<BankService>()
     call.respond(
-        message = bankService.updateAllBanks(
+        message = bankService.saveAllBanks(
             banks = call.receive()
         )
     )
@@ -43,7 +43,7 @@ private fun Route.updateAllBanks() = put<Banks> {
 private fun Route.updateBank() = put<Banks.JmsTopic> {
     val bankService = getKoin().get<BankService>()
     call.respond(
-        message = bankService.updateBank(
+        message = bankService.saveBank(
             bank = call.receive()
         )
     )

@@ -128,7 +128,7 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
     override suspend fun getAll(): List<Task> {
         return col.aggregate<Task>(
             lookup(
-                from = Bank::class.simpleName as String,
+                from = Bank::class.simpleName?.lowercase() as String,
                 let = listOf(
                     Task::banks.variableDefinition()
                 ),

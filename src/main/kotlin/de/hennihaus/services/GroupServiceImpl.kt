@@ -1,14 +1,23 @@
 package de.hennihaus.services
 
+import de.hennihaus.configurations.Configuration.PASSWORD_LENGTH
 import de.hennihaus.models.Group
 import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.repositories.GroupRepository
 import de.hennihaus.utils.toObjectId
+import org.koin.core.annotation.Property
 import org.koin.core.annotation.Single
 import org.litote.kmongo.id.toId
+import org.passay.CharacterRule
+import org.passay.EnglishCharacterData
+import org.passay.PasswordGenerator
 
 @Single
-class GroupServiceImpl(private val repository: GroupRepository, private val stats: StatsService) : GroupService {
+class GroupServiceImpl(
+    private val repository: GroupRepository,
+    private val stats: StatsService,
+    @Property(PASSWORD_LENGTH) private val passwordLength: String
+) : GroupService {
 
     override suspend fun getAllGroups(): List<Group> = repository.getAll()
         .sortedBy { it.username }
@@ -39,11 +48,7 @@ class GroupServiceImpl(private val repository: GroupRepository, private val stat
         }
     }
 
-    override suspend fun createGroup(group: Group): Group = stats.setHasPassed(group = group).let {
-        repository.save(entry = it)
-    }
-
-    override suspend fun updateGroup(group: Group): Group = stats.setHasPassed(group = group).let {
+    override suspend fun saveGroup(group: Group): Group = stats.setHasPassed(group = group).let {
         repository.save(entry = it)
     }
 
@@ -51,6 +56,12 @@ class GroupServiceImpl(private val repository: GroupRepository, private val stat
         id.toObjectId { objectId ->
             objectId.takeIf { repository.deleteById(id = it) } ?: throw NotFoundException(message = ID_MESSAGE)
         }
+    }
+
+    override suspend fun resetAllGroups(): List<Group> {
+        return repository.getAll()
+            .map { resetGroup(group = it) }
+            .map { repository.save(entry = it) }
     }
 
     override suspend fun resetStats(id: String): Group {
@@ -61,6 +72,17 @@ class GroupServiceImpl(private val repository: GroupRepository, private val stat
                 ?.also { repository.save(entry = it) }
                 ?: throw NotFoundException(message = ID_MESSAGE)
         }
+    }
+
+    private fun resetGroup(group: Group): Group = group.let {
+        it.copy(
+            stats = it.stats.mapValues { ZERO_REQUESTS },
+            hasPassed = false,
+            password = PasswordGenerator().generatePassword(
+                passwordLength.toInt(),
+                CharacterRule(EnglishCharacterData.Alphabetical)
+            )
+        )
     }
 
     companion object {

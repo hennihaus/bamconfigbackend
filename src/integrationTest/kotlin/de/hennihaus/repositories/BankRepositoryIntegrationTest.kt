@@ -1,11 +1,11 @@
 package de.hennihaus.repositories
 
 import de.hennihaus.configurations.MongoConfiguration
+import de.hennihaus.containers.MongoContainer
 import de.hennihaus.models.Bank
 import de.hennihaus.objectmothers.BankObjectMother.getJmsBank
-import de.hennihaus.objectmothers.TestContainerObjectMother
+import de.hennihaus.objectmothers.MongoContainerObjectMother
 import de.hennihaus.plugins.initKoin
-import de.hennihaus.testutils.MongoContainer
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ints.shouldBeGreaterThanOrEqual
@@ -53,8 +53,8 @@ class BankRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetById {
         @Test
-        fun `should find a bank by jmsTopic`() = runBlocking {
-            val jmsTopic = TestContainerObjectMother.BANK_JMS_TOPIC
+        fun `should find a bank by jmsTopic`() = runBlocking<Unit> {
+            val jmsTopic = MongoContainerObjectMother.BANK_JMS_TOPIC
 
             val result: Bank? = classUnderTest.getById(id = jmsTopic)
 
@@ -75,11 +75,11 @@ class BankRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetAll {
         @Test
-        fun `should return at least one bank`() = runBlocking {
+        fun `should return at least one bank`() = runBlocking<Unit> {
             val result: List<Bank> = classUnderTest.getAll()
 
             result.size shouldBeGreaterThanOrEqual 1
-            result[0].groups.size shouldBeGreaterThanOrEqual 1
+            result.find { it.isAsync }!!.groups.size shouldBeGreaterThanOrEqual 1
         }
     }
 
@@ -88,9 +88,9 @@ class BankRepositoryIntegrationTest : KoinTest {
         @Test
         fun `should save an existing bank`() = runBlocking {
             val bank = getJmsBank(
-                jmsTopic = TestContainerObjectMother.BANK_JMS_TOPIC,
+                jmsTopic = MongoContainerObjectMother.BANK_JMS_TOPIC,
                 name = "NewBankName",
-                groups = listOf(TestContainerObjectMother.getFirstGroup())
+                groups = listOf(MongoContainerObjectMother.getFirstGroup())
             )
 
             val result: Bank = classUnderTest.save(entry = bank)
@@ -103,7 +103,7 @@ class BankRepositoryIntegrationTest : KoinTest {
         fun `should save a bank when no existing bank is in db`() = runBlocking {
             val bank = getJmsBank(
                 jmsTopic = "newBank",
-                groups = listOf(TestContainerObjectMother.getFirstGroup())
+                groups = listOf(MongoContainerObjectMother.getFirstGroup())
             )
 
             val result: Bank = classUnderTest.save(entry = bank)
@@ -117,7 +117,7 @@ class BankRepositoryIntegrationTest : KoinTest {
     inner class DeleteById {
         @Test
         fun `should return true when one bank was deleted by jmsTopic`() = runBlocking {
-            val jmsTopic = TestContainerObjectMother.BANK_JMS_TOPIC
+            val jmsTopic = MongoContainerObjectMother.BANK_JMS_TOPIC
 
             val result: Boolean = classUnderTest.deleteById(id = jmsTopic)
 

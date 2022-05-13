@@ -1,5 +1,7 @@
 package de.hennihaus.plugins
 
+import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_DEFAULT_MESSAGE
+import de.hennihaus.plugins.ErrorMessage.OBJECT_ID_EXCEPTION_DEFAULT_MESSAGE
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -37,11 +39,16 @@ fun Application.configureErrorHandling() {
     }
 }
 
+object ErrorMessage {
+    const val OBJECT_ID_EXCEPTION_DEFAULT_MESSAGE = "ObjectId could not be parsed due to an invalid format"
+    const val BROKER_EXCEPTION_DEFAULT_MESSAGE = "Error while calling ActiveMQ"
+}
+
 class NotFoundException(override val message: String) : RuntimeException()
 
-class ObjectIdException(
-    override val message: String = "ObjectId could not be parsed due to an invalid formar"
-) : RuntimeException()
+class ObjectIdException(override val message: String = OBJECT_ID_EXCEPTION_DEFAULT_MESSAGE) : RuntimeException()
+
+class BrokerException(override val message: String?) : RuntimeException(message ?: BROKER_EXCEPTION_DEFAULT_MESSAGE)
 
 @Serializable
 data class ExceptionResponse(

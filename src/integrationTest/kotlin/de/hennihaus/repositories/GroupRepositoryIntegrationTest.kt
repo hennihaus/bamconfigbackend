@@ -3,11 +3,11 @@ package de.hennihaus.repositories
 import de.hennihaus.configurations.MongoConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.MongoConfiguration.DATABASE_NAME
 import de.hennihaus.configurations.MongoConfiguration.DATABASE_PORT
+import de.hennihaus.containers.MongoContainer
 import de.hennihaus.models.Group
 import de.hennihaus.objectmothers.GroupObjectMother.getFirstGroup
-import de.hennihaus.objectmothers.TestContainerObjectMother
+import de.hennihaus.objectmothers.MongoContainerObjectMother
 import de.hennihaus.plugins.initKoin
-import de.hennihaus.testutils.MongoContainer
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ints.shouldBeGreaterThanOrEqual
@@ -59,7 +59,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
     inner class GetById {
         @Test
         fun `should find a group by id`() = runBlocking {
-            val id = TestContainerObjectMother.GROUP_OBJECT_ID
+            val id = MongoContainerObjectMother.GROUP_OBJECT_ID
 
             val result: Group? = classUnderTest.getById(id = id)
 
@@ -79,7 +79,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetAll {
         @Test
-        fun `should return at least one group`() = runBlocking {
+        fun `should return at least one group`() = runBlocking<Unit> {
             val result: List<Group> = classUnderTest.getAll()
 
             result.size shouldBeGreaterThanOrEqual 1
@@ -91,7 +91,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
         @Test
         fun `should save an existing group`() = runBlocking {
             val group = getFirstGroup(
-                id = TestContainerObjectMother.GROUP_OBJECT_ID.toId(),
+                id = MongoContainerObjectMother.GROUP_OBJECT_ID.toId(),
                 username = "NewUsername"
             )
 
@@ -122,7 +122,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
     inner class DeleteById {
         @Test
         fun `should return true when one group was deleted by id`() = runBlocking {
-            val id = TestContainerObjectMother.GROUP_OBJECT_ID
+            val id = MongoContainerObjectMother.GROUP_OBJECT_ID
 
             val result: Boolean = classUnderTest.deleteById(id = id)
 
@@ -143,7 +143,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
     inner class GetGroupByUsername {
         @Test
         fun `should return a group when group is found by username`() = runBlocking {
-            val username = TestContainerObjectMother.GROUP_USERNAME
+            val username = MongoContainerObjectMother.GROUP_USERNAME
 
             val result: Group? = classUnderTest.getGroupByUsername(username = username)
 
@@ -152,7 +152,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
 
         @Test
         fun `should return null when group is not found by username`() = runBlocking {
-            val username = "unknown"
+            val username = "unknownUsername"
 
             val result: Group? = classUnderTest.getGroupByUsername(username = username)
 
@@ -164,7 +164,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
     inner class GetGroupByPassword {
         @Test
         fun `should return a group when group is found by password`() = runBlocking {
-            val password = TestContainerObjectMother.GROUP_PASSWORD
+            val password = MongoContainerObjectMother.GROUP_PASSWORD
 
             val result: Group? = classUnderTest.getGroupByPassword(password = password)
 
@@ -173,7 +173,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
 
         @Test
         fun `should return null when group is not found by password`() = runBlocking {
-            val password = "unknown"
+            val password = "unknownPassword"
 
             val result: Group? = classUnderTest.getGroupByPassword(password = password)
 
@@ -185,7 +185,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
     inner class GetGroupByJmsTopic {
         @Test
         fun `should return a group when group is found by jmsTopic`() = runBlocking {
-            val jmsTopic = TestContainerObjectMother.GROUP_JMS_TOPIC
+            val jmsTopic = MongoContainerObjectMother.GROUP_JMS_TOPIC
 
             val result: Group? = classUnderTest.getGroupByJmsTopic(jmsTopic = jmsTopic)
 

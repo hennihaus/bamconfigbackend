@@ -1,6 +1,7 @@
 package de.hennihaus.plugins
 
 import de.hennihaus.routes.registerBankRoutes
+import de.hennihaus.routes.registerBrokerRoutes
 import de.hennihaus.routes.registerGroupRoutes
 import de.hennihaus.routes.registerTaskRoutes
 import io.ktor.serialization.kotlinx.json.json
@@ -29,5 +30,6 @@ fun Application.configureRouting() {
         registerGroupRoutes()
         registerBankRoutes()
         registerTaskRoutes()
+        registerBrokerRoutes()
     }
 }

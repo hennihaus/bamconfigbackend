@@ -7,7 +7,7 @@ import de.hennihaus.models.RatingLevel
 import org.bson.types.ObjectId
 import org.litote.kmongo.id.toId
 
-object TestContainerObjectMother {
+object MongoContainerObjectMother {
     val GROUP_OBJECT_ID = ObjectId("61376f0750f6a6dfcd3b39a7")
     const val GROUP_USERNAME = "Gruppe01"
     const val GROUP_PASSWORD = "lkhNqstcxs"
@@ -38,7 +38,7 @@ object TestContainerObjectMother {
     val CREDIT_CONFIGURATION_MIN_SCHUFA_RATING = RatingLevel.A
     val CREDIT_CONFIGURATION_MAX_SCHUFA_RATING = RatingLevel.P
 
-    val TASK_OBJECT_ID = ObjectId("6150281b8031b5b4e70a881e")
+    val TASK_OBJECT_ID = ObjectId("61503edf6354bd996d9e89a6")
 
     fun getFirstGroup() = Group(
         id = GROUP_OBJECT_ID.toId(),
