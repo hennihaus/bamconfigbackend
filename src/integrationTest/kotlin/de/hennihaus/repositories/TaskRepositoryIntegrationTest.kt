@@ -56,7 +56,7 @@ class TaskRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetById {
         @Test
-        fun `should find a task by id`() = runBlocking {
+        fun `should find a task by id`() = runBlocking<Unit> {
             val id = MongoContainerObjectMother.TASK_OBJECT_ID
 
             val result: Task? = classUnderTest.getById(id = id)
@@ -79,12 +79,12 @@ class TaskRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetAll {
         @Test
-        fun `should return at least one task`() = runBlocking {
+        fun `should return at least one task`() = runBlocking<Unit> {
             val result: List<Task> = classUnderTest.getAll()
 
             result.size shouldBeGreaterThanOrEqual 1
-            result[0].banks.size shouldBeGreaterThanOrEqual 1
-            result[0].banks[0].groups.size shouldBeGreaterThanOrEqual 1
+            result.find { it.step == SCHUFA_STEP }!!.banks.size shouldBeGreaterThanOrEqual 1
+            result.find { it.step == ASYNC_BANKS_STEP }!!.banks[0].groups.size shouldBeGreaterThanOrEqual 1
         }
     }
 
@@ -139,5 +139,10 @@ class TaskRepositoryIntegrationTest : KoinTest {
 
             result.shouldBeFalse()
         }
+    }
+
+    companion object {
+        const val SCHUFA_STEP = 1
+        const val ASYNC_BANKS_STEP = 3
     }
 }

@@ -10,8 +10,11 @@ import de.hennihaus.configurations.BrokerConfiguration.brokerModule
 import de.hennihaus.containers.BrokerContainer
 import de.hennihaus.models.generated.GetQueuesResponse
 import de.hennihaus.models.generated.GetTopicsResponse
+import de.hennihaus.models.generated.Queue
+import de.hennihaus.models.generated.Topic
 import de.hennihaus.objectmothers.BrokerContainerObjectMother.OBJECT_NAME_DEFAULT_PREFIX
-import de.hennihaus.objectmothers.BrokerContainerObjectMother.OBJECT_NAME_DEFAULT_SUFFIX
+import de.hennihaus.objectmothers.BrokerContainerObjectMother.QUEUE_OBJECT_NAME_SUFFIX
+import de.hennihaus.objectmothers.BrokerContainerObjectMother.TOPIC_OBJECT_NAME_SUFFIX
 import de.hennihaus.objectmothers.BrokerContainerObjectMother.getTestJobs
 import de.hennihaus.objectmothers.BrokerContainerObjectMother.getTestQueues
 import de.hennihaus.objectmothers.BrokerContainerObjectMother.getTestTopics
@@ -27,6 +30,7 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotBeEmpty
+import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.maps.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.should
@@ -82,7 +86,7 @@ class BrokerCallServiceIntegrationTest : KoinTest {
     @Nested
     inner class GetAllQueues {
         @Test
-        fun `should return 200 and a queue list containing correct objectName`() = runBlocking {
+        fun `should return 200 and a queue list containing correct objectName`() = runBlocking<Unit> {
             BrokerContainer.addTestData(queues = getTestQueues())
 
             val result: GetQueuesResponse = classUnderTest.getAllQueues()
@@ -91,18 +95,20 @@ class BrokerCallServiceIntegrationTest : KoinTest {
             result.status shouldBe HttpStatusCode.OK.value
             result.value shouldHaveSize getTestQueues().size
             result.value shouldContainExactlyInAnyOrder getTestQueues().map {
-                """
-                    $OBJECT_NAME_DEFAULT_PREFIX
-                    $DESTINATION_NAME_DELIMITER
-                    $it
-                    $DESTINATION_TYPE_DELIMITER
-                    $OBJECT_NAME_DEFAULT_SUFFIX
-                """.trimIndent().replace("\n", "")
+                Queue(
+                    objectName = """
+                        $OBJECT_NAME_DEFAULT_PREFIX
+                        $DESTINATION_NAME_DELIMITER
+                        $it
+                        $DESTINATION_TYPE_DELIMITER
+                        $QUEUE_OBJECT_NAME_SUFFIX
+                    """.trimIndent().replace("\n", "")
+                )
             }
         }
 
         @Test
-        fun `should return 200 and an empty list when no queues available`() = runBlocking {
+        fun `should return 200 and an empty list when no queues available`() = runBlocking<Unit> {
             BrokerContainer.addTestData(queues = emptyList())
 
             val result: GetQueuesResponse = classUnderTest.getAllQueues()
@@ -116,7 +122,7 @@ class BrokerCallServiceIntegrationTest : KoinTest {
     @Nested
     inner class GetAllTopics {
         @Test
-        fun `should return 200 and a topic list containing correct objectName`() = runBlocking {
+        fun `should return 200 and a topic list containing correct objectName`() = runBlocking<Unit> {
             BrokerContainer.addTestData(topics = getTestTopics())
 
             val result: GetTopicsResponse = classUnderTest.getAllTopics()
@@ -125,18 +131,20 @@ class BrokerCallServiceIntegrationTest : KoinTest {
             result.status shouldBe HttpStatusCode.OK.value
             result.value shouldHaveSize getTestTopics().size
             result.value shouldContainExactlyInAnyOrder getTestTopics().map {
-                """
-                    $OBJECT_NAME_DEFAULT_PREFIX
-                    $DESTINATION_NAME_DELIMITER
-                    $it
-                    $DESTINATION_TYPE_DELIMITER
-                    $OBJECT_NAME_DEFAULT_SUFFIX
-                """.trimIndent().replace("\n", "")
+                Topic(
+                    objectName = """
+                        $OBJECT_NAME_DEFAULT_PREFIX
+                        $DESTINATION_NAME_DELIMITER
+                        $it
+                        $DESTINATION_TYPE_DELIMITER
+                        $TOPIC_OBJECT_NAME_SUFFIX
+                    """.trimIndent().replace("\n", "")
+                )
             }
         }
 
         @Test
-        fun `should return 200 and an empty list when no topics available`() = runBlocking {
+        fun `should return 200 and an empty list when no topics available`() = runBlocking<Unit> {
             BrokerContainer.addTestData(topics = emptyList())
 
             val result: GetTopicsResponse = classUnderTest.getAllTopics()
@@ -176,7 +184,7 @@ class BrokerCallServiceIntegrationTest : KoinTest {
     @Nested
     inner class DeleteQueueByName {
         @Test
-        fun `should delete a queue by name`() = runBlocking {
+        fun `should delete a queue by name`() = runBlocking<Unit> {
             BrokerContainer.addTestData(queues = listOf(JMS_BANK_A_QUEUE))
             BrokerContainer.getTestQueues().value.shouldNotBeEmpty()
 
@@ -188,7 +196,7 @@ class BrokerCallServiceIntegrationTest : KoinTest {
         }
 
         @Test
-        fun `should return 200 and not throw an exception when queue was not found`() = runBlocking {
+        fun `should return 200 and not throw an exception when queue was not found`() = runBlocking<Unit> {
             val name = "unknownQueue"
 
             val response: HttpResponse = classUnderTest.deleteQueueByName(name = name)
@@ -212,7 +220,7 @@ class BrokerCallServiceIntegrationTest : KoinTest {
     @Nested
     inner class DeleteTopicByName {
         @Test
-        fun `should delete delete a topic by name`() = runBlocking {
+        fun `should delete a topic by name`() = runBlocking<Unit> {
             BrokerContainer.addTestData(topics = listOf(JMS_BANK_A_QUEUE))
             BrokerContainer.getTestTopics().value.shouldNotBeEmpty()
 
@@ -220,11 +228,19 @@ class BrokerCallServiceIntegrationTest : KoinTest {
 
             response shouldHaveStatus HttpStatusCode.OK
             response.bodyAsText() shouldContain HTTP_STATUS_OK
-            BrokerContainer.getTestTopics().value.shouldBeEmpty()
+            BrokerContainer.getTestTopics().value shouldNotContain Topic(
+                objectName = """
+                    $OBJECT_NAME_DEFAULT_PREFIX
+                    $DESTINATION_NAME_DELIMITER
+                    $JMS_BANK_A_QUEUE
+                    $DESTINATION_TYPE_DELIMITER
+                    $TOPIC_OBJECT_NAME_SUFFIX
+                """.trimIndent().replace("\n", "")
+            )
         }
 
         @Test
-        fun `should return 200 and not throw an exception when topic was not found`() = runBlocking {
+        fun `should return 200 and not throw an exception when topic was not found`() = runBlocking<Unit> {
             val name = "unknownTopic"
 
             val response: HttpResponse = classUnderTest.deleteTopicByName(name = name)

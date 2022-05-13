@@ -53,7 +53,7 @@ class BankRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetById {
         @Test
-        fun `should find a bank by jmsTopic`() = runBlocking {
+        fun `should find a bank by jmsTopic`() = runBlocking<Unit> {
             val jmsTopic = MongoContainerObjectMother.BANK_JMS_TOPIC
 
             val result: Bank? = classUnderTest.getById(id = jmsTopic)
@@ -75,11 +75,11 @@ class BankRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetAll {
         @Test
-        fun `should return at least one bank`() = runBlocking {
+        fun `should return at least one bank`() = runBlocking<Unit> {
             val result: List<Bank> = classUnderTest.getAll()
 
             result.size shouldBeGreaterThanOrEqual 1
-            result[0].groups.size shouldBeGreaterThanOrEqual 1
+            result.find { it.isAsync }!!.groups.size shouldBeGreaterThanOrEqual 1
         }
     }
 

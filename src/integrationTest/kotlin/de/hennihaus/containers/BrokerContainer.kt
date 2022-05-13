@@ -95,34 +95,30 @@ object BrokerContainer {
         }
     }
 
-    /**
-     * Necessary to execute @BeforeEach methods without return type in a single method expression
-     */
-    @Suppress("OptionalUnit")
-    fun resetState(): Unit = runBlocking {
+    fun resetState() = runBlocking<Unit> {
         // remove queues
         TEST_CLIENT.get(resource = Broker.Read.MBean.Queues()).body<GetQueuesResponse>().value
             .map {
                 it.objectName.substringAfter(delimiter = DESTINATION_NAME_DELIMITER)
-                    .substringAfter(delimiter = DESTINATION_TYPE_DELIMITER)
+                    .substringBefore(delimiter = DESTINATION_TYPE_DELIMITER)
             }
             .forEach { TEST_CLIENT.get(resource = Broker.Exec.MBean.RemoveQueue(name = it)) }
         // remove topics
         TEST_CLIENT.get(resource = Broker.Read.MBean.Topics()).body<GetTopicsResponse>().value
             .map {
                 it.objectName.substringAfter(delimiter = DESTINATION_NAME_DELIMITER)
-                    .substringAfter(delimiter = DESTINATION_TYPE_DELIMITER)
+                    .substringBefore(delimiter = DESTINATION_TYPE_DELIMITER)
             }
-            .forEach { TEST_CLIENT.get(resource = Broker.Exec.MBean.RemoveQueue(name = it)) }
+            .forEach { TEST_CLIENT.get(resource = Broker.Exec.MBean.RemoveTopic(name = it)) }
         // remove jobs
         TEST_CLIENT.get(resource = Broker.Exec.JobMBean.RemoveAllJobs())
     }
 
     suspend fun getTestQueues(): GetQueuesResponse =
-        TEST_CLIENT.get(urlString = "$BASE_CONFIG_PATH/$EXEC_PATH/$BASE_M_BEAN_PATH/$GET_QUEUES_OPERATION").body()
+        TEST_CLIENT.get(urlString = "$BASE_CONFIG_PATH/$READ_PATH/$BASE_M_BEAN_PATH/$GET_QUEUES_OPERATION").body()
 
     suspend fun getTestTopics(): GetTopicsResponse =
-        TEST_CLIENT.get(urlString = "$BASE_CONFIG_PATH/$EXEC_PATH/$BASE_M_BEAN_PATH/$GET_TOPICS_OPERATION").body()
+        TEST_CLIENT.get(urlString = "$BASE_CONFIG_PATH/$READ_PATH/$BASE_M_BEAN_PATH/$GET_TOPICS_OPERATION").body()
 
     suspend fun getTestJobs(): GetJobsResponse =
         TEST_CLIENT.get(urlString = "$BASE_CONFIG_PATH/$READ_PATH/$BASE_JMS_M_BEAN_PATH/$GET_JOBS_OPERATION").body()

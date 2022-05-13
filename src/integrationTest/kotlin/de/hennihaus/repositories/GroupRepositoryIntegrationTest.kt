@@ -79,7 +79,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetAll {
         @Test
-        fun `should return at least one group`() = runBlocking {
+        fun `should return at least one group`() = runBlocking<Unit> {
             val result: List<Group> = classUnderTest.getAll()
 
             result.size shouldBeGreaterThanOrEqual 1

@@ -17,7 +17,8 @@ object BrokerContainerObjectMother {
     private const val DEFAULT_TEST_MESSAGE = "Test"
     const val DEFAULT_TEST_DELAY = 600_000L
     const val OBJECT_NAME_DEFAULT_PREFIX = "org.apache.activemq:brokerName=localhost"
-    const val OBJECT_NAME_DEFAULT_SUFFIX = "Queue,type=Broker"
+    const val QUEUE_OBJECT_NAME_SUFFIX = "Queue,type=Broker"
+    const val TOPIC_OBJECT_NAME_SUFFIX = "Topic,type=Broker"
 
     fun getTestQueues(): List<String> = listOf(
         DEAD_LETTER_QUEUE,
