@@ -13,9 +13,13 @@ object BankObjectMother {
     private const val DEFAULT_THUMBNAIL_URL = "http://localhost:8085/picture.jpg"
     private const val DEFAULT_IS_ACTIVE = true
 
+    const val SCHUFA_BANK_NAME = "schufa"
+    const val V_BANK_NAME = "vbank"
+    const val JMS_BANK_NAME = "jmsBankA"
+
     fun getSchufaBank(
-        jmsTopic: String = "schufa",
-        name: String = "schufa",
+        jmsTopic: String = SCHUFA_BANK_NAME,
+        name: String = SCHUFA_BANK_NAME,
         thumbnailUrl: String = DEFAULT_THUMBNAIL_URL,
         isAsync: Boolean = false,
         isActive: Boolean = DEFAULT_IS_ACTIVE,
@@ -32,8 +36,8 @@ object BankObjectMother {
     )
 
     fun getVBank(
-        jmsTopic: String = "vbank",
-        name: String = "vbank",
+        jmsTopic: String = V_BANK_NAME,
+        name: String = V_BANK_NAME,
         thumbnailUrl: String = "http://localhost:8085/picture.jpg",
         isAsync: Boolean = false,
         isActive: Boolean = DEFAULT_IS_ACTIVE,
@@ -50,8 +54,8 @@ object BankObjectMother {
     )
 
     fun getJmsBank(
-        jmsTopic: String = "jmsBankA",
-        name: String = "jmsBankA",
+        jmsTopic: String = JMS_BANK_NAME,
+        name: String = JMS_BANK_NAME,
         thumbnailUrl: String = "http://localhost:8085/picture.jpg",
         isAsync: Boolean = true,
         isActive: Boolean = DEFAULT_IS_ACTIVE,
