@@ -1,15 +1,14 @@
 package de.hennihaus.objectmothers
 
 import de.hennihaus.models.Group
+import de.hennihaus.objectmothers.BankObjectMother.JMS_BANK_NAME
+import de.hennihaus.objectmothers.BankObjectMother.SCHUFA_BANK_NAME
+import de.hennihaus.objectmothers.BankObjectMother.V_BANK_NAME
 import org.bson.types.ObjectId
 import org.litote.kmongo.Id
 import org.litote.kmongo.id.toId
 
 object GroupObjectMother {
-
-    private const val SCHUFA_BANK = "schufa"
-    private const val V_BANK = "vbank"
-    private const val JMS_BANK_A = "jmsBankA"
 
     private const val DEFAULT_PASSWORD = "0123456789"
     private const val DEFAULT_HAS_PASSED = false
@@ -19,14 +18,14 @@ object GroupObjectMother {
         "Thomas Müller"
     )
     val ZERO_STATS = mapOf(
-        SCHUFA_BANK to 0,
-        V_BANK to 0,
-        JMS_BANK_A to 0
+        SCHUFA_BANK_NAME to 0,
+        V_BANK_NAME to 0,
+        JMS_BANK_NAME to 0
     )
     val NON_ZERO_STATS = mapOf(
-        SCHUFA_BANK to 1,
-        V_BANK to 1,
-        JMS_BANK_A to 1
+        SCHUFA_BANK_NAME to 1,
+        V_BANK_NAME to 1,
+        JMS_BANK_NAME to 1
     )
 
     fun getFirstGroup(
