@@ -16,8 +16,6 @@ object MongoContainer {
     private const val IMAGE_VERSION = "latest"
     private const val MONGO_PORT = 27_017
 
-    const val DATABASE_NAME = "businessintegration"
-
     val INSTANCE by lazy { startMongoContainer() }
 
     private val state by lazy {

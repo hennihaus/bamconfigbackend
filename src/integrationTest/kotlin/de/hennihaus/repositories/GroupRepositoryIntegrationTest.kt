@@ -1,7 +1,6 @@
 package de.hennihaus.repositories
 
 import de.hennihaus.configurations.MongoConfiguration.DATABASE_HOST
-import de.hennihaus.configurations.MongoConfiguration.DATABASE_NAME
 import de.hennihaus.configurations.MongoConfiguration.DATABASE_PORT
 import de.hennihaus.containers.MongoContainer
 import de.hennihaus.models.Group
@@ -44,7 +43,6 @@ class GroupRepositoryIntegrationTest : KoinTest {
             properties = mapOf(
                 DATABASE_HOST to mongoContainer.host,
                 DATABASE_PORT to mongoContainer.firstMappedPort.toString(),
-                DATABASE_NAME to MongoContainer.DATABASE_NAME
             )
         )
     }

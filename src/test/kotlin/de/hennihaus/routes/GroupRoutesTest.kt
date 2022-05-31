@@ -13,7 +13,7 @@ import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.plugins.ObjectIdException
 import de.hennihaus.services.GroupService
 import de.hennihaus.services.GroupServiceImpl.Companion.ID_MESSAGE
-import de.hennihaus.testutils.KtorTestBuilder.testApplication
+import de.hennihaus.testutils.KtorTestBuilder.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
@@ -50,7 +50,7 @@ class GroupRoutesTest {
     @Nested
     inner class GetAllGroups {
         @Test
-        fun `should return 200 and a list of three groups`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and a list of three groups`() = testApplicationWith(mockModule) {
             coEvery { groupService.getAllGroups() } returns listOf(
                 getFirstGroup(),
                 getSecondGroup(),
@@ -69,7 +69,7 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 200 and an empty list when no groups`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and an empty list when no groups`() = testApplicationWith(mockModule) {
             coEvery { groupService.getAllGroups() } returns emptyList()
 
             val response = client.get("/groups")
@@ -83,7 +83,7 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 500 and an exception response on error`() = testApplication(mockModule = mockModule) {
+        fun `should return 500 and an exception response on error`() = testApplicationWith(mockModule) {
             coEvery { groupService.getAllGroups() } throws Exception(INTERNAL_SERVER_ERROR_MESSAGE)
 
             val response = testClient.get("/groups")
@@ -97,7 +97,7 @@ class GroupRoutesTest {
     @Nested
     inner class GetGroupById {
         @Test
-        fun `should return 200 and a group by id`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and a group by id`() = testApplicationWith(mockModule) {
             val id = getFirstGroup().id.toString()
             coEvery { groupService.getGroupById(id = any()) } returns getFirstGroup()
 
@@ -109,7 +109,7 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 404 and not found exception response on error`() = testApplication(mockModule = mockModule) {
+        fun `should return 404 and not found exception response on error`() = testApplicationWith(mockModule) {
             val id = ObjectId().toString()
             coEvery { groupService.getGroupById(id = any()) } throws NotFoundException(message = ID_MESSAGE)
 
@@ -124,7 +124,7 @@ class GroupRoutesTest {
     @Nested
     inner class CheckUsername {
         @Test
-        fun `should return 200 and true when username exists`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and true when username exists`() = testApplicationWith(mockModule) {
             val (id, username) = getFirstGroup()
             coEvery { groupService.checkUsername(id = any(), username = any()) } returns true
 
@@ -136,7 +136,7 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 400 and an exception when id is invalid`() = testApplication(mockModule = mockModule) {
+        fun `should return 400 and an exception when id is invalid`() = testApplicationWith(mockModule) {
             val id = "invalidId"
             val username = getFirstGroup().username
             coEvery { groupService.checkUsername(id = any(), username = any()) } throws ObjectIdException()
@@ -152,7 +152,7 @@ class GroupRoutesTest {
     @Nested
     inner class CheckPassword {
         @Test
-        fun `should return 200 and true when password exists`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and true when password exists`() = testApplicationWith(mockModule) {
             val (id, _, password) = getFirstGroup()
             coEvery { groupService.checkPassword(id = any(), password = any()) } returns true
 
@@ -164,7 +164,7 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 400 and an exception when id is invalid`() = testApplication(mockModule = mockModule) {
+        fun `should return 400 and an exception when id is invalid`() = testApplicationWith(mockModule) {
             val id = "invalidId"
             val password = getFirstGroup().password
             coEvery { groupService.checkPassword(id = any(), password = any()) } throws ObjectIdException()
@@ -180,7 +180,7 @@ class GroupRoutesTest {
     @Nested
     inner class CheckJmsTopic {
         @Test
-        fun `should return 200 and true when jmsTopic exists`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and true when jmsTopic exists`() = testApplicationWith(mockModule) {
             val (id, _, _, jmsTopic) = getFirstGroup()
             coEvery { groupService.checkJmsTopic(id = any(), jmsTopic = any()) } returns true
 
@@ -192,7 +192,7 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 400 and an exception when id is invalid`() = testApplication(mockModule = mockModule) {
+        fun `should return 400 and an exception when id is invalid`() = testApplicationWith(mockModule) {
             val id = "invalidId"
             val jmsTopic = getFirstGroup().jmsTopic
             coEvery { groupService.checkJmsTopic(id = any(), jmsTopic = any()) } throws ObjectIdException()
@@ -208,7 +208,7 @@ class GroupRoutesTest {
     @Nested
     inner class CreateGroup {
         @Test
-        fun `should return 201 and a group when successfully created`() = testApplication(mockModule = mockModule) {
+        fun `should return 201 and a group when successfully created`() = testApplicationWith(mockModule) {
             val testGroup = getFirstGroup()
             coEvery { groupService.saveGroup(group = any()) } returns testGroup
 
@@ -223,7 +223,7 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 500 with invalid input`() = testApplication(mockModule = mockModule) {
+        fun `should return 500 with invalid input`() = testApplicationWith(mockModule) {
             val invalidInput = "{\"invalid\":\"invalid\"}"
 
             val response = testClient.post("/groups") {
@@ -239,7 +239,7 @@ class GroupRoutesTest {
     @Nested
     inner class UpdateGroup {
         @Test
-        fun `should return 200 and a updated group`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and a updated group`() = testApplicationWith(mockModule) {
             val testGroup = getFirstGroup()
             coEvery { groupService.saveGroup(group = any()) } returns testGroup
 
@@ -254,7 +254,7 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 500 with invalid input`() = testApplication(mockModule = mockModule) {
+        fun `should return 500 with invalid input`() = testApplicationWith(mockModule) {
             val invalidInput = "{\"invalid\":\"invalid\"}"
 
             val response = testClient.put("/groups/invalid") {
@@ -270,7 +270,7 @@ class GroupRoutesTest {
     @Nested
     inner class DeleteGroupById {
         @Test
-        fun `should return 204 when successfully deleted a group by id`() = testApplication(mockModule = mockModule) {
+        fun `should return 204 when successfully deleted a group by id`() = testApplicationWith(mockModule) {
             val id = getFirstGroup().id.toString()
             coEvery { groupService.deleteGroupById(id = any()) } returns Unit
 
@@ -282,7 +282,7 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 404 and not found exception response on error`() = testApplication(mockModule = mockModule) {
+        fun `should return 404 and not found exception response on error`() = testApplicationWith(mockModule) {
             val id = getFirstGroup().id.toString()
             coEvery { groupService.deleteGroupById(id = any()) } throws NotFoundException(message = ID_MESSAGE)
 
@@ -297,7 +297,7 @@ class GroupRoutesTest {
     @Nested
     inner class ResetStats {
         @Test
-        fun `should return 200 and return group with zero stats`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and return group with zero stats`() = testApplicationWith(mockModule) {
             val id = getFirstGroup().id.toString()
             coEvery { groupService.resetStats(id = any()) } returns getFirstGroup()
 
@@ -309,7 +309,7 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 404 and not found exception response on error`() = testApplication(mockModule = mockModule) {
+        fun `should return 404 and not found exception response on error`() = testApplicationWith(mockModule) {
             val id = getFirstGroup().id.toString()
             coEvery { groupService.resetStats(id = any()) } throws NotFoundException(message = ID_MESSAGE)
 

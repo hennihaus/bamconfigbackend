@@ -7,8 +7,8 @@ import io.ktor.server.application.install
 import io.ktor.server.plugins.cors.routing.CORS
 
 fun Application.configureCors() {
-    val allowedHost = environment.config.property(path = "ktor.deployment.cors.allowedHost").getString()
-    val allowedProtocol = environment.config.property(path = "ktor.deployment.cors.allowedProtocol").getString()
+    val allowedHost = getProperty<String>(key = "ktor.deployment.cors.allowedHost")
+    val allowedProtocol = getProperty<String>(key = "ktor.deployment.cors.allowedProtocol")
     install(CORS) {
         allowCredentials = true
 

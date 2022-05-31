@@ -8,7 +8,7 @@ import de.hennihaus.objectmothers.GroupObjectMother.getSecondGroup
 import de.hennihaus.plugins.ExceptionResponse
 import de.hennihaus.services.BrokerService
 import de.hennihaus.services.GroupService
-import de.hennihaus.testutils.KtorTestBuilder.testApplication
+import de.hennihaus.testutils.KtorTestBuilder.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.shouldBe
@@ -43,7 +43,7 @@ class BrokerRoutesTest {
     @Nested
     inner class ResetBroker {
         @Test
-        fun `should return 204 and no content when reset was successful`() = testApplication(mockModule = mockModule) {
+        fun `should return 204 and no content when reset was successful`() = testApplicationWith(mockModule) {
             coEvery { groupService.resetAllGroups() } returns listOf(
                 getFirstGroup(),
                 getSecondGroup()
@@ -61,7 +61,7 @@ class BrokerRoutesTest {
         }
 
         @Test
-        fun `should return 500 and an exception response on error`() = testApplication(mockModule = mockModule) {
+        fun `should return 500 and an exception response on error`() = testApplicationWith(mockModule) {
             coEvery { groupService.resetAllGroups() } returns emptyList()
             coEvery { brokerService.resetBroker() } throws Exception(INTERNAL_SERVER_ERROR_MESSAGE)
 
@@ -79,7 +79,7 @@ class BrokerRoutesTest {
     @Nested
     inner class DeleteQueueByName {
         @Test
-        fun `should return 204 and no content when delete was successful`() = testApplication(mockModule = mockModule) {
+        fun `should return 204 and no content when delete was successful`() = testApplicationWith(mockModule) {
             val name = getJmsBank().name
             coEvery { brokerService.deleteQueueByName(name = any()) } returns Unit
 
@@ -91,7 +91,7 @@ class BrokerRoutesTest {
         }
 
         @Test
-        fun `should return 500 and an exception response on error`() = testApplication(mockModule = mockModule) {
+        fun `should return 500 and an exception response on error`() = testApplicationWith(mockModule) {
             val name = getJmsBank().name
             coEvery { brokerService.deleteQueueByName(name = any()) } throws Exception(INTERNAL_SERVER_ERROR_MESSAGE)
 

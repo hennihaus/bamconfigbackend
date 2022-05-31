@@ -3,38 +3,33 @@ package de.hennihaus.plugins
 import de.hennihaus.configurations.BrokerConfiguration.brokerModule
 import de.hennihaus.configurations.MongoConfiguration.mongoModule
 import io.ktor.server.application.Application
-import io.ktor.server.application.ApplicationStopping
+import io.ktor.server.application.install
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.Routing
 import org.koin.core.KoinApplication
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
+import org.koin.fileProperties
 import org.koin.ksp.generated.defaultModule
+import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
+import org.koin.ktor.ext.getProperty as property
 
-fun Application.configureDependencyInjection(koinModules: List<Module>) {
-    val properties = environment.config.keys().flatMap { key ->
-        runCatching {
-            listOf(key to environment.config.property(path = key).getString())
-        }.getOrElse {
-            environment.config.property(path = key).getList().mapIndexed { index, property ->
-                "$key[$index]" to property
-            }
-        }
-    }
-
-    startKoin {
-        initKoin(properties = properties.toMap(), modules = koinModules)
-    }
-    environment.monitor.subscribe(ApplicationStopping) {
-        stopKoin()
-    }
+fun Application.configureDependencyInjection(vararg koinModules: Module) = install(Koin) {
+    initKoin(modules = koinModules)
 }
 
 fun KoinApplication.initKoin(
-    properties: Map<String, String>,
-    modules: List<Module> = listOf(defaultModule, mongoModule, brokerModule),
+    properties: Map<String, String> = emptyMap(),
+    vararg modules: Module = arrayOf(defaultModule, mongoModule, brokerModule)
 ) {
     slf4jLogger()
+    fileProperties()
     properties(values = properties)
     modules(modules = modules)
 }
+
+fun <T> Application.getProperty(key: String): T = property(key) ?: throw PropertyNotFoundException(key = key)
+
+fun <T> Routing.getProperty(key: String): T = property(key) ?: throw PropertyNotFoundException(key = key)
+
+fun <T> Route.getProperty(key: String): T = property(key) ?: throw PropertyNotFoundException(key = key)

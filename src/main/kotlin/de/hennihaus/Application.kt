@@ -8,19 +8,21 @@ import de.hennihaus.plugins.configureErrorHandling
 import de.hennihaus.plugins.configureMonitoring
 import de.hennihaus.plugins.configureRouting
 import io.ktor.server.application.Application
-import io.ktor.server.cio.EngineMain
+import io.ktor.server.cio.CIO
+import io.ktor.server.engine.embeddedServer
 import org.koin.core.module.Module
 import org.koin.ksp.generated.defaultModule
 
-fun main(args: Array<String>) = EngineMain.main(args)
+fun main() {
+    embeddedServer(CIO, port = 8080) {
+        module()
+    }.start(wait = true)
+}
 
-@Suppress("unused")
-fun Application.module(
-    koinModules: List<Module> = listOf(defaultModule, mongoModule, brokerModule)
-) {
-    configureCors()
+fun Application.module(vararg koinModules: Module = arrayOf(defaultModule, mongoModule, brokerModule)) {
+    configureMonitoring()
     configureDependencyInjection(koinModules = koinModules)
+    configureCors()
     configureRouting()
     configureErrorHandling()
-    configureMonitoring()
 }

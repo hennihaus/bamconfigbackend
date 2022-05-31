@@ -39,7 +39,6 @@ class BankRepositoryIntegrationTest : KoinTest {
             properties = mapOf(
                 MongoConfiguration.DATABASE_HOST to mongoContainer.host,
                 MongoConfiguration.DATABASE_PORT to mongoContainer.firstMappedPort.toString(),
-                MongoConfiguration.DATABASE_NAME to MongoContainer.DATABASE_NAME
             )
         )
     }
