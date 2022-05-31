@@ -1,12 +1,8 @@
 package de.hennihaus.services.callservices
 
 import de.hennihaus.configurations.BrokerConfiguration.ACTIVE_MQ_HEADER_AUTHORIZATION
-import de.hennihaus.configurations.BrokerConfiguration.ACTIVE_MQ_HEADER_ORIGIN
 import de.hennihaus.configurations.BrokerConfiguration.ACTIVE_MQ_HOST
 import de.hennihaus.configurations.BrokerConfiguration.ACTIVE_MQ_PORT
-import de.hennihaus.configurations.BrokerConfiguration.ACTIVE_MQ_PROTOCOL
-import de.hennihaus.configurations.BrokerConfiguration.ACTIVE_MQ_RETRIES
-import de.hennihaus.configurations.BrokerConfiguration.brokerModule
 import de.hennihaus.containers.BrokerContainer
 import de.hennihaus.models.generated.GetQueuesResponse
 import de.hennihaus.models.generated.GetTopicsResponse
@@ -49,7 +45,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.koin.core.context.stopKoin
-import org.koin.ksp.generated.defaultModule
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
@@ -66,14 +61,10 @@ class BrokerCallServiceIntegrationTest : KoinTest {
     val koinTestInstance = KoinTestExtension.create {
         initKoin(
             properties = mapOf(
-                ACTIVE_MQ_PROTOCOL to BrokerContainer.ACTIVE_MQ_PROTOCOL.name,
                 ACTIVE_MQ_HOST to brokerContainer.host,
                 ACTIVE_MQ_PORT to brokerContainer.firstMappedPort.toString(),
-                ACTIVE_MQ_RETRIES to BrokerContainer.ACTIVE_MQ_RETRIES.toString(),
                 ACTIVE_MQ_HEADER_AUTHORIZATION to BrokerContainer.ACTIVE_MQ_AUTHORIZATION_HEADER,
-                ACTIVE_MQ_HEADER_ORIGIN to BrokerContainer.ACTIVE_MQ_ORIGIN_HEADER
-            ),
-            modules = listOf(defaultModule, brokerModule)
+            )
         )
     }
 

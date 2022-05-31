@@ -64,10 +64,9 @@ object BrokerContainer {
     /**
      * ActiveMQ client configurations
      */
-    val ACTIVE_MQ_PROTOCOL = URLProtocol.HTTP
-    const val ACTIVE_MQ_RETRIES = 1
+    private const val ACTIVE_MQ_ORIGIN_HEADER = "http://localhost"
+    private val ACTIVE_MQ_PROTOCOL = URLProtocol.HTTP
     const val ACTIVE_MQ_AUTHORIZATION_HEADER = "Basic dGVzdDp0ZXN0"
-    const val ACTIVE_MQ_ORIGIN_HEADER = "http://localhost"
 
     /**
      * Helpers

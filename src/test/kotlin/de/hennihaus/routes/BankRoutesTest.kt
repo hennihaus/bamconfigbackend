@@ -11,7 +11,7 @@ import de.hennihaus.plugins.ExceptionResponse
 import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.services.BankService
 import de.hennihaus.services.BankServiceImpl.Companion.ID_MESSAGE
-import de.hennihaus.testutils.KtorTestBuilder.testApplication
+import de.hennihaus.testutils.KtorTestBuilder.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
@@ -45,7 +45,7 @@ class BankRoutesTest {
     @Nested
     inner class GetAllBanks {
         @Test
-        fun `should return 200 and a list of banks`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and a list of banks`() = testApplicationWith(mockModule) {
             coEvery { bankService.getAllBanks() } returns listOf(
                 getSchufaBank(),
                 getVBank(),
@@ -64,7 +64,7 @@ class BankRoutesTest {
         }
 
         @Test
-        fun `should return 200 and an empty list when no banks available`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and an empty list when no banks available`() = testApplicationWith(mockModule) {
             coEvery { bankService.getAllBanks() } returns emptyList()
 
             val response = client.get("/banks")
@@ -78,7 +78,7 @@ class BankRoutesTest {
         }
 
         @Test
-        fun `should return 500 and an exception response on error`() = testApplication(mockModule = mockModule) {
+        fun `should return 500 and an exception response on error`() = testApplicationWith(mockModule) {
             coEvery { bankService.getAllBanks() } throws Exception(INTERNAL_SERVER_ERROR_MESSAGE)
 
             val response = testClient.get("/banks")
@@ -92,7 +92,7 @@ class BankRoutesTest {
     @Nested
     inner class GetBankByJmsTopic {
         @Test
-        fun `should return 200 and a bank by jmsTopic`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and a bank by jmsTopic`() = testApplicationWith(mockModule) {
             val jmsTopic = getSchufaBank().jmsTopic
             coEvery { bankService.getBankByJmsTopic(jmsTopic = any()) } returns getSchufaBank()
 
@@ -104,7 +104,7 @@ class BankRoutesTest {
         }
 
         @Test
-        fun `should return 404 and not found exception response on error`() = testApplication(mockModule = mockModule) {
+        fun `should return 404 and not found exception response on error`() = testApplicationWith(mockModule) {
             val jmsTopic = "unknown"
             coEvery { bankService.getBankByJmsTopic(jmsTopic = any()) } throws NotFoundException(message = ID_MESSAGE)
 
@@ -119,7 +119,7 @@ class BankRoutesTest {
     @Nested
     inner class UpdateAllBanks {
         @Test
-        fun `should return 200 and a list of updated banks`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and a list of updated banks`() = testApplicationWith(mockModule) {
             val testBanks = listOf(getSchufaBank(), getVBank(), getSchufaBank())
             coEvery { bankService.saveAllBanks(banks = any()) } returns testBanks
 
@@ -134,7 +134,7 @@ class BankRoutesTest {
         }
 
         @Test
-        fun `should return 500 with invalid input`() = testApplication(mockModule = mockModule) {
+        fun `should return 500 with invalid input`() = testApplicationWith(mockModule) {
             val invalidInput = "[{\"invalid\":\"invalid\"}]"
 
             val response = testClient.put("/banks") {
@@ -150,7 +150,7 @@ class BankRoutesTest {
     @Nested
     inner class UpdateBank {
         @Test
-        fun `should return 200 and an updated bank`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and an updated bank`() = testApplicationWith(mockModule) {
             val testBank = getSchufaBank()
             coEvery { bankService.saveBank(bank = any()) } returns testBank
 
@@ -165,7 +165,7 @@ class BankRoutesTest {
         }
 
         @Test
-        fun `should return 500 with invalid input`() = testApplication(mockModule = mockModule) {
+        fun `should return 500 with invalid input`() = testApplicationWith(mockModule) {
             val invalidInput = "{\"invalid\":\"invalid\"}"
 
             val response = testClient.put("/banks/invalid") {

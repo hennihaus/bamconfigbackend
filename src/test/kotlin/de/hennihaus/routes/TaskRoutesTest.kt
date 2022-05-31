@@ -13,7 +13,7 @@ import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.plugins.ObjectIdException
 import de.hennihaus.services.TaskService
 import de.hennihaus.services.TaskServiceImpl.Companion.ID_MESSAGE
-import de.hennihaus.testutils.KtorTestBuilder.testApplication
+import de.hennihaus.testutils.KtorTestBuilder.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
@@ -48,7 +48,7 @@ class TaskRoutesTest {
     @Nested
     inner class GetAllTasks {
         @Test
-        fun `should return 200 and a list of tasks`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and a list of tasks`() = testApplicationWith(mockModule) {
             coEvery { taskService.getAllTasks() } returns listOf(
                 getSchufaTask(),
                 getSynchronousBankTask(),
@@ -67,7 +67,7 @@ class TaskRoutesTest {
         }
 
         @Test
-        fun `should return 200 and an empty list when no tasks available`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and an empty list when no tasks available`() = testApplicationWith(mockModule) {
             coEvery { taskService.getAllTasks() } returns emptyList()
 
             val response = client.get("/tasks")
@@ -81,7 +81,7 @@ class TaskRoutesTest {
         }
 
         @Test
-        fun `should return 500 and an exception response on error`() = testApplication(mockModule = mockModule) {
+        fun `should return 500 and an exception response on error`() = testApplicationWith(mockModule) {
             coEvery { taskService.getAllTasks() } throws Exception(INTERNAL_SERVER_ERROR_MESSAGE)
 
             val response = testClient.get("/tasks")
@@ -95,7 +95,7 @@ class TaskRoutesTest {
     @Nested
     inner class GetTaskById {
         @Test
-        fun `should return 200 and a task by id`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and a task by id`() = testApplicationWith(mockModule) {
             val id = getSchufaTask().id.toString()
             coEvery { taskService.getTaskById(id = any()) } returns getSchufaTask()
 
@@ -107,7 +107,7 @@ class TaskRoutesTest {
         }
 
         @Test
-        fun `should return 404 and not found exception response on error`() = testApplication(mockModule = mockModule) {
+        fun `should return 404 and not found exception response on error`() = testApplicationWith(mockModule) {
             val id = ObjectId().toString()
             coEvery { taskService.getTaskById(id = any()) } throws NotFoundException(message = ID_MESSAGE)
 
@@ -122,7 +122,7 @@ class TaskRoutesTest {
     @Nested
     inner class PatchTask {
         @Test
-        fun `should return 200 and a patched task`() = testApplication(mockModule = mockModule) {
+        fun `should return 200 and a patched task`() = testApplicationWith(mockModule) {
             val testTask = getSchufaTask()
             coEvery { taskService.patchTask(id = any(), task = any()) } returns testTask
 
@@ -137,7 +137,7 @@ class TaskRoutesTest {
         }
 
         @Test
-        fun `should return 400 when id is invalid`() = testApplication(mockModule = mockModule) {
+        fun `should return 400 when id is invalid`() = testApplicationWith(mockModule) {
             val id = "invalidId"
             val testTask = getSchufaTask()
             coEvery { taskService.patchTask(id = any(), task = any()) } throws ObjectIdException()
