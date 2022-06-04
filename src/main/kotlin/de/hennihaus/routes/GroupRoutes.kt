@@ -7,7 +7,6 @@ import io.ktor.server.application.call
 import io.ktor.server.request.receive
 import io.ktor.server.resources.delete
 import io.ktor.server.resources.get
-import io.ktor.server.resources.post
 import io.ktor.server.resources.put
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -18,8 +17,7 @@ fun Route.registerGroupRoutes() {
     getGroupById()
     checkUsername()
     checkPassword()
-    checkJmsTopic()
-    createGroup()
+    checkJmsQueue()
     updateGroup()
     deleteGroupById()
     resetStats()
@@ -59,23 +57,13 @@ private fun Route.checkPassword(): Route = get<Groups.Id.CheckPassword> { reques
     )
 }
 
-private fun Route.checkJmsTopic(): Route = get<Groups.Id.CheckJmsTopic> { request ->
+private fun Route.checkJmsQueue(): Route = get<Groups.Id.CheckJmsQueue> { request ->
     val groupService = getKoin().get<GroupService>()
     call.respond(
-        message = groupService.checkJmsTopic(
+        message = groupService.checkJmsQueue(
             id = request.parent.id,
-            jmsTopic = request.jmsTopic
+            jmsQueue = request.jmsQueue
         )
-    )
-}
-
-private fun Route.createGroup(): Route = post<Groups> {
-    val groupService = getKoin().get<GroupService>()
-    call.respond(
-        message = groupService.saveGroup(
-            group = call.receive()
-        ),
-        status = HttpStatusCode.Created
     )
 }
 

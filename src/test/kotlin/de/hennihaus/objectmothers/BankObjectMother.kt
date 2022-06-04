@@ -18,7 +18,7 @@ object BankObjectMother {
     const val JMS_BANK_NAME = "jmsBankA"
 
     fun getSchufaBank(
-        jmsTopic: String = SCHUFA_BANK_NAME,
+        jmsQueue: String = SCHUFA_BANK_NAME,
         name: String = SCHUFA_BANK_NAME,
         thumbnailUrl: String = DEFAULT_THUMBNAIL_URL,
         isAsync: Boolean = false,
@@ -26,7 +26,7 @@ object BankObjectMother {
         creditConfiguration: CreditConfiguration? = null,
         groups: List<Group> = emptyList()
     ) = Bank(
-        jmsTopic = jmsTopic,
+        jmsQueue = jmsQueue,
         name = name,
         thumbnailUrl = thumbnailUrl,
         isAsync = isAsync,
@@ -36,7 +36,7 @@ object BankObjectMother {
     )
 
     fun getVBank(
-        jmsTopic: String = V_BANK_NAME,
+        jmsQueue: String = V_BANK_NAME,
         name: String = V_BANK_NAME,
         thumbnailUrl: String = "http://localhost:8085/picture.jpg",
         isAsync: Boolean = false,
@@ -44,7 +44,7 @@ object BankObjectMother {
         creditConfiguration: CreditConfiguration? = getCreditConfigurationWithNoEmptyFields(),
         groups: List<Group> = emptyList()
     ) = Bank(
-        jmsTopic = jmsTopic,
+        jmsQueue = jmsQueue,
         name = name,
         thumbnailUrl = thumbnailUrl,
         isAsync = isAsync,
@@ -54,7 +54,7 @@ object BankObjectMother {
     )
 
     fun getJmsBank(
-        jmsTopic: String = JMS_BANK_NAME,
+        jmsQueue: String = JMS_BANK_NAME,
         name: String = JMS_BANK_NAME,
         thumbnailUrl: String = "http://localhost:8085/picture.jpg",
         isAsync: Boolean = true,
@@ -62,7 +62,7 @@ object BankObjectMother {
         creditConfiguration: CreditConfiguration? = getCreditConfigurationWithNoEmptyFields(),
         groups: List<Group> = listOf(getFirstGroup(), getSecondGroup(), getThirdGroup())
     ) = Bank(
-        jmsTopic = jmsTopic,
+        jmsQueue = jmsQueue,
         name = name,
         thumbnailUrl = thumbnailUrl,
         isAsync = isAsync,

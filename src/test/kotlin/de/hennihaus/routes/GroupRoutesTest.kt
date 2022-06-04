@@ -21,7 +21,6 @@ import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
-import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -178,61 +177,30 @@ class GroupRoutesTest {
     }
 
     @Nested
-    inner class CheckJmsTopic {
+    inner class CheckJmsQueue {
         @Test
-        fun `should return 200 and true when jmsTopic exists`() = testApplicationWith(mockModule) {
-            val (id, _, _, jmsTopic) = getFirstGroup()
-            coEvery { groupService.checkJmsTopic(id = any(), jmsTopic = any()) } returns true
+        fun `should return 200 and true when jmsQueue exists`() = testApplicationWith(mockModule) {
+            val (id, _, _, jmsQueue) = getFirstGroup()
+            coEvery { groupService.checkJmsQueue(id = any(), jmsQueue = any()) } returns true
 
-            val response = testClient.get("/groups/$id/$jmsTopic/jmsTopic")
+            val response = testClient.get("/groups/$id/$jmsQueue/jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.OK
             response.bodyAsText() shouldBe true.toString()
-            coVerify(exactly = 1) { groupService.checkJmsTopic(id = id.toString(), jmsTopic = jmsTopic) }
+            coVerify(exactly = 1) { groupService.checkJmsQueue(id = id.toString(), jmsQueue = jmsQueue) }
         }
 
         @Test
         fun `should return 400 and an exception when id is invalid`() = testApplicationWith(mockModule) {
             val id = "invalidId"
-            val jmsTopic = getFirstGroup().jmsTopic
-            coEvery { groupService.checkJmsTopic(id = any(), jmsTopic = any()) } throws ObjectIdException()
+            val jmsQueue = getFirstGroup().jmsQueue
+            coEvery { groupService.checkJmsQueue(id = any(), jmsQueue = any()) } throws ObjectIdException()
 
-            val response = testClient.get("/groups/$id/$jmsTopic/jmsTopic")
+            val response = testClient.get("/groups/$id/$jmsQueue/jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
             response.body<ExceptionResponse>() shouldBe getInvalidIdErrorResponse()
-            coVerify(exactly = 1) { groupService.checkJmsTopic(id = id, jmsTopic = jmsTopic) }
-        }
-    }
-
-    @Nested
-    inner class CreateGroup {
-        @Test
-        fun `should return 201 and a group when successfully created`() = testApplicationWith(mockModule) {
-            val testGroup = getFirstGroup()
-            coEvery { groupService.saveGroup(group = any()) } returns testGroup
-
-            val response = testClient.post("/groups") {
-                contentType(type = ContentType.Application.Json)
-                setBody(body = testGroup)
-            }
-
-            response shouldHaveStatus HttpStatusCode.Created
-            response.body<Group>() shouldBe testGroup
-            coVerify(exactly = 1) { groupService.saveGroup(group = testGroup) }
-        }
-
-        @Test
-        fun `should return 500 with invalid input`() = testApplicationWith(mockModule) {
-            val invalidInput = "{\"invalid\":\"invalid\"}"
-
-            val response = testClient.post("/groups") {
-                contentType(type = ContentType.Application.Json)
-                setBody(body = invalidInput)
-            }
-
-            response shouldHaveStatus HttpStatusCode.InternalServerError
-            coVerify(exactly = 0) { groupService.saveGroup(group = any()) }
+            coVerify(exactly = 1) { groupService.checkJmsQueue(id = id, jmsQueue = jmsQueue) }
         }
     }
 
@@ -282,14 +250,14 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 404 and not found exception response on error`() = testApplicationWith(mockModule) {
+        fun `should return 500 and not found exception response on error`() = testApplicationWith(mockModule) {
             val id = getFirstGroup().id.toString()
-            coEvery { groupService.deleteGroupById(id = any()) } throws NotFoundException(message = ID_MESSAGE)
+            coEvery { groupService.deleteGroupById(id = any()) } throws Exception(INTERNAL_SERVER_ERROR_MESSAGE)
 
             val response = testClient.delete("/groups/$id")
 
-            response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ExceptionResponse>() shouldBe getGroupNotFoundErrorResponse()
+            response shouldHaveStatus HttpStatusCode.InternalServerError
+            response.body<ExceptionResponse>() shouldBe getInternalServerErrorResponse()
             coVerify(exactly = 1) { groupService.deleteGroupById(id = id) }
         }
     }

@@ -11,7 +11,7 @@ object MongoContainerObjectMother {
     val GROUP_OBJECT_ID = ObjectId("61376f0750f6a6dfcd3b39a7")
     const val GROUP_USERNAME = "Gruppe01"
     const val GROUP_PASSWORD = "lkhNqstcxs"
-    const val GROUP_JMS_TOPIC = "ResponseLoanBrokerGruppe01"
+    const val GROUP_JMS_QUEUE = "ResponseLoanBrokerGruppe01"
     val GROUP_STUDENTS = listOf("Büsra Alili", "Emel Göktas", "Helmut Hermann Lindel")
     val GROUP_STATS = mapOf(
         "schufa" to 0,
@@ -24,7 +24,7 @@ object MongoContainerObjectMother {
     )
     const val GROUP_HAS_PASSED = false
 
-    const val BANK_JMS_TOPIC = "sparkasse"
+    const val BANK_JMS_QUEUE = "sparkasse"
     const val BANK_JMS_NAME = "Sparkasse"
     const val BANK_THUMBNAIL_URL =
         "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png"
@@ -44,14 +44,14 @@ object MongoContainerObjectMother {
         id = GROUP_OBJECT_ID.toId(),
         username = GROUP_USERNAME,
         password = GROUP_PASSWORD,
-        jmsTopic = GROUP_JMS_TOPIC,
+        jmsQueue = GROUP_JMS_QUEUE,
         students = GROUP_STUDENTS,
         stats = GROUP_STATS,
         hasPassed = GROUP_HAS_PASSED
     )
 
     fun getSparkasseBank() = Bank(
-        jmsTopic = BANK_JMS_TOPIC,
+        jmsQueue = BANK_JMS_QUEUE,
         name = BANK_JMS_NAME,
         thumbnailUrl = BANK_THUMBNAIL_URL,
         isAsync = BANK_IS_ASYNC,

@@ -81,7 +81,7 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
                 pipeline = arrayOf(
                     match(
                         expr(
-                            `in` from listOf(Bank::jmsTopic, Task::banks.variable)
+                            `in` from listOf(Bank::jmsQueue, Task::banks.variable)
                         )
                     ),
                     lookup(
@@ -136,7 +136,7 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
                 pipeline = arrayOf(
                     match(
                         expr(
-                            `in` from listOf(Bank::jmsTopic, Task::banks.variable)
+                            `in` from listOf(Bank::jmsQueue, Task::banks.variable)
                         )
                     ),
                     lookup(
@@ -158,7 +158,7 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
      *      {
      *          $set: {
      *              banks: [
-     *                  "<BANK_ID/BANK_JMS_TOPIC>"
+     *                  "<BANK_ID/BANK_JMS_QUEUE>"
      *              ]
      *          }
      *      }
@@ -173,7 +173,7 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
             filter = Task::id eq entry.id,
             update = set(
                 SetTo(
-                    Task::banks, entry.banks.map { bank -> bank.jmsTopic }
+                    Task::banks, entry.banks.map { bank -> bank.jmsQueue }
                 )
             )
         )

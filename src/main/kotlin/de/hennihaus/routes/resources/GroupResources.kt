@@ -8,7 +8,7 @@ object GroupPaths {
     const val ID_PATH = "/{id}"
     const val USERNAME_EXISTS_PATH = "/{username}/username"
     const val PASSWORD_EXISTS_PATH = "/{password}/password"
-    const val JMS_TOPIC_EXISTS_PATH = "/{jmsTopic}/jmsTopic"
+    const val JMS_QUEUE_EXISTS_PATH = "/{jmsQueue}/jmsQueue"
     const val RESET_ALL_STATS_PATH = "/stats"
 }
 
@@ -29,8 +29,8 @@ class Groups {
         data class CheckPassword(val parent: Id, val password: String)
 
         @Serializable
-        @Resource(GroupPaths.JMS_TOPIC_EXISTS_PATH)
-        data class CheckJmsTopic(val parent: Id, val jmsTopic: String)
+        @Resource(GroupPaths.JMS_QUEUE_EXISTS_PATH)
+        data class CheckJmsQueue(val parent: Id, val jmsQueue: String)
 
         @Serializable
         @Resource(GroupPaths.RESET_ALL_STATS_PATH)

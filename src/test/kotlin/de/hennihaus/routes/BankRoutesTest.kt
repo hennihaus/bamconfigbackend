@@ -90,29 +90,29 @@ class BankRoutesTest {
     }
 
     @Nested
-    inner class GetBankByJmsTopic {
+    inner class GetBankByJmsQueue {
         @Test
-        fun `should return 200 and a bank by jmsTopic`() = testApplicationWith(mockModule) {
-            val jmsTopic = getSchufaBank().jmsTopic
-            coEvery { bankService.getBankByJmsTopic(jmsTopic = any()) } returns getSchufaBank()
+        fun `should return 200 and a bank by jmsQueue`() = testApplicationWith(mockModule) {
+            val jmsQueue = getSchufaBank().jmsQueue
+            coEvery { bankService.getBankByJmsQueue(jmsQueue = any()) } returns getSchufaBank()
 
-            val response = testClient.get("/banks/$jmsTopic")
+            val response = testClient.get("/banks/$jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.OK
             response.body<Bank>() shouldBe getSchufaBank()
-            coVerify(exactly = 1) { bankService.getBankByJmsTopic(jmsTopic = jmsTopic) }
+            coVerify(exactly = 1) { bankService.getBankByJmsQueue(jmsQueue = jmsQueue) }
         }
 
         @Test
         fun `should return 404 and not found exception response on error`() = testApplicationWith(mockModule) {
-            val jmsTopic = "unknown"
-            coEvery { bankService.getBankByJmsTopic(jmsTopic = any()) } throws NotFoundException(message = ID_MESSAGE)
+            val jmsQueue = "unknown"
+            coEvery { bankService.getBankByJmsQueue(jmsQueue = any()) } throws NotFoundException(message = ID_MESSAGE)
 
-            val response = testClient.get("/banks/$jmsTopic")
+            val response = testClient.get("/banks/$jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.NotFound
             response.body<ExceptionResponse>() shouldBe getBankNotFoundErrorResponse()
-            coVerify(exactly = 1) { bankService.getBankByJmsTopic(jmsTopic = jmsTopic) }
+            coVerify(exactly = 1) { bankService.getBankByJmsQueue(jmsQueue = jmsQueue) }
         }
     }
 
@@ -154,7 +154,7 @@ class BankRoutesTest {
             val testBank = getSchufaBank()
             coEvery { bankService.saveBank(bank = any()) } returns testBank
 
-            val response = testClient.put("/banks/${testBank.jmsTopic}") {
+            val response = testClient.put("/banks/${testBank.jmsQueue}") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testBank)
             }

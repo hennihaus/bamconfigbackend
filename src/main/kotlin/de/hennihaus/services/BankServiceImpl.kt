@@ -12,8 +12,8 @@ class BankServiceImpl(private val repository: BankRepository, private val stats:
         it.copy(groups = it.groups.map { group -> stats.setHasPassed(group = group) })
     }
 
-    override suspend fun getBankByJmsTopic(jmsTopic: String): Bank {
-        val bank = repository.getById(jmsTopic) ?: throw NotFoundException(ID_MESSAGE)
+    override suspend fun getBankByJmsQueue(jmsQueue: String): Bank {
+        val bank = repository.getById(jmsQueue) ?: throw NotFoundException(ID_MESSAGE)
         return bank.copy(groups = bank.groups.map { group -> stats.setHasPassed(group = group) })
     }
 
