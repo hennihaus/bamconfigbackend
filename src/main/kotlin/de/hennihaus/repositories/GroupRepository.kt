@@ -36,7 +36,7 @@ class GroupRepository(private val db: CoroutineDatabase) : Repository<Group, Obj
         Group::password eq password
     )
 
-    suspend fun getGroupByJmsTopic(jmsTopic: String): Group? = col.findOne(
-        Group::jmsTopic eq jmsTopic
+    suspend fun getGroupByJmsQueue(jmsQueue: String): Group? = col.findOne(
+        Group::jmsQueue eq jmsQueue
     )
 }

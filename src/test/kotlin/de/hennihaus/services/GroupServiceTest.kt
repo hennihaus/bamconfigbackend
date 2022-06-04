@@ -215,51 +215,51 @@ class GroupServiceTest {
     }
 
     @Nested
-    inner class CheckJmsTopic {
+    inner class CheckJmsQueue {
         @Test
-        fun `should return true when jmsTopic is already in db and ids are different`() = runBlocking {
-            val (id, _, _, jmsTopic) = getFirstGroup()
-            coEvery { repository.getGroupByJmsTopic(jmsTopic = jmsTopic) } returns getSecondGroup()
+        fun `should return true when jmsQueue is already in db and ids are different`() = runBlocking {
+            val (id, _, _, jmsQueue) = getFirstGroup()
+            coEvery { repository.getGroupByJmsQueue(jmsQueue = jmsQueue) } returns getSecondGroup()
 
-            val result: Boolean = classUnderTest.checkJmsTopic(id = id.toString(), jmsTopic = jmsTopic)
+            val result: Boolean = classUnderTest.checkJmsQueue(id = id.toString(), jmsQueue = jmsQueue)
 
             result.shouldBeTrue()
-            coVerify(exactly = 1) { repository.getGroupByJmsTopic(jmsTopic = withArg { it shouldBe jmsTopic }) }
+            coVerify(exactly = 1) { repository.getGroupByJmsQueue(jmsQueue = withArg { it shouldBe jmsQueue }) }
         }
 
         @Test
-        fun `should return false when jmsTopic is in database and ids are equal`() = runBlocking {
-            val (id, _, _, jmsTopic) = getFirstGroup()
-            coEvery { repository.getGroupByJmsTopic(jmsTopic = any()) } returns getFirstGroup()
+        fun `should return false when jmsQueue is in database and ids are equal`() = runBlocking {
+            val (id, _, _, jmsQueue) = getFirstGroup()
+            coEvery { repository.getGroupByJmsQueue(jmsQueue = any()) } returns getFirstGroup()
 
-            val result: Boolean = classUnderTest.checkJmsTopic(id = id.toString(), jmsTopic = jmsTopic)
+            val result: Boolean = classUnderTest.checkJmsQueue(id = id.toString(), jmsQueue = jmsQueue)
 
             result.shouldBeFalse()
-            coVerify(exactly = 1) { repository.getGroupByJmsTopic(jmsTopic = withArg { it shouldBe jmsTopic }) }
+            coVerify(exactly = 1) { repository.getGroupByJmsQueue(jmsQueue = withArg { it shouldBe jmsQueue }) }
         }
 
         @Test
-        fun `should return false when jmsTopic is not in database`() = runBlocking {
-            val (id, _, _, jmsTopic) = getFirstGroup()
-            coEvery { repository.getGroupByJmsTopic(jmsTopic = any()) } returns null
+        fun `should return false when jmsQueue is not in database`() = runBlocking {
+            val (id, _, _, jmsQueue) = getFirstGroup()
+            coEvery { repository.getGroupByJmsQueue(jmsQueue = any()) } returns null
 
-            val result: Boolean = classUnderTest.checkJmsTopic(id = id.toString(), jmsTopic = jmsTopic)
+            val result: Boolean = classUnderTest.checkJmsQueue(id = id.toString(), jmsQueue = jmsQueue)
 
             result.shouldBeFalse()
-            coVerify(exactly = 1) { repository.getGroupByJmsTopic(jmsTopic = withArg { it shouldBe jmsTopic }) }
+            coVerify(exactly = 1) { repository.getGroupByJmsQueue(jmsQueue = withArg { it shouldBe jmsQueue }) }
         }
 
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
-            val (id, _, _, jmsTopic) = getFirstGroup()
-            coEvery { repository.getGroupByJmsTopic(jmsTopic = any()) } throws Exception()
+            val (id, _, _, jmsQueue) = getFirstGroup()
+            coEvery { repository.getGroupByJmsQueue(jmsQueue = any()) } throws Exception()
 
             val result = shouldThrow<Exception> {
-                classUnderTest.checkJmsTopic(id = id.toString(), jmsTopic = jmsTopic)
+                classUnderTest.checkJmsQueue(id = id.toString(), jmsQueue = jmsQueue)
             }
 
             result should beInstanceOf<Exception>()
-            coVerify(exactly = 1) { repository.getGroupByJmsTopic(jmsTopic = withArg { it shouldBe jmsTopic }) }
+            coVerify(exactly = 1) { repository.getGroupByJmsQueue(jmsQueue = withArg { it shouldBe jmsQueue }) }
         }
     }
 
@@ -305,14 +305,13 @@ class GroupServiceTest {
         }
 
         @Test
-        fun `should throw an exception when id is not in database`() = runBlocking {
+        fun `should throw an exception when error occurs`() = runBlocking {
             val id = getFirstGroup().id.toString()
-            coEvery { repository.deleteById(id = any()) } returns false
+            coEvery { repository.deleteById(id = any()) } throws Exception()
 
-            val result = shouldThrow<NotFoundException> { classUnderTest.deleteGroupById(id = id) }
+            val result = shouldThrow<Exception> { classUnderTest.deleteGroupById(id = id) }
 
-            result should beInstanceOf<NotFoundException>()
-            result.message shouldBe ID_MESSAGE
+            result should beInstanceOf<Exception>()
             coVerify(exactly = 1) { repository.deleteById(id = withArg { it shouldBe ObjectId(id) }) }
         }
     }

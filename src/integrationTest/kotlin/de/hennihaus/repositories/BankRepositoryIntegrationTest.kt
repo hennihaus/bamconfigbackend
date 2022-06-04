@@ -52,20 +52,20 @@ class BankRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetById {
         @Test
-        fun `should find a bank by jmsTopic`() = runBlocking<Unit> {
-            val jmsTopic = MongoContainerObjectMother.BANK_JMS_TOPIC
+        fun `should find a bank by jmsQueue`() = runBlocking<Unit> {
+            val jmsQueue = MongoContainerObjectMother.BANK_JMS_QUEUE
 
-            val result: Bank? = classUnderTest.getById(id = jmsTopic)
+            val result: Bank? = classUnderTest.getById(id = jmsQueue)
 
             result should beInstanceOf<Bank>()
             result!!.groups.size shouldBeGreaterThanOrEqual 1
         }
 
         @Test
-        fun `should return null when jmsTopic is not in db`() = runBlocking {
-            val jmsTopic = "unknown"
+        fun `should return null when jmsQueue is not in db`() = runBlocking {
+            val jmsQueue = "unknown"
 
-            val result: Bank? = classUnderTest.getById(id = jmsTopic)
+            val result: Bank? = classUnderTest.getById(id = jmsQueue)
 
             result.shouldBeNull()
         }
@@ -87,7 +87,7 @@ class BankRepositoryIntegrationTest : KoinTest {
         @Test
         fun `should save an existing bank`() = runBlocking {
             val bank = getJmsBank(
-                jmsTopic = MongoContainerObjectMother.BANK_JMS_TOPIC,
+                jmsQueue = MongoContainerObjectMother.BANK_JMS_QUEUE,
                 name = "NewBankName",
                 groups = listOf(MongoContainerObjectMother.getFirstGroup())
             )
@@ -95,39 +95,39 @@ class BankRepositoryIntegrationTest : KoinTest {
             val result: Bank = classUnderTest.save(entry = bank)
 
             result shouldBe bank
-            classUnderTest.getById(id = bank.jmsTopic) shouldBe bank
+            classUnderTest.getById(id = bank.jmsQueue) shouldBe bank
         }
 
         @Test
         fun `should save a bank when no existing bank is in db`() = runBlocking {
             val bank = getJmsBank(
-                jmsTopic = "newBank",
+                jmsQueue = "newBank",
                 groups = listOf(MongoContainerObjectMother.getFirstGroup())
             )
 
             val result: Bank = classUnderTest.save(entry = bank)
 
             result shouldBe bank
-            classUnderTest.getById(id = bank.jmsTopic) shouldBe bank
+            classUnderTest.getById(id = bank.jmsQueue) shouldBe bank
         }
     }
 
     @Nested
     inner class DeleteById {
         @Test
-        fun `should return true when one bank was deleted by jmsTopic`() = runBlocking {
-            val jmsTopic = MongoContainerObjectMother.BANK_JMS_TOPIC
+        fun `should return true when one bank was deleted by jmsQueue`() = runBlocking {
+            val jmsQueue = MongoContainerObjectMother.BANK_JMS_QUEUE
 
-            val result: Boolean = classUnderTest.deleteById(id = jmsTopic)
+            val result: Boolean = classUnderTest.deleteById(id = jmsQueue)
 
             result.shouldBeTrue()
         }
 
         @Test
-        fun `should return false when no bank was deleted by jmsTopic`() = runBlocking {
-            val jmsTopic = "unknown"
+        fun `should return false when no bank was deleted by jmsQueue`() = runBlocking {
+            val jmsQueue = "unknown"
 
-            val result: Boolean = classUnderTest.deleteById(id = jmsTopic)
+            val result: Boolean = classUnderTest.deleteById(id = jmsQueue)
 
             result.shouldBeFalse()
         }

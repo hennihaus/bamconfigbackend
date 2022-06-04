@@ -42,9 +42,9 @@ class GroupServiceImpl(
         }
     }
 
-    override suspend fun checkJmsTopic(id: String, jmsTopic: String): Boolean {
+    override suspend fun checkJmsQueue(id: String, jmsQueue: String): Boolean {
         return id.toObjectId { objectId ->
-            repository.getGroupByJmsTopic(jmsTopic = jmsTopic)?.let { it.id != objectId.toId<Group>() } ?: false
+            repository.getGroupByJmsQueue(jmsQueue = jmsQueue)?.let { it.id != objectId.toId<Group>() } ?: false
         }
     }
 
@@ -53,9 +53,7 @@ class GroupServiceImpl(
     }
 
     override suspend fun deleteGroupById(id: String) {
-        id.toObjectId { objectId ->
-            objectId.takeIf { repository.deleteById(id = it) } ?: throw NotFoundException(message = ID_MESSAGE)
-        }
+        id.toObjectId { repository.deleteById(id = it) }
     }
 
     override suspend fun resetAllGroups(): List<Group> {

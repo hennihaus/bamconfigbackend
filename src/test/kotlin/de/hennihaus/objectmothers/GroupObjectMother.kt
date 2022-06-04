@@ -32,7 +32,7 @@ object GroupObjectMother {
         id: Id<Group> = ObjectId("61320a79410347e41dbea0f9").toId(),
         username: String = "LoanBrokerGruppe01",
         password: String = DEFAULT_PASSWORD,
-        jmsTopic: String = "ResponseLoanBrokerGruppe01",
+        jmsQueue: String = "ResponseLoanBrokerGruppe01",
         students: List<String> = DEFAULT_STUDENTS,
         stats: Map<String, Int> = ZERO_STATS,
         hasPassed: Boolean = DEFAULT_HAS_PASSED
@@ -40,7 +40,7 @@ object GroupObjectMother {
         id = id,
         username = username,
         password = password,
-        jmsTopic = jmsTopic,
+        jmsQueue = jmsQueue,
         students = students,
         stats = stats,
         hasPassed = hasPassed
@@ -50,7 +50,7 @@ object GroupObjectMother {
         id: Id<Group> = ObjectId("61320a84befcde533be505c5").toId(),
         username: String = "LoanBrokerGruppe02",
         password: String = DEFAULT_PASSWORD,
-        jmsTopic: String = "ResponseLoanBrokerGruppe02",
+        jmsQueue: String = "ResponseLoanBrokerGruppe02",
         students: List<String> = DEFAULT_STUDENTS,
         stats: Map<String, Int> = ZERO_STATS,
         hasPassed: Boolean = DEFAULT_HAS_PASSED
@@ -58,7 +58,7 @@ object GroupObjectMother {
         id = id,
         username = username,
         password = password,
-        jmsTopic = jmsTopic,
+        jmsQueue = jmsQueue,
         students = students,
         stats = stats,
         hasPassed = hasPassed
@@ -68,7 +68,7 @@ object GroupObjectMother {
         id: Id<Group> = ObjectId("62449e3d944f2af727e6f1fb").toId(),
         username: String = "LoanBrokerGruppe03",
         password: String = DEFAULT_PASSWORD,
-        jmsTopic: String = "ResponseLoanBrokerGruppe03",
+        jmsQueue: String = "ResponseLoanBrokerGruppe03",
         students: List<String> = DEFAULT_STUDENTS,
         stats: Map<String, Int> = ZERO_STATS,
         hasPassed: Boolean = DEFAULT_HAS_PASSED
@@ -76,7 +76,7 @@ object GroupObjectMother {
         id = id,
         username = username,
         password = password,
-        jmsTopic = jmsTopic,
+        jmsQueue = jmsQueue,
         students = students,
         stats = stats,
         hasPassed = hasPassed

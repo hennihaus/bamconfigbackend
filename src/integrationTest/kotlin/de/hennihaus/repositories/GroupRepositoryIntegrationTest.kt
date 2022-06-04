@@ -180,21 +180,21 @@ class GroupRepositoryIntegrationTest : KoinTest {
     }
 
     @Nested
-    inner class GetGroupByJmsTopic {
+    inner class GetGroupByJmsQueue {
         @Test
-        fun `should return a group when group is found by jmsTopic`() = runBlocking {
-            val jmsTopic = MongoContainerObjectMother.GROUP_JMS_TOPIC
+        fun `should return a group when group is found by jmsQueue`() = runBlocking {
+            val jmsQueue = MongoContainerObjectMother.GROUP_JMS_QUEUE
 
-            val result: Group? = classUnderTest.getGroupByJmsTopic(jmsTopic = jmsTopic)
+            val result: Group? = classUnderTest.getGroupByJmsQueue(jmsQueue = jmsQueue)
 
             result should beInstanceOf<Group>()
         }
 
         @Test
-        fun `should return null when group is not found by jmsTopic`() = runBlocking {
-            val jmsTopic = "unknown"
+        fun `should return null when group is not found by jmsQueue`() = runBlocking {
+            val jmsQueue = "unknown"
 
-            val result: Group? = classUnderTest.getGroupByJmsTopic(jmsTopic = jmsTopic)
+            val result: Group? = classUnderTest.getGroupByJmsQueue(jmsQueue = jmsQueue)
 
             result.shouldBeNull()
         }

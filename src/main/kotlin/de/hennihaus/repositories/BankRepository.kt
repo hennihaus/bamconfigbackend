@@ -44,7 +44,7 @@ class BankRepository(private val db: CoroutineDatabase) : Repository<Bank, Strin
     override suspend fun getById(id: String): Bank? {
         return col.aggregate<Bank>(
             match(
-                filter = Bank::jmsTopic eq id
+                filter = Bank::jmsQueue eq id
             ),
             lookup(
                 from = Group::class.simpleName?.lowercase() as String,
@@ -101,14 +101,14 @@ class BankRepository(private val db: CoroutineDatabase) : Repository<Bank, Strin
             options = UpdateOptions().upsert(true)
         )
         col.updateOne(
-            filter = Bank::jmsTopic eq entry.jmsTopic,
+            filter = Bank::jmsQueue eq entry.jmsQueue,
             update = set(
                 SetTo(
                     Bank::groups, entry.groups.map { group -> group.id.toString().toObjectId { it } }
                 )
             )
         )
-        return getById(id = entry.jmsTopic) ?: throw NotFoundException(
+        return getById(id = entry.jmsQueue) ?: throw NotFoundException(
             message = BankServiceImpl.ID_MESSAGE
         )
     }

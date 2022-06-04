@@ -14,7 +14,7 @@ data class Group(
     val id: Id<Group> = newId(),
     val username: String,
     val password: String,
-    val jmsTopic: String,
+    val jmsQueue: String,
     val students: List<String>,
     val stats: Map<String, Int>,
     val hasPassed: Boolean,

@@ -40,9 +40,9 @@ class StatsServiceTest {
         fun `should set hasPassed = false when group has zero request stats`() = runBlocking {
             val group = getFirstGroup(
                 stats = mapOf(
-                    getSchufaBank().jmsTopic to 0,
-                    getVBank().jmsTopic to 0,
-                    getJmsBank().jmsTopic to 0
+                    getSchufaBank().jmsQueue to 0,
+                    getVBank().jmsQueue to 0,
+                    getJmsBank().jmsQueue to 0
                 ),
             )
 
@@ -56,9 +56,9 @@ class StatsServiceTest {
         fun `should set hasPassed = false when group has one async bank with zero request stats`() = runBlocking {
             val group = getFirstGroup(
                 stats = mapOf(
-                    getSchufaBank().jmsTopic to 1,
-                    getVBank().jmsTopic to 1,
-                    getJmsBank().jmsTopic to 0
+                    getSchufaBank().jmsQueue to 1,
+                    getVBank().jmsQueue to 1,
+                    getJmsBank().jmsQueue to 0
                 )
             )
 
@@ -72,9 +72,9 @@ class StatsServiceTest {
         fun `should set hasPassed = true when group has one request for every bank`() = runBlocking {
             val group = getFirstGroup(
                 stats = mapOf(
-                    getSchufaBank().jmsTopic to 1,
-                    getVBank().jmsTopic to 1,
-                    getJmsBank().jmsTopic to 1
+                    getSchufaBank().jmsQueue to 1,
+                    getVBank().jmsQueue to 1,
+                    getJmsBank().jmsQueue to 1
                 )
             )
 
@@ -94,9 +94,9 @@ class StatsServiceTest {
                 )
                 val group = getFirstGroup(
                     stats = mapOf(
-                        getSchufaBank().jmsTopic to 1,
-                        getVBank().jmsTopic to 1,
-                        getJmsBank().jmsTopic to 0
+                        getSchufaBank().jmsQueue to 1,
+                        getVBank().jmsQueue to 1,
+                        getJmsBank().jmsQueue to 0
                     )
                 )
 
@@ -116,9 +116,9 @@ class StatsServiceTest {
                 )
                 val group = getFirstGroup(
                     stats = mapOf(
-                        getSchufaBank().jmsTopic to 1,
-                        getVBank().jmsTopic to 1,
-                        getJmsBank().jmsTopic to 0
+                        getSchufaBank().jmsQueue to 1,
+                        getVBank().jmsQueue to 1,
+                        getJmsBank().jmsQueue to 0
                     )
                 )
 
@@ -131,9 +131,9 @@ class StatsServiceTest {
         fun `should set hasPassed = false when group has zero requests for one sync banks`() = runBlocking {
             val group = getFirstGroup(
                 stats = mapOf(
-                    getSchufaBank().jmsTopic to 0,
-                    getVBank().jmsTopic to 1,
-                    getJmsBank().jmsTopic to 1
+                    getSchufaBank().jmsQueue to 0,
+                    getVBank().jmsQueue to 1,
+                    getJmsBank().jmsQueue to 1
                 )
             )
 

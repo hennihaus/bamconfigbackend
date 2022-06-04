@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Bank(
     @SerialName(ID_FIELD)
-    val jmsTopic: String,
+    val jmsQueue: String,
     val name: String,
     val thumbnailUrl: String,
     val isAsync: Boolean,

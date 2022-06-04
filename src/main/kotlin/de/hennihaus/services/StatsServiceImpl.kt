@@ -11,7 +11,7 @@ class StatsServiceImpl(private val repository: BankRepository) : StatsService {
         hasPassed = repository.getAll()
             .filter { bank -> if (bank.isAsync) bank.groups.any { it.id == group.id } else true }
             .filter { bank -> if (bank.isAsync) bank.isActive else true }
-            .none { bank -> group.stats[bank.jmsTopic] == ZERO_REQUESTS }
+            .none { bank -> group.stats[bank.jmsQueue] == ZERO_REQUESTS }
     )
 
     companion object {

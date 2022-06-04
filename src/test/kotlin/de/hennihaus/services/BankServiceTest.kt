@@ -78,17 +78,17 @@ class BankServiceTest {
     }
 
     @Nested
-    inner class GetBankByJmsTopic {
+    inner class GetBankByJmsQueue {
         @Test
-        fun `should return bank when jmsTopic is in database`() = runBlocking {
-            val jmsTopic = getJmsBank().jmsTopic
+        fun `should return bank when jmsQueue is in database`() = runBlocking {
+            val jmsQueue = getJmsBank().jmsQueue
             coEvery { repository.getById(id = any()) } returns getJmsBank()
 
-            val result: Bank = classUnderTest.getBankByJmsTopic(jmsTopic = jmsTopic)
+            val result: Bank = classUnderTest.getBankByJmsQueue(jmsQueue = jmsQueue)
 
             result shouldBe getJmsBank()
             coVerifySequence {
-                repository.getById(id = jmsTopic)
+                repository.getById(id = jmsQueue)
                 stats.setHasPassed(group = getFirstGroup())
                 stats.setHasPassed(group = getSecondGroup())
                 stats.setHasPassed(group = getThirdGroup())
@@ -96,15 +96,15 @@ class BankServiceTest {
         }
 
         @Test
-        fun `should throw an exception when jmsTopic is not in database`() = runBlocking {
-            val jmsTopic = "unknown"
+        fun `should throw an exception when jmsQueue is not in database`() = runBlocking {
+            val jmsQueue = "unknown"
             coEvery { repository.getById(id = any()) } returns null
 
-            val result = shouldThrow<NotFoundException> { classUnderTest.getBankByJmsTopic(jmsTopic = jmsTopic) }
+            val result = shouldThrow<NotFoundException> { classUnderTest.getBankByJmsQueue(jmsQueue = jmsQueue) }
 
             result shouldBe instanceOf<NotFoundException>()
             result.message shouldBe BankServiceImpl.ID_MESSAGE
-            coVerify(exactly = 1) { repository.getById(id = jmsTopic) }
+            coVerify(exactly = 1) { repository.getById(id = jmsQueue) }
             coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
         }
     }
