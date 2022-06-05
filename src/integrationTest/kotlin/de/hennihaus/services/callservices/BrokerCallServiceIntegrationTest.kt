@@ -1,8 +1,8 @@
 package de.hennihaus.services.callservices
 
-import de.hennihaus.configurations.BrokerConfiguration.ACTIVE_MQ_HEADER_AUTHORIZATION
-import de.hennihaus.configurations.BrokerConfiguration.ACTIVE_MQ_HOST
-import de.hennihaus.configurations.BrokerConfiguration.ACTIVE_MQ_PORT
+import de.hennihaus.configurations.BrokerConfiguration.Companion.ACTIVE_MQ_HEADER_AUTHORIZATION
+import de.hennihaus.configurations.BrokerConfiguration.Companion.ACTIVE_MQ_HOST
+import de.hennihaus.configurations.BrokerConfiguration.Companion.ACTIVE_MQ_PORT
 import de.hennihaus.containers.BrokerContainer
 import de.hennihaus.models.generated.GetQueuesResponse
 import de.hennihaus.models.generated.GetTopicsResponse

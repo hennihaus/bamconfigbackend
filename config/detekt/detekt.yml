@@ -586,7 +586,7 @@ style:
     active: true
   DestructuringDeclarationWithTooManyEntries:
     active: true
-    maxDestructuringEntries: 5
+    maxDestructuringEntries: 6
   EqualsNullCall:
     active: true
   EqualsOnSignatureLine:

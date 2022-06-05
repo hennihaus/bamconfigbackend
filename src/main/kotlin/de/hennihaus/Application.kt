@@ -1,7 +1,7 @@
 package de.hennihaus
 
-import de.hennihaus.configurations.BrokerConfiguration.brokerModule
-import de.hennihaus.configurations.MongoConfiguration.mongoModule
+import de.hennihaus.configurations.brokerModule
+import de.hennihaus.configurations.mongoModule
 import de.hennihaus.plugins.configureCors
 import de.hennihaus.plugins.configureDependencyInjection
 import de.hennihaus.plugins.configureErrorHandling
