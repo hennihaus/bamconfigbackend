@@ -1,7 +1,7 @@
 package de.hennihaus.plugins
 
-import de.hennihaus.configurations.BrokerConfiguration.brokerModule
-import de.hennihaus.configurations.MongoConfiguration.mongoModule
+import de.hennihaus.configurations.brokerModule
+import de.hennihaus.configurations.mongoModule
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.routing.Route

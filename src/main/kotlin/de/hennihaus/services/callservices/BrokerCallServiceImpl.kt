@@ -1,5 +1,6 @@
 package de.hennihaus.services.callservices
 
+import de.hennihaus.configurations.BrokerConfiguration
 import de.hennihaus.models.generated.DeleteJobsResponse
 import de.hennihaus.models.generated.DeleteQueueResponse
 import de.hennihaus.models.generated.DeleteTopicResponse
@@ -8,15 +9,43 @@ import de.hennihaus.models.generated.GetTopicsResponse
 import de.hennihaus.plugins.BrokerException
 import de.hennihaus.services.callservices.resources.Broker
 import io.ktor.client.HttpClient
+import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.resources.Resources
 import io.ktor.client.plugins.resources.get
+import io.ktor.client.request.headers
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.URLProtocol
 import io.ktor.http.isSuccess
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.appendIfNameAbsent
+import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Single
 
 @Single
-class BrokerCallServiceImpl(private val client: HttpClient) : BrokerCallService {
+class BrokerCallServiceImpl(
+    private val engine: HttpClientEngine,
+    private val config: BrokerConfiguration,
+) : BrokerCallService {
+
+    private val client = HttpClient(engine = engine) {
+        expectSuccess = true
+        configureMonitoring()
+        configureSerialization()
+        configureRetryBehavior()
+        configureDefaultRequests()
+    }
 
     override suspend fun getAllQueues(): GetQueuesResponse {
         return client.get(resource = Broker.Read.MBean.Queues()).body<GetQueuesResponse>().also {
@@ -71,5 +100,40 @@ class BrokerCallServiceImpl(private val client: HttpClient) : BrokerCallService 
             HttpStatusCode.fromValue(value = it).isSuccess()
         }
         valid ?: throw BrokerException(message = error)
+    }
+
+    private fun HttpClientConfig<*>.configureMonitoring() = install(plugin = Logging) {
+        logger = Logger.DEFAULT
+        level = LogLevel.INFO
+    }
+
+    private fun HttpClientConfig<*>.configureSerialization() {
+        install(plugin = ContentNegotiation) {
+            json(
+                contentType = ContentType.Any,
+                json = Json {
+                    ignoreUnknownKeys = true
+                }
+            )
+        }
+        install(plugin = Resources)
+    }
+
+    private fun HttpClientConfig<*>.configureRetryBehavior() = install(plugin = HttpRequestRetry) {
+        retryOnServerErrors(maxRetries = config.maxRetries)
+        exponentialDelay()
+    }
+
+    private fun HttpClientConfig<*>.configureDefaultRequests() = install(plugin = DefaultRequest) {
+        val (protocol, host, port, _, authorizationHeader, originHeader) = config
+        url {
+            this.protocol = URLProtocol.createOrDefault(name = protocol)
+            this.host = host
+            this.port = port
+        }
+        headers {
+            appendIfNameAbsent(name = HttpHeaders.Authorization, value = authorizationHeader)
+            appendIfNameAbsent(name = HttpHeaders.Origin, value = originHeader)
+        }
     }
 }
