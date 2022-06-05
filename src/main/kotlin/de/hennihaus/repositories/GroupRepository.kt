@@ -2,9 +2,9 @@ package de.hennihaus.repositories
 
 import com.mongodb.client.model.UpdateOptions
 import de.hennihaus.models.Group
-import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.services.GroupServiceImpl
 import de.hennihaus.utils.toObjectId
+import io.ktor.server.plugins.NotFoundException
 import org.bson.types.ObjectId
 import org.koin.core.annotation.Single
 import org.litote.kmongo.coroutine.CoroutineCollection

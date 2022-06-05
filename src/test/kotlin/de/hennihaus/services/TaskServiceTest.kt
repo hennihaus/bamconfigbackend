@@ -7,13 +7,13 @@ import de.hennihaus.objectmothers.GroupObjectMother.getThirdGroup
 import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask
-import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.repositories.TaskRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.beInstanceOf
+import io.ktor.server.plugins.NotFoundException
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify

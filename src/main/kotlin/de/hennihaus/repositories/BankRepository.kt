@@ -4,9 +4,9 @@ import com.mongodb.client.model.UpdateOptions
 import de.hennihaus.configurations.MongoConfiguration.ID_FIELD
 import de.hennihaus.models.Bank
 import de.hennihaus.models.Group
-import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.services.BankServiceImpl
 import de.hennihaus.utils.toObjectId
+import io.ktor.server.plugins.NotFoundException
 import org.koin.core.annotation.Single
 import org.litote.kmongo.SetTo
 import org.litote.kmongo.coroutine.CoroutineCollection

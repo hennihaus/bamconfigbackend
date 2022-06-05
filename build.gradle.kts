@@ -50,7 +50,7 @@ dependencies {
     val kmongoVersion: String by project
     val passayVersion: String by project
     val kotestVersion: String by project
-    val kotestKtorVersion: String by project
+    val kotestLibrariesVersion: String by project
     val mockkVersion: String by project
     val junitVersion: String by project
     val koinVersion: String by project
@@ -97,7 +97,7 @@ dependencies {
     // test plugins
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
-    testImplementation("io.kotest:kotest-assertions-ktor:$kotestKtorVersion")
+    testImplementation("io.kotest:kotest-assertions-ktor:$kotestLibrariesVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }

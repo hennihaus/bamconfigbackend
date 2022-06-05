@@ -1,8 +1,8 @@
 package de.hennihaus.services
 
 import de.hennihaus.models.Bank
-import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.repositories.BankRepository
+import io.ktor.server.plugins.NotFoundException
 import org.koin.core.annotation.Single
 
 @Single
@@ -13,7 +13,7 @@ class BankServiceImpl(private val repository: BankRepository, private val stats:
     }
 
     override suspend fun getBankByJmsQueue(jmsQueue: String): Bank {
-        val bank = repository.getById(jmsQueue) ?: throw NotFoundException(ID_MESSAGE)
+        val bank = repository.getById(jmsQueue) ?: throw NotFoundException(message = ID_MESSAGE)
         return bank.copy(groups = bank.groups.map { group -> stats.setHasPassed(group = group) })
     }
 

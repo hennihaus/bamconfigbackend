@@ -8,7 +8,6 @@ import de.hennihaus.objectmothers.ExceptionResponseObjectMother.INTERNAL_SERVER_
 import de.hennihaus.objectmothers.ExceptionResponseObjectMother.getBankNotFoundErrorResponse
 import de.hennihaus.objectmothers.ExceptionResponseObjectMother.getInternalServerErrorResponse
 import de.hennihaus.plugins.ExceptionResponse
-import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.services.BankService
 import de.hennihaus.services.BankServiceImpl.Companion.ID_MESSAGE
 import de.hennihaus.testutils.KtorTestBuilder.testApplicationWith
@@ -24,6 +23,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.server.plugins.NotFoundException
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify

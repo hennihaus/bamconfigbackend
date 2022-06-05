@@ -6,7 +6,6 @@ import de.hennihaus.objectmothers.GroupObjectMother.ZERO_STATS
 import de.hennihaus.objectmothers.GroupObjectMother.getFirstGroup
 import de.hennihaus.objectmothers.GroupObjectMother.getSecondGroup
 import de.hennihaus.objectmothers.GroupObjectMother.getThirdGroup
-import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.repositories.GroupRepository
 import de.hennihaus.services.GroupServiceImpl.Companion.ID_MESSAGE
 import io.kotest.assertions.throwables.shouldThrow
@@ -18,6 +17,7 @@ import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldMatch
 import io.kotest.matchers.types.beInstanceOf
+import io.ktor.server.plugins.NotFoundException
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify

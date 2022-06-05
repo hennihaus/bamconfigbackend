@@ -9,7 +9,6 @@ import de.hennihaus.objectmothers.GroupObjectMother.getFirstGroup
 import de.hennihaus.objectmothers.GroupObjectMother.getSecondGroup
 import de.hennihaus.objectmothers.GroupObjectMother.getThirdGroup
 import de.hennihaus.plugins.ExceptionResponse
-import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.plugins.ObjectIdException
 import de.hennihaus.services.GroupService
 import de.hennihaus.services.GroupServiceImpl.Companion.ID_MESSAGE
@@ -27,6 +26,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.server.plugins.NotFoundException
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify

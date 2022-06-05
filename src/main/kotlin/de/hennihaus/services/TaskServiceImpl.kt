@@ -2,9 +2,9 @@ package de.hennihaus.services
 
 import de.hennihaus.models.Bank
 import de.hennihaus.models.Task
-import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.repositories.TaskRepository
 import de.hennihaus.utils.toObjectId
+import io.ktor.server.plugins.NotFoundException
 import org.koin.core.annotation.Single
 
 @Single
