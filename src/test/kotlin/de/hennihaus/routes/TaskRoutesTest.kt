@@ -9,7 +9,6 @@ import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask
 import de.hennihaus.plugins.ExceptionResponse
-import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.plugins.ObjectIdException
 import de.hennihaus.services.TaskService
 import de.hennihaus.services.TaskServiceImpl.Companion.ID_MESSAGE
@@ -26,6 +25,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.server.plugins.NotFoundException
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify

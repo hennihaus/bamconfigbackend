@@ -1,5 +1,7 @@
 package de.hennihaus
 
+import io.kotest.assertions.ktor.client.shouldHaveStatus
+import io.kotest.matchers.shouldBe
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
@@ -8,7 +10,6 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.ktor.server.testing.testApplication
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class ApplicationTest {
@@ -21,10 +22,10 @@ class ApplicationTest {
             }
         }
 
-        val response = client.get(ROOT_ENDPOINT_PATH)
+        val response = client.get(urlString = ROOT_ENDPOINT_PATH)
 
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(ROOT_ENDPOINT_MESSAGE, response.bodyAsText())
+        response shouldHaveStatus HttpStatusCode.OK
+        response.bodyAsText() shouldBe ROOT_ENDPOINT_MESSAGE
     }
 
     companion object {

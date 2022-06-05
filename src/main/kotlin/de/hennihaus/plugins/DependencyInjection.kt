@@ -14,7 +14,7 @@ import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import org.koin.ktor.ext.getProperty as property
 
-fun Application.configureDependencyInjection(vararg koinModules: Module) = install(Koin) {
+fun Application.configureDependencyInjection(vararg koinModules: Module) = install(plugin = Koin) {
     initKoin(modules = koinModules)
 }
 

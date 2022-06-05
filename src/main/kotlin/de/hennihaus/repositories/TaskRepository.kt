@@ -5,9 +5,9 @@ import de.hennihaus.configurations.MongoConfiguration.ID_FIELD
 import de.hennihaus.models.Bank
 import de.hennihaus.models.Group
 import de.hennihaus.models.Task
-import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.services.TaskServiceImpl
 import de.hennihaus.utils.toObjectId
+import io.ktor.server.plugins.NotFoundException
 import org.bson.types.ObjectId
 import org.koin.core.annotation.Single
 import org.litote.kmongo.MongoOperator.`in`

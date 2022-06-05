@@ -2,9 +2,9 @@ package de.hennihaus.services
 
 import de.hennihaus.configurations.Configuration.PASSWORD_LENGTH
 import de.hennihaus.models.Group
-import de.hennihaus.plugins.NotFoundException
 import de.hennihaus.repositories.GroupRepository
 import de.hennihaus.utils.toObjectId
+import io.ktor.server.plugins.NotFoundException
 import org.koin.core.annotation.Property
 import org.koin.core.annotation.Single
 import org.litote.kmongo.id.toId
