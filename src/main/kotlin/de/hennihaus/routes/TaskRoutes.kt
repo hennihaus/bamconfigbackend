@@ -25,7 +25,7 @@ private fun Route.getTaskById(): Route = get<Tasks.Id> { request ->
     val taskService = getKoin().get<TaskService>()
     call.respond(
         message = taskService.getTaskById(
-            id = request.id
+            id = request.id,
         )
     )
 }
@@ -35,7 +35,7 @@ private fun Route.patchTask(): Route = patch<Tasks.Id> { request ->
     call.respond(
         message = taskService.patchTask(
             id = request.id,
-            task = call.receive()
+            task = call.receive(),
         )
     )
 }

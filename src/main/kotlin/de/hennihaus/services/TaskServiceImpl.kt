@@ -22,12 +22,15 @@ class TaskServiceImpl(private val repository: TaskRepository, private val stats:
     }
 
     override suspend fun patchTask(id: String, task: Task): Task {
-        return id.toObjectId {
-            repository.getById(id = it)
+        return id.toObjectId { objectId ->
+            repository.getById(id = objectId)
                 ?.copy(
                     title = task.title,
                     description = task.description,
-                    parameters = task.parameters
+                    isOpenApiVerbose = task.isOpenApiVerbose,
+                    contact = task.contact,
+                    parameters = task.parameters,
+                    responses = task.responses,
                 )
                 ?.let { task -> repository.save(entry = task) }
                 ?.let { task -> task.copy(banks = task.banks.map { bank -> updateBank(bank = bank) }) }

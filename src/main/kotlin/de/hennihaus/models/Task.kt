@@ -1,7 +1,11 @@
 package de.hennihaus.models
 
 import de.hennihaus.configurations.MongoConfiguration.ID_FIELD
+import de.hennihaus.models.serializer.ContentTypeSerializer
+import de.hennihaus.models.serializer.HttpStatusCodeSerializer
 import de.hennihaus.models.serializer.UriSerializer
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -16,9 +20,18 @@ data class Task(
     val title: String,
     val description: String,
     val step: Int,
+    val isOpenApiVerbose: Boolean,
+    val contact: Contact,
     val endpoints: List<Endpoint>,
     val parameters: List<Parameter>,
-    val banks: List<Bank>
+    val responses: List<Response>,
+    val banks: List<Bank>,
+)
+
+@Serializable
+data class Contact(
+    val name: String,
+    val email: String,
 )
 
 @Serializable
@@ -27,25 +40,36 @@ data class Endpoint(
     @Serializable(with = UriSerializer::class)
     val url: URI,
     @Serializable(with = UriSerializer::class)
-    val docsUrl: URI
+    val docsUrl: URI,
 )
 
 enum class EndpointType {
     REST,
     SOAP,
-    JMS
+    JMS,
 }
 
 @Serializable
 data class Parameter(
     val name: String,
     val type: ParameterType,
-    val description: String
+    val description: String,
+    val example: String,
 )
 
 enum class ParameterType {
     STRING,
     INTEGER,
     LONG,
-    CHARACTER
+    CHARACTER,
 }
+
+@Serializable
+data class Response(
+    @Serializable(with = HttpStatusCodeSerializer::class)
+    val code: HttpStatusCode,
+    @Serializable(with = ContentTypeSerializer::class)
+    val mediaType: ContentType,
+    val description: String,
+    val example: String,
+)
