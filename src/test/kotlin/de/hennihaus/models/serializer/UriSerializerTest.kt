@@ -19,12 +19,12 @@ class UriSerializerTest {
 
         val result: TestObject = Json.decodeFromString(string = testJson)
 
-        result shouldBe TestObject(URI("http://localhost:8080"))
+        result shouldBe TestObject(uri = URI("http://localhost:8080"))
     }
 
     @Test
     fun `should serialize an object with URI property correctly`() {
-        val testObject = TestObject(URI("http://localhost:8080"))
+        val testObject = TestObject(uri = URI("http://localhost:8080"))
 
         val result: String = Json.encodeToString(value = testObject)
 

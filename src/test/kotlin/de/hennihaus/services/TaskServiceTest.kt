@@ -112,12 +112,15 @@ class TaskServiceTest {
     @Nested
     inner class PatchTask {
         @Test
-        fun `should just update title, description and parameters from a task`() = runBlocking {
+        fun `should just update six fields from a task`() = runBlocking {
             val id = getAsynchronousBankTask().id.toString()
             val task = getSchufaTask(
                 title = getAsynchronousBankTask().title,
                 description = getAsynchronousBankTask().description,
-                parameters = getAsynchronousBankTask().parameters
+                isOpenApiVerbose = getAsynchronousBankTask().isOpenApiVerbose,
+                contact = getAsynchronousBankTask().contact,
+                parameters = getAsynchronousBankTask().parameters,
+                responses = getAsynchronousBankTask().responses,
             )
             coEvery { repository.getById(id = any()) } returns getAsynchronousBankTask()
             coEvery { repository.save(entry = any()) } returns getAsynchronousBankTask()
@@ -140,7 +143,10 @@ class TaskServiceTest {
             val task = getSynchronousBankTask(
                 title = getSchufaTask().title,
                 description = getSchufaTask().description,
-                parameters = getSchufaTask().parameters
+                isOpenApiVerbose = getSchufaTask().isOpenApiVerbose,
+                contact = getSchufaTask().contact,
+                parameters = getSchufaTask().parameters,
+                responses = getSchufaTask().responses,
             )
             coEvery { repository.getById(id = any()) } returns null
             coEvery { repository.save(entry = any()) } returns getSchufaTask()

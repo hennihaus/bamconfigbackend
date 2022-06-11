@@ -8,7 +8,10 @@ import kotlinx.serialization.encoding.Encoder
 import java.net.URI
 
 object UriSerializer : KSerializer<URI> {
-    override val descriptor = PrimitiveSerialDescriptor("URI", PrimitiveKind.STRING)
+    override val descriptor = PrimitiveSerialDescriptor(
+        serialName = "URI",
+        kind = PrimitiveKind.STRING,
+    )
 
     override fun deserialize(decoder: Decoder): URI {
         val url = decoder.decodeString()
