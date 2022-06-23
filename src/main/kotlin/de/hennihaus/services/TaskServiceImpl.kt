@@ -8,7 +8,11 @@ import io.ktor.server.plugins.NotFoundException
 import org.koin.core.annotation.Single
 
 @Single
-class TaskServiceImpl(private val repository: TaskRepository, private val stats: StatsService) : TaskService {
+class TaskServiceImpl(
+    private val repository: TaskRepository,
+    private val stats: StatsService,
+    private val github: GithubService,
+) : TaskService {
 
     override suspend fun getAllTasks(): List<Task> = repository.getAll()
         .sortedBy { it.step }
@@ -32,6 +36,7 @@ class TaskServiceImpl(private val repository: TaskRepository, private val stats:
                     parameters = task.parameters,
                     responses = task.responses,
                 )
+                ?.also { task -> github.updateOpenApi(task = task) }
                 ?.let { task -> repository.save(entry = task) }
                 ?.let { task -> task.copy(banks = task.banks.map { bank -> updateBank(bank = bank) }) }
                 ?: throw NotFoundException(message = ID_MESSAGE)

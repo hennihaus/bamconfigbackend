@@ -1,11 +1,11 @@
 package de.hennihaus.repositories
 
 import de.hennihaus.configurations.MongoConfiguration
-import de.hennihaus.containers.MongoContainer
 import de.hennihaus.models.Bank
 import de.hennihaus.objectmothers.BankObjectMother.getJmsBank
 import de.hennihaus.objectmothers.MongoContainerObjectMother
 import de.hennihaus.plugins.initKoin
+import de.hennihaus.testutils.containers.MongoContainer
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ints.shouldBeGreaterThanOrEqual

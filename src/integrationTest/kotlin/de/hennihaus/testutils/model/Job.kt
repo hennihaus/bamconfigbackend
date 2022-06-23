@@ -1,4 +1,4 @@
-package de.hennihaus.model
+package de.hennihaus.testutils.model
 
 import de.hennihaus.objectmothers.BrokerContainerObjectMother.DEFAULT_TEST_DELAY
 

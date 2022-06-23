@@ -1,7 +1,7 @@
-package de.hennihaus.models.generated
+package de.hennihaus.models.generated.broker
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class DeleteTopicResponse(
@@ -18,5 +18,5 @@ data class DeleteTopicRequest(
     val arguments: List<String> = emptyList(),
     val mbean: String,
     val operation: String,
-    val type: String
+    val type: String,
 )

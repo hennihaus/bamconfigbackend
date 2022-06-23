@@ -12,7 +12,7 @@ import de.hennihaus.plugins.ExceptionResponse
 import de.hennihaus.plugins.ObjectIdException
 import de.hennihaus.services.GroupService
 import de.hennihaus.services.GroupServiceImpl.Companion.ID_MESSAGE
-import de.hennihaus.testutils.KtorTestBuilder.testApplicationWith
+import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly

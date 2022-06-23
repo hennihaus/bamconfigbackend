@@ -1,13 +1,13 @@
 package de.hennihaus.services.callservices
 
+import de.hennihaus.objectmothers.BrokerObjectMother.getDeleteJobsErrorResponse
+import de.hennihaus.objectmothers.BrokerObjectMother.getQueuesErrorResponse
+import de.hennihaus.objectmothers.BrokerObjectMother.getTopicsErrorResponse
 import de.hennihaus.objectmothers.ConfigurationObjectMother.getBrokerConfiguration
 import de.hennihaus.plugins.BrokerException
-import de.hennihaus.plugins.ErrorMessage
 import de.hennihaus.testutils.MockEngineBuilder
-import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.should
-import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.types.beInstanceOf
+import io.kotest.assertions.throwables.shouldThrowExactly
+import io.kotest.matchers.throwable.shouldHaveMessage
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Nested
@@ -31,10 +31,11 @@ class BrokerCallServiceTest {
                 config = getBrokerConfiguration(),
             )
 
-            val result = shouldThrow<BrokerException> { classUnderTest.getAllQueues() }
+            val result: BrokerException = shouldThrowExactly {
+                classUnderTest.getAllQueues()
+            }
 
-            result should beInstanceOf(BrokerException::class)
-            result.message shouldNotBe ErrorMessage.BROKER_EXCEPTION_DEFAULT_MESSAGE
+            result shouldHaveMessage getQueuesErrorResponse().error!!
         }
     }
 
@@ -51,10 +52,11 @@ class BrokerCallServiceTest {
                 config = getBrokerConfiguration()
             )
 
-            val result = shouldThrow<BrokerException> { classUnderTest.getAllTopics() }
+            val result: BrokerException = shouldThrowExactly {
+                classUnderTest.getAllTopics()
+            }
 
-            result should beInstanceOf(BrokerException::class)
-            result.message shouldNotBe ErrorMessage.BROKER_EXCEPTION_DEFAULT_MESSAGE
+            result shouldHaveMessage getTopicsErrorResponse().error!!
         }
     }
 
@@ -63,7 +65,7 @@ class BrokerCallServiceTest {
         @Test
         fun `should throw an exception when request is invalid`() = runBlocking {
             val engine = MockEngineBuilder.getMockEngine(
-                content = File("./src/test/resources/broker/DeleteJobsErrorResponse.json").readText(),
+                content = File("./src/test/resources/broker/deleteJobsErrorResponse.json").readText(),
                 status = HttpStatusCode.OK
             )
             classUnderTest = BrokerCallServiceImpl(
@@ -71,10 +73,11 @@ class BrokerCallServiceTest {
                 config = getBrokerConfiguration(),
             )
 
-            val result = shouldThrow<BrokerException> { classUnderTest.deleteAllJobs() }
+            val result: BrokerException = shouldThrowExactly {
+                classUnderTest.deleteAllJobs()
+            }
 
-            result should beInstanceOf(BrokerException::class)
-            result.message shouldNotBe ErrorMessage.BROKER_EXCEPTION_DEFAULT_MESSAGE
+            result shouldHaveMessage getDeleteJobsErrorResponse().error!!
         }
     }
 }

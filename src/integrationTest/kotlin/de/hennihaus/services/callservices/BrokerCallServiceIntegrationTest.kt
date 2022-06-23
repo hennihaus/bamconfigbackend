@@ -3,11 +3,10 @@ package de.hennihaus.services.callservices
 import de.hennihaus.configurations.BrokerConfiguration.Companion.ACTIVE_MQ_HEADER_AUTHORIZATION
 import de.hennihaus.configurations.BrokerConfiguration.Companion.ACTIVE_MQ_HOST
 import de.hennihaus.configurations.BrokerConfiguration.Companion.ACTIVE_MQ_PORT
-import de.hennihaus.containers.BrokerContainer
-import de.hennihaus.models.generated.GetQueuesResponse
-import de.hennihaus.models.generated.GetTopicsResponse
-import de.hennihaus.models.generated.Queue
-import de.hennihaus.models.generated.Topic
+import de.hennihaus.models.generated.broker.GetQueuesResponse
+import de.hennihaus.models.generated.broker.GetTopicsResponse
+import de.hennihaus.models.generated.broker.Queue
+import de.hennihaus.models.generated.broker.Topic
 import de.hennihaus.objectmothers.BrokerContainerObjectMother.OBJECT_NAME_DEFAULT_PREFIX
 import de.hennihaus.objectmothers.BrokerContainerObjectMother.QUEUE_OBJECT_NAME_SUFFIX
 import de.hennihaus.objectmothers.BrokerContainerObjectMother.TOPIC_OBJECT_NAME_SUFFIX
@@ -20,6 +19,7 @@ import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_DEFAULT_MESSAGE
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.services.BrokerServiceImpl.Companion.DESTINATION_NAME_DELIMITER
 import de.hennihaus.services.BrokerServiceImpl.Companion.DESTINATION_TYPE_DELIMITER
+import de.hennihaus.testutils.containers.BrokerContainer
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldBeEmpty

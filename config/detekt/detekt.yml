@@ -525,7 +525,8 @@ potential-bugs:
       '**/commonTest/**',
       '**/jvmTest/**',
       '**/jsTest/**',
-      '**/iosTest/**'
+      '**/iosTest/**',
+      '**/integrationTest/**'
     ]
     ignoreOnClassesPattern: ''
   MapGetWithNotNullAssertionOperator:

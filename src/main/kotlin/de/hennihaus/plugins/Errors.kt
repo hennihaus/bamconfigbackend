@@ -2,7 +2,6 @@ package de.hennihaus.plugins
 
 import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_DEFAULT_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.MISSING_PROPERTY_MESSAGE
-import de.hennihaus.plugins.ErrorMessage.NOT_FOUND_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.OBJECT_ID_EXCEPTION_DEFAULT_MESSAGE
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -20,22 +19,22 @@ fun Application.configureErrorHandling() {
                     status = HttpStatusCode.NotFound,
                     message = ExceptionResponse(
                         code = HttpStatusCode.NotFound.value,
-                        error = throwable.message ?: NOT_FOUND_MESSAGE
-                    )
+                        error = "${throwable.message}",
+                    ),
                 )
                 is ObjectIdException -> call.respond(
                     status = HttpStatusCode.BadRequest,
                     message = ExceptionResponse(
                         code = HttpStatusCode.BadRequest.value,
-                        error = throwable.message
-                    )
+                        error = throwable.message,
+                    ),
                 )
                 else -> call.respond(
                     status = HttpStatusCode.InternalServerError,
                     message = ExceptionResponse(
                         code = HttpStatusCode.InternalServerError.value,
-                        error = throwable.message.toString()
-                    )
+                        error = "${throwable.message}",
+                    ),
                 )
             }
         }
@@ -46,7 +45,6 @@ object ErrorMessage {
     const val OBJECT_ID_EXCEPTION_DEFAULT_MESSAGE = "ObjectId could not be parsed due to an invalid format"
     const val BROKER_EXCEPTION_DEFAULT_MESSAGE = "Error while calling ActiveMQ"
     const val MISSING_PROPERTY_MESSAGE = "Missing property"
-    const val NOT_FOUND_MESSAGE = "Resource not found"
 }
 
 class ObjectIdException(override val message: String = OBJECT_ID_EXCEPTION_DEFAULT_MESSAGE) : RuntimeException()

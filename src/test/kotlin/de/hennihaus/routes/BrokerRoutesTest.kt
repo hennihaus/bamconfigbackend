@@ -8,7 +8,7 @@ import de.hennihaus.objectmothers.GroupObjectMother.getSecondGroup
 import de.hennihaus.plugins.ExceptionResponse
 import de.hennihaus.services.BrokerService
 import de.hennihaus.services.GroupService
-import de.hennihaus.testutils.KtorTestBuilder.testApplicationWith
+import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.shouldBe

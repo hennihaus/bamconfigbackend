@@ -29,7 +29,13 @@ class TaskServiceTest {
 
     private val repository = mockk<TaskRepository>()
     private val stats = mockk<StatsServiceImpl>()
-    private val classUnderTest = TaskServiceImpl(repository = repository, stats = stats)
+    private val github = mockk<GithubServiceImpl>()
+
+    private val classUnderTest = TaskServiceImpl(
+        repository = repository,
+        stats = stats,
+        github = github,
+    )
 
     @BeforeEach
     fun init() {
@@ -47,7 +53,7 @@ class TaskServiceTest {
             coEvery { repository.getAll() } returns listOf(
                 getSynchronousBankTask(step = 2),
                 getAsynchronousBankTask(step = 3),
-                getSchufaTask(step = 1)
+                getSchufaTask(step = 1),
             )
 
             val response: List<Task> = classUnderTest.getAllTasks()
@@ -55,7 +61,7 @@ class TaskServiceTest {
             response.shouldContainExactly(
                 getSchufaTask(step = 1),
                 getSynchronousBankTask(step = 2),
-                getAsynchronousBankTask(step = 3)
+                getAsynchronousBankTask(step = 3),
             )
             coVerifySequence {
                 repository.getAll()
@@ -124,12 +130,14 @@ class TaskServiceTest {
             )
             coEvery { repository.getById(id = any()) } returns getAsynchronousBankTask()
             coEvery { repository.save(entry = any()) } returns getAsynchronousBankTask()
+            coEvery { github.updateOpenApi(task = any()) } returns Unit
 
             val result: Task = classUnderTest.patchTask(id = id, task = task)
 
             result shouldBe getAsynchronousBankTask()
             coVerifySequence {
                 repository.getById(id = ObjectId(id))
+                github.updateOpenApi(task = getAsynchronousBankTask())
                 repository.save(entry = getAsynchronousBankTask())
                 stats.setHasPassed(group = getFirstGroup())
                 stats.setHasPassed(group = getSecondGroup())
@@ -149,13 +157,13 @@ class TaskServiceTest {
                 responses = getSchufaTask().responses,
             )
             coEvery { repository.getById(id = any()) } returns null
-            coEvery { repository.save(entry = any()) } returns getSchufaTask()
 
             val result = shouldThrow<NotFoundException> { classUnderTest.patchTask(id = id, task = task) }
 
             result should beInstanceOf<NotFoundException>()
             result.message shouldBe TaskServiceImpl.ID_MESSAGE
             coVerify(exactly = 1) { repository.getById(id = withArg { it shouldBe ObjectId(id) }) }
+            coVerify(exactly = 0) { github.updateOpenApi(task = any()) }
             coVerify(exactly = 0) { repository.save(entry = any()) }
         }
     }

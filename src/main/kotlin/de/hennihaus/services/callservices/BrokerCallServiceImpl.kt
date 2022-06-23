@@ -1,24 +1,21 @@
 package de.hennihaus.services.callservices
 
 import de.hennihaus.configurations.BrokerConfiguration
-import de.hennihaus.models.generated.DeleteJobsResponse
-import de.hennihaus.models.generated.DeleteQueueResponse
-import de.hennihaus.models.generated.DeleteTopicResponse
-import de.hennihaus.models.generated.GetQueuesResponse
-import de.hennihaus.models.generated.GetTopicsResponse
+import de.hennihaus.models.generated.broker.DeleteJobsResponse
+import de.hennihaus.models.generated.broker.DeleteQueueResponse
+import de.hennihaus.models.generated.broker.DeleteTopicResponse
+import de.hennihaus.models.generated.broker.GetQueuesResponse
+import de.hennihaus.models.generated.broker.GetTopicsResponse
 import de.hennihaus.plugins.BrokerException
 import de.hennihaus.services.callservices.resources.Broker
+import de.hennihaus.utils.configureMonitoring
+import de.hennihaus.utils.configureRetryBehavior
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.DefaultRequest
-import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.DEFAULT
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.resources.Resources
 import io.ktor.client.plugins.resources.get
 import io.ktor.client.request.headers
@@ -43,7 +40,7 @@ class BrokerCallServiceImpl(
         expectSuccess = true
         configureMonitoring()
         configureSerialization()
-        configureRetryBehavior()
+        configureRetryBehavior(maxRetries = config.maxRetries)
         configureDefaultRequests()
     }
 
@@ -51,7 +48,7 @@ class BrokerCallServiceImpl(
         return client.get(resource = Broker.Read.MBean.Queues()).body<GetQueuesResponse>().also {
             validateResponse(
                 status = it.status,
-                error = it.error
+                error = it.error,
             )
         }
     }
@@ -60,7 +57,7 @@ class BrokerCallServiceImpl(
         return client.get(resource = Broker.Read.MBean.Topics()).body<GetTopicsResponse>().also {
             validateResponse(
                 status = it.status,
-                error = it.error
+                error = it.error,
             )
         }
     }
@@ -70,7 +67,7 @@ class BrokerCallServiceImpl(
             val body = it.body<DeleteJobsResponse>()
             validateResponse(
                 status = body.status,
-                error = body.error
+                error = body.error,
             )
         }
     }
@@ -80,7 +77,7 @@ class BrokerCallServiceImpl(
             val body = it.body<DeleteQueueResponse>()
             validateResponse(
                 status = body.status,
-                error = body.error
+                error = body.error,
             )
         }
     }
@@ -90,7 +87,7 @@ class BrokerCallServiceImpl(
             val body = it.body<DeleteTopicResponse>()
             validateResponse(
                 status = body.status,
-                error = body.error
+                error = body.error,
             )
         }
     }
@@ -100,11 +97,6 @@ class BrokerCallServiceImpl(
             HttpStatusCode.fromValue(value = it).isSuccess()
         }
         valid ?: throw BrokerException(message = error)
-    }
-
-    private fun HttpClientConfig<*>.configureMonitoring() = install(plugin = Logging) {
-        logger = Logger.DEFAULT
-        level = LogLevel.INFO
     }
 
     private fun HttpClientConfig<*>.configureSerialization() {
@@ -117,11 +109,6 @@ class BrokerCallServiceImpl(
             )
         }
         install(plugin = Resources)
-    }
-
-    private fun HttpClientConfig<*>.configureRetryBehavior() = install(plugin = HttpRequestRetry) {
-        retryOnServerErrors(maxRetries = config.maxRetries)
-        exponentialDelay()
     }
 
     private fun HttpClientConfig<*>.configureDefaultRequests() = install(plugin = DefaultRequest) {

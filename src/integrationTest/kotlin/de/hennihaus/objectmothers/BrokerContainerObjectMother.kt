@@ -1,6 +1,5 @@
 package de.hennihaus.objectmothers
 
-import de.hennihaus.model.Job
 import de.hennihaus.objectmothers.BrokerObjectMother.CONNECTION_QUEUES_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.CONSUMED_QUEUES_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.DEAD_LETTER_QUEUE
@@ -11,6 +10,7 @@ import de.hennihaus.objectmothers.BrokerObjectMother.MESSAGE_TO_DLQ_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.PRODUCED_QUEUES_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.QUEUE_CREATION_DELETION_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.TOPIC_CREATION_DELETION_INFO
+import de.hennihaus.testutils.model.Job
 
 object BrokerContainerObjectMother {
 

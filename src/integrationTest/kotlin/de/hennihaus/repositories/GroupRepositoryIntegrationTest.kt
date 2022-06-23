@@ -2,11 +2,11 @@ package de.hennihaus.repositories
 
 import de.hennihaus.configurations.MongoConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.MongoConfiguration.DATABASE_PORT
-import de.hennihaus.containers.MongoContainer
 import de.hennihaus.models.Group
 import de.hennihaus.objectmothers.GroupObjectMother.getFirstGroup
 import de.hennihaus.objectmothers.MongoContainerObjectMother
 import de.hennihaus.plugins.initKoin
+import de.hennihaus.testutils.containers.MongoContainer
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.ints.shouldBeGreaterThanOrEqual
@@ -43,7 +43,7 @@ class GroupRepositoryIntegrationTest : KoinTest {
             properties = mapOf(
                 DATABASE_HOST to mongoContainer.host,
                 DATABASE_PORT to mongoContainer.firstMappedPort.toString(),
-            )
+            ),
         )
     }
 

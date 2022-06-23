@@ -1,4 +1,4 @@
-package de.hennihaus.containers
+package de.hennihaus.testutils.containers
 
 import de.hennihaus.models.Bank
 import de.hennihaus.models.Group
@@ -22,7 +22,7 @@ object MongoContainer {
         mapOf(
             Group::class.simpleName to getEntries<Group>(),
             Bank::class.simpleName to getEntries<Bank>(),
-            Task::class.simpleName to getEntries<Task>()
+            Task::class.simpleName to getEntries<Task>(),
         )
     }
 

@@ -1,0 +1,241 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CHANGEABLE",
+    "contact": {
+      "name": "CHANGEABLE",
+      "email": "CHANGEABLE"
+    },
+    "description": "CHANGEABLE",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://github.com/hennihaus/bamschufarest/blob/master/LICENSE"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://bambusinessintegration.wi.hs-furtwangen.de/schufa",
+      "description": "Base-URL"
+    }
+  ],
+  "paths": {
+    "/rating": {
+      "get": {
+        "tags": [
+          "Rating"
+        ],
+        "operationId": "getRating",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/socialSecurityNumber"
+          },
+          {
+            "$ref": "#/components/parameters/ratingLevel"
+          },
+          {
+            "$ref": "#/components/parameters/delayInMilliseconds"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/password"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Rating"
+    }
+  ],
+  "components": {
+    "parameters": {
+      "socialSecurityNumber": {
+        "name": "socialSecurityNumber",
+        "description": "CHANGEABLE",
+        "in": "query",
+        "required": true,
+        "example": "CHANGEABLE",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ratingLevel": {
+        "name": "ratingLevel",
+        "description": "CHANGEABLE",
+        "in": "query",
+        "required": true,
+        "example": "CHANGEABLE",
+        "schema": {
+          "$ref": "#/components/schemas/RatingLevel"
+        }
+      },
+      "delayInMilliseconds": {
+        "name": "delayInMilliseconds",
+        "description": "CHANGEABLE",
+        "in": "query",
+        "required": true,
+        "example": "CHANGEABLE",
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "username": {
+        "name": "username",
+        "description": "CHANGEABLE",
+        "in": "query",
+        "required": true,
+        "example": "CHANGEABLE",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "password": {
+        "name": "password",
+        "description": "CHANGEABLE",
+        "in": "query",
+        "required": true,
+        "example": "CHANGEABLE",
+        "schema": {
+          "type": "string",
+          "format": "password"
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "CHANGEABLE",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Rating"
+            },
+            "example": {
+              "score": 9858,
+              "failureRiskInPercent": 0.77
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "CHANGEABLE",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "message": "[username is required, password is required]",
+              "dateTime": "2022-01-31T07:43:30"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "CHANGEABLE",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "message": "[group not found by username and password]",
+              "dateTime": "2022-01-31T07:43:30"
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "CHANGEABLE",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "message": "[kotlin.Exception: Internal server error]",
+              "dateTime": "2022-01-31T07:43:30"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "RatingLevel": {
+        "type": "string",
+        "enum": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "L",
+          "N",
+          "O",
+          "P"
+        ]
+      },
+      "Rating": {
+        "type": "object",
+        "required": [
+          "score",
+          "failureRiskInPercent"
+        ],
+        "properties": {
+          "score": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "maximum": 9999
+          },
+          "failureRiskInPercent": {
+            "type": "number",
+            "format": "double",
+            "minimum": 0.77,
+            "maximum": 98.07
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "message",
+          "dateTime"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "dateTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}

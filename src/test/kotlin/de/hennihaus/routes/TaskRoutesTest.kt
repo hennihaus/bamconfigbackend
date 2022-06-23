@@ -12,7 +12,7 @@ import de.hennihaus.plugins.ExceptionResponse
 import de.hennihaus.plugins.ObjectIdException
 import de.hennihaus.services.TaskService
 import de.hennihaus.services.TaskServiceImpl.Companion.ID_MESSAGE
-import de.hennihaus.testutils.KtorTestBuilder.testApplicationWith
+import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
@@ -52,7 +52,7 @@ class TaskRoutesTest {
             coEvery { taskService.getAllTasks() } returns listOf(
                 getSchufaTask(),
                 getSynchronousBankTask(),
-                getAsynchronousBankTask()
+                getAsynchronousBankTask(),
             )
 
             val response = testClient.get("/tasks")
@@ -61,7 +61,7 @@ class TaskRoutesTest {
             response.body<List<Task>>().shouldContainExactly(
                 getSchufaTask(),
                 getSynchronousBankTask(),
-                getAsynchronousBankTask()
+                getAsynchronousBankTask(),
             )
             coVerify(exactly = 1) { taskService.getAllTasks() }
         }

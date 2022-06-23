@@ -1,7 +1,7 @@
 package de.hennihaus.services.callservices
 
-import de.hennihaus.models.generated.GetQueuesResponse
-import de.hennihaus.models.generated.GetTopicsResponse
+import de.hennihaus.models.generated.broker.GetQueuesResponse
+import de.hennihaus.models.generated.broker.GetTopicsResponse
 import io.ktor.client.statement.HttpResponse
 
 interface BrokerCallService {

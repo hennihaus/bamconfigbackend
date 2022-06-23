@@ -9,7 +9,7 @@ import org.koin.core.module.Module
 import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 import io.ktor.server.testing.testApplication as ktorTestApplication
 
-object KtorTestBuilder {
+object KtorTestUtils {
     fun testApplicationWith(vararg mockModules: Module, block: suspend ApplicationTestBuilder.() -> Unit) {
         ktorTestApplication {
             application {

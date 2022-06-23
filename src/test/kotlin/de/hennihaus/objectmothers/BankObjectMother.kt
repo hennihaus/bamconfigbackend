@@ -10,12 +10,12 @@ import de.hennihaus.objectmothers.GroupObjectMother.getThirdGroup
 
 object BankObjectMother {
 
-    private const val DEFAULT_THUMBNAIL_URL = "http://localhost:8085/picture.jpg"
-    private const val DEFAULT_IS_ACTIVE = true
-
     const val SCHUFA_BANK_NAME = "schufa"
     const val V_BANK_NAME = "vbank"
     const val JMS_BANK_NAME = "jmsBankA"
+
+    const val DEFAULT_THUMBNAIL_URL = "http://localhost:8085/picture.jpg"
+    const val DEFAULT_IS_ACTIVE = true
 
     fun getSchufaBank(
         jmsQueue: String = SCHUFA_BANK_NAME,
