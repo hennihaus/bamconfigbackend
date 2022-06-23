@@ -22,6 +22,8 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
+        env:
+          GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.API_GITHUB_AUTHORIZATION_TOKEN }}
 
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.36.0

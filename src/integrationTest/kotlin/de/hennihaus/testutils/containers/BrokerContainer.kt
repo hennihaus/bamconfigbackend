@@ -1,12 +1,12 @@
-package de.hennihaus.containers
+package de.hennihaus.testutils.containers
 
-import de.hennihaus.model.Job
-import de.hennihaus.model.generated.GetJobsResponse
-import de.hennihaus.models.generated.GetQueuesResponse
-import de.hennihaus.models.generated.GetTopicsResponse
+import de.hennihaus.models.generated.broker.GetQueuesResponse
+import de.hennihaus.models.generated.broker.GetTopicsResponse
 import de.hennihaus.services.BrokerServiceImpl.Companion.DESTINATION_NAME_DELIMITER
 import de.hennihaus.services.BrokerServiceImpl.Companion.DESTINATION_TYPE_DELIMITER
 import de.hennihaus.services.callservices.resources.Broker
+import de.hennihaus.testutils.model.Job
+import de.hennihaus.testutils.model.generated.GetJobsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO

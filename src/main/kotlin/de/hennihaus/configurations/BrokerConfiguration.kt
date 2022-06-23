@@ -1,12 +1,8 @@
 package de.hennihaus.configurations
 
-import io.ktor.client.engine.cio.CIO
 import org.koin.dsl.module
 
 val brokerModule = module {
-    single {
-        CIO.create()
-    }
     single {
         val protocol = getProperty<String>(key = BrokerConfiguration.ACTIVE_MQ_PROTOCOL)
         val host = getProperty<String>(key = BrokerConfiguration.ACTIVE_MQ_HOST)
@@ -21,7 +17,7 @@ val brokerModule = module {
             port = port.toInt(),
             maxRetries = maxRetries.toInt(),
             authorizationHeader = authorizationHeader,
-            originHeader = originHeader
+            originHeader = originHeader,
         )
     }
 }

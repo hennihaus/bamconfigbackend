@@ -5,12 +5,12 @@ import de.hennihaus.models.RatingLevel
 
 object CreditConfigurationObjectMother {
 
-    private const val DEFAULT_MIN_AMOUNT_IN_EUROS = 10_000
-    private const val DEFAULT_MAX_AMOUNT_IN_EUROS = 50_000
-    private const val DEFAULT_MIN_TERM_IN_MONTHS = 6
-    private const val DEFAULT_MAX_TERM_IN_MONTHS = 36
-    private val DEFAULT_MIN_SCHUFA_RATING = RatingLevel.A
-    private val DEFAULT_MAX_SCHUFA_RATING = RatingLevel.P
+    const val DEFAULT_MIN_AMOUNT_IN_EUROS = 10_000
+    const val DEFAULT_MAX_AMOUNT_IN_EUROS = 50_000
+    const val DEFAULT_MIN_TERM_IN_MONTHS = 6
+    const val DEFAULT_MAX_TERM_IN_MONTHS = 36
+    val DEFAULT_MIN_SCHUFA_RATING = RatingLevel.A
+    val DEFAULT_MAX_SCHUFA_RATING = RatingLevel.P
 
     fun getCreditConfigurationWithNoEmptyFields(
         minAmountInEuros: Int = DEFAULT_MIN_AMOUNT_IN_EUROS,

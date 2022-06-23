@@ -11,6 +11,8 @@ import de.hennihaus.objectmothers.BrokerObjectMother.MESSAGE_TO_DLQ_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.PRODUCED_QUEUES_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.QUEUE_CREATION_DELETION_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.TOPIC_CREATION_DELETION_INFO
+import de.hennihaus.objectmothers.BrokerObjectMother.getQueuesResponse
+import de.hennihaus.objectmothers.BrokerObjectMother.getTopicsResponse
 import de.hennihaus.services.callservices.BrokerCallServiceImpl
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.should
@@ -21,12 +23,9 @@ import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.io.File
 
 class BrokerServiceTest {
 
@@ -67,12 +66,8 @@ class BrokerServiceTest {
     inner class ResetBroker {
         @Test
         fun `should reset broker`() = runBlocking {
-            coEvery { brokerCall.getAllQueues() } returns Json.decodeFromString(
-                string = File("./src/test/resources/broker/getQueuesResponse.json").readText()
-            )
-            coEvery { brokerCall.getAllTopics() } returns Json.decodeFromString(
-                string = File("./src/test/resources/broker/getTopicsResponse.json").readText()
-            )
+            coEvery { brokerCall.getAllQueues() } returns getQueuesResponse()
+            coEvery { brokerCall.getAllTopics() } returns getTopicsResponse()
             coEvery { brokerCall.deleteQueueByName(name = any()) } returns mockk()
             coEvery { brokerCall.deleteTopicByName(name = any()) } returns mockk()
             coEvery { brokerCall.deleteAllJobs() } returns mockk()

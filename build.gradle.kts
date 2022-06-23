@@ -1,6 +1,7 @@
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import kotlinx.kover.api.CoverageEngine
 import kotlinx.kover.api.VerificationValueType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     application
@@ -23,6 +24,12 @@ application {
 tasks.shadowJar {
     manifest {
         attributes("Main-Class" to "io.ktor.server.cio.EngineMain")
+    }
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn")
     }
 }
 

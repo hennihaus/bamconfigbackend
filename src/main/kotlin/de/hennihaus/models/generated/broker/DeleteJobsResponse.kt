@@ -1,22 +1,22 @@
-package de.hennihaus.models.generated
+package de.hennihaus.models.generated.broker
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DeleteQueueResponse(
+data class DeleteJobsResponse(
     val error: String? = null,
     @SerialName("error_type")
     val errorType: String? = null,
-    val request: DeleteQueueRequest,
+    val request: DeleteJobsRequest,
     val status: Int,
     val timestamp: Long? = null,
 )
 
 @Serializable
-data class DeleteQueueRequest(
-    val arguments: List<String> = emptyList(),
+data class DeleteJobsRequest(
     val mbean: String,
+    val arguments: List<String> = emptyList(),
     val operation: String,
-    val type: String
+    val type: String,
 )

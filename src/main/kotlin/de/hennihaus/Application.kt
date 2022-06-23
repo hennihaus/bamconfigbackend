@@ -1,6 +1,8 @@
 package de.hennihaus
 
 import de.hennihaus.configurations.brokerModule
+import de.hennihaus.configurations.defaultModule
+import de.hennihaus.configurations.githubModule
 import de.hennihaus.configurations.mongoModule
 import de.hennihaus.plugins.configureCors
 import de.hennihaus.plugins.configureDependencyInjection
@@ -11,7 +13,6 @@ import io.ktor.server.application.Application
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.embeddedServer
 import org.koin.core.module.Module
-import org.koin.ksp.generated.defaultModule
 
 fun main() {
     embeddedServer(CIO, port = 8080) {
@@ -19,7 +20,7 @@ fun main() {
     }.start(wait = true)
 }
 
-fun Application.module(vararg koinModules: Module = arrayOf(defaultModule, mongoModule, brokerModule)) {
+fun Application.module(vararg koinModules: Module = arrayOf(defaultModule, mongoModule, brokerModule, githubModule)) {
     configureMonitoring()
     configureDependencyInjection(koinModules = koinModules)
     configureCors()

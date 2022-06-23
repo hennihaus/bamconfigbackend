@@ -1,4 +1,4 @@
-package de.hennihaus.models.generated
+package de.hennihaus.models.generated.broker
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -11,17 +11,17 @@ data class GetQueuesResponse(
     val request: GetQueuesRequest,
     val status: Int,
     val timestamp: Long? = null,
-    val value: List<Queue> = emptyList()
+    val value: List<Queue> = emptyList(),
 )
 
 @Serializable
 data class GetQueuesRequest(
     val attribute: String,
     val mbean: String,
-    val type: String
+    val type: String,
 )
 
 @Serializable
 data class Queue(
-    val objectName: String
+    val objectName: String,
 )

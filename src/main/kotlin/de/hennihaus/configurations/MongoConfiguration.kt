@@ -8,7 +8,6 @@ import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
 
 val mongoModule = module {
-
     single {
         val databaseName = getProperty<String>(MongoConfiguration.DATABASE_NAME)
         val databaseHost = getProperty<String>(MongoConfiguration.DATABASE_HOST)

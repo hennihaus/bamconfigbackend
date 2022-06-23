@@ -1,4 +1,4 @@
-package de.hennihaus.model.generated
+package de.hennihaus.testutils.model.generated
 
 import kotlinx.serialization.Serializable
 
@@ -7,14 +7,14 @@ data class GetJobsResponse(
     val request: GetJobsRequest,
     val status: Int,
     val timestamp: Long,
-    val value: Map<String, Job>
+    val value: Map<String, Job>,
 )
 
 @Serializable
 data class GetJobsRequest(
     val attribute: String,
     val mbean: String,
-    val type: String
+    val type: String,
 )
 
 @Serializable
@@ -25,5 +25,5 @@ data class Job(
     val next: String,
     val period: Int,
     val repeat: Int,
-    val start: String
+    val start: String,
 )

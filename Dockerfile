@@ -4,6 +4,7 @@ WORKDIR /home/gradle/src
 RUN gradle shadowJar --no-daemon
 
 FROM openjdk:11.0.14-jre-slim
+ENV GITHUB_AUTHORIZATION_TOKEN=abc
 EXPOSE 8080:8080
 RUN mkdir /app
 COPY --from=build /home/gradle/src/build/libs/*-all.jar /app/ktor-docker-sample.jar
