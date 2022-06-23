@@ -20,7 +20,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
         env:
-          GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.API_GITHUB_AUTHORIZATION_TOKEN }}
 
       - name: Build Docker Image
         run: docker build . --file Dockerfile --tag ${{ github.repository }}:latest
