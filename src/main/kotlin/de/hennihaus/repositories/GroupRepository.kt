@@ -21,22 +21,22 @@ class GroupRepository(private val db: CoroutineDatabase) : Repository<Group, Obj
     override suspend fun save(entry: Group): Group {
         col.updateOne(
             target = entry,
-            options = UpdateOptions().upsert(true)
+            options = UpdateOptions().upsert(true),
         )
-        return getById(id = entry.id.toString().toObjectId { it }) ?: throw NotFoundException(
-            message = GroupServiceImpl.ID_MESSAGE
+        return getById(id = "${entry.id}".toObjectId { it }) ?: throw NotFoundException(
+            message = GroupServiceImpl.GROUP_NOT_FOUND_MESSAGE,
         )
     }
 
     suspend fun getGroupByUsername(username: String): Group? = col.findOne(
-        Group::username eq username
+        filter = Group::username eq username,
     )
 
     suspend fun getGroupByPassword(password: String): Group? = col.findOne(
-        Group::password eq password
+        filter = Group::password eq password,
     )
 
     suspend fun getGroupByJmsQueue(jmsQueue: String): Group? = col.findOne(
-        Group::jmsQueue eq jmsQueue
+        filter = Group::jmsQueue eq jmsQueue,
     )
 }

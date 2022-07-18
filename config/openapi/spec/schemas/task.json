@@ -1,0 +1,283 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BAM Business Integration - Task Schema",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "Task": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description",
+          "step",
+          "isOpenApiVerbose",
+          "contact",
+          "endpoints",
+          "parameters",
+          "responses",
+          "banks"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 50
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "step": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "isOpenApiVerbose": {
+            "type": "boolean"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/Contact"
+          },
+          "endpoints": {
+            "type": "array",
+            "title": "Endpoints",
+            "items": {
+              "$ref": "#/components/schemas/Endpoint"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "parameters": {
+            "type": "array",
+            "title": "Parameters",
+            "items": {
+              "$ref": "#/components/schemas/Parameter"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "responses": {
+            "type": "array",
+            "title": "Responses",
+            "items": {
+              "$ref": "#/components/schemas/Response"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "banks": {
+            "type": "array",
+            "title": "Banks",
+            "items": {
+              "$ref": "./bank.json#/components/schemas/Bank"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          }
+        },
+        "example": {
+          "id": "e393ce40-7c72-436e-8cf7-eb5be28278d5",
+          "title": "Asynchrone Banken",
+          "description": "<p>Es existieren eine Reihe bereits vorgegebener asynchroner Banken, welche per JMS erreichbar sind. Um die Banken zu erreichen, müssen Sie im VPN der Hochschule sein und den Port in der URL mit angeben. Sie kommunizieren nicht direkt mit den Banken, sondern mit einem ActiveMQ-Broker als Middleware. Die Messages an den Broker sind Textnachrichten, die als JSON strukturiert sind. Die Message entspricht also einem JSON-Objekt mit den Parametern als einzelne Key-Value-Pairs (siehe unten). Ein Error-Handling wie in den synchronen Services gibt es nicht. Sie übernehmen daher die Anfragegrenzen aus der internen Konfiguration der Banken. Die Rückgabewert der Banken enthält neben einem Zinsatz für den gewünschten Kredit zwischen 0 und 10% vom Datentyp Double die Request ID der Anfrage. Eine Bank hört auf einer Queue des Broker nach Nachrichten für diese Bank (Bei der Sparkasse z.B. „sparkasse“). Sie entnehmen die Antworten der Banken auf ihrer Gruppen-Queue, z.B. ResponseLoanBrokerGruppe01.</p><p>Beispiel Textnachricht Request: {\\\"requestId\\\": \\\"123\\\",\\\"amountInEuros\\\": 20000,\\\"termInMonths\\\": 12,\\\"ratingLevel\\\": \\\"B\\\",\\\"delayInMilliseconds\\\": 0,\\\"username\\\": \\\"Gruppe01\\\",\\\"password\\\": \\\"123456\\\"}</p><p>Beispiel Textnachricht Response: {\\\"requestId\\\":\\\"123\\\",\\\"lendingRate\\\":2.738343644690228}</p>",
+          "step": 3,
+          "isOpenApiVerbose": false,
+          "contact": {
+            "name": "Jan-Hendrik Hausner",
+            "email": "jan-hendrik.hausner@outlook.com"
+          },
+          "endpoints": [
+            {
+              "type": "JMS",
+              "url": "tcp://bambusinessintegration.wi.hs-furtwangen.de:61616",
+              "docsUrl": ""
+            }
+          ],
+          "parameters": [
+            {
+              "name": "requestId",
+              "type": "STRING",
+              "description": "Zufällige Request-ID",
+              "example": "7729e687-415b-4594-818b-77f2800b2a08"
+            }
+          ],
+          "responses": [
+            {
+              "code": -1,
+              "contentType": "application/json",
+              "description": "Kreditzins in Prozent",
+              "example": "{ \\\"requestId\\\": \\\"123\\\", \\\"lendingRateInPercent\\\": 2.738343644690228 }"
+            }
+          ],
+          "banks": [
+            {
+              "jmsQueue": "sparkasse",
+              "name": "Sparkasse",
+              "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png",
+              "isAsync": true,
+              "isActive": true,
+              "creditConfiguration": {
+                "minAmountInEuros": 10000,
+                "maxAmountInEuros": 50000,
+                "minTermInMonths": 6,
+                "maxTermInMonths": 36,
+                "minSchufaRating": "A",
+                "maxSchufaRating": "P"
+              },
+              "groups": [
+                {
+                  "id": "e7a259c7-44f1-472f-a869-f9c71f65a209",
+                  "username": "Beispielgruppe",
+                  "password": "OOfKqWksmA",
+                  "jmsQueue": "ResponseLoanBrokerBeispielgruppe",
+                  "students": [
+                    "Angela Merkel",
+                    "Max Mustermann",
+                    "Thomas Müller"
+                  ],
+                  "stats": {
+                    "schufa": 0,
+                    "deutschebank": 0,
+                    "sparkasse": 0,
+                    "psdbank": 0,
+                    "raiffeisen": 0,
+                    "volksbank": 0,
+                    "commerzbank": 0
+                  },
+                  "hasPassed": false
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Contact": {
+        "type": "object",
+        "required": [
+          "name",
+          "email"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 50
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "pattern": "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
+          }
+        }
+      },
+      "Endpoint": {
+        "type": "object",
+        "required": [
+          "type",
+          "url",
+          "docsUrl"
+        ],
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/EndpointType"
+          },
+          "url": {
+            "type": "string",
+            "format": "url"
+          },
+          "docsUrl": {
+            "type": "string",
+            "format": "url"
+          }
+        }
+      },
+      "EndpointType": {
+        "type": "string",
+        "enum": [
+          "REST",
+          "JMS"
+        ]
+      },
+      "Parameter": {
+        "type": "object",
+        "required": [
+          "name",
+          "type",
+          "description",
+          "example"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 50
+          },
+          "type": {
+            "$ref": "#/components/schemas/ParameterType"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 100
+          },
+          "example": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          }
+        }
+      },
+      "ParameterType": {
+        "type": "string",
+        "enum": [
+          "STRING",
+          "INTEGER",
+          "LONG",
+          "CHARACTER"
+        ]
+      },
+      "Response": {
+        "type": "object",
+        "required": [
+          "code",
+          "contentType",
+          "description",
+          "example"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "http-status",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "contentType": {
+            "type": "string",
+            "format": "content-type",
+            "x-is-contextual": true
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "example": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        }
+      }
+    }
+  }
+}

@@ -47,7 +47,7 @@ class BankServiceTest {
             coEvery { repository.getAll() } returns listOf(
                 getSchufaBank(),
                 getVBank(),
-                getJmsBank()
+                getJmsBank(),
             )
 
             val response: List<Bank> = classUnderTest.getAllBanks()
@@ -55,7 +55,7 @@ class BankServiceTest {
             response.shouldContainExactly(
                 getSchufaBank(),
                 getVBank(),
-                getJmsBank()
+                getJmsBank(),
             )
             coVerifySequence {
                 repository.getAll()
@@ -103,7 +103,7 @@ class BankServiceTest {
             val result = shouldThrow<NotFoundException> { classUnderTest.getBankByJmsQueue(jmsQueue = jmsQueue) }
 
             result shouldBe instanceOf<NotFoundException>()
-            result.message shouldBe BankServiceImpl.ID_MESSAGE
+            result.message shouldBe BankServiceImpl.BANK_NOT_FOUND_MESSAGE
             coVerify(exactly = 1) { repository.getById(id = jmsQueue) }
             coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
         }

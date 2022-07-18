@@ -1,0 +1,102 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BAM Business Integration - Shared Stuff",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "responses": {
+      "200": {
+        "description": "Exists",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ExistsResponse"
+            },
+            "example": {
+              "exists": true
+            }
+          }
+        }
+      },
+      "204": {
+        "description": "No Content",
+        "content": {
+          "text/plain": {}
+        }
+      },
+      "400": {
+        "description": "Invalid Request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "message": "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+              "dateTime": "2022-01-31T07:43:30"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Not Found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "message": "[Resource not found]",
+              "dateTime": "2022-01-31T07:43:30"
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Internal Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "message": "[kotlin.Exception: Internal server error]",
+              "dateTime": "2022-01-31T07:43:30"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ExistsResponse": {
+        "type": "object",
+        "required": [
+          "exists"
+        ],
+        "properties": {
+          "exists": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "message",
+          "dateTime"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "dateTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}

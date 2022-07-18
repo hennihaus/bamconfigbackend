@@ -82,16 +82,16 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
                     match(
                         expr(
                             `in` from listOf(Bank::jmsQueue, Task::banks.variable)
-                        )
+                        ),
                     ),
                     lookup(
                         from = Group::class.simpleName?.lowercase() as String,
                         localField = Bank::groups.name,
                         foreignField = ID_FIELD,
-                        newAs = Bank::groups.name
-                    )
-                )
-            )
+                        newAs = Bank::groups.name,
+                    ),
+                ),
+            ),
         ).first()
     }
 
@@ -143,10 +143,10 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
                         from = Group::class.simpleName?.lowercase() as String,
                         localField = Bank::groups.name,
                         foreignField = ID_FIELD,
-                        newAs = Bank::groups.name
-                    )
-                )
-            )
+                        newAs = Bank::groups.name,
+                    ),
+                ),
+            ),
         ).toList()
     }
 
@@ -167,18 +167,19 @@ class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, Objec
     override suspend fun save(entry: Task): Task {
         col.updateOne(
             target = entry,
-            options = UpdateOptions().upsert(true)
+            options = UpdateOptions().upsert(true),
         )
         col.updateOne(
             filter = Task::id eq entry.id,
             update = set(
                 SetTo(
-                    Task::banks, entry.banks.map { bank -> bank.jmsQueue }
-                )
-            )
+                    property = Task::banks,
+                    value = entry.banks.map { bank -> bank.jmsQueue },
+                ),
+            ),
         )
         return getById(id = entry.id.toString().toObjectId { it }) ?: throw NotFoundException(
-            message = TaskServiceImpl.ID_MESSAGE
+            message = TaskServiceImpl.TASK_NOT_FOUND_MESSAGE,
         )
     }
 }

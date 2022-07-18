@@ -45,7 +45,6 @@ data class Endpoint(
 
 enum class EndpointType {
     REST,
-    SOAP,
     JMS,
 }
 
@@ -69,7 +68,7 @@ data class Response(
     @Serializable(with = HttpStatusCodeSerializer::class)
     val code: HttpStatusCode,
     @Serializable(with = ContentTypeSerializer::class)
-    val mediaType: ContentType,
+    val contentType: ContentType,
     val description: String,
     val example: String,
 )

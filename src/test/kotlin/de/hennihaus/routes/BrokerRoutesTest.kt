@@ -1,11 +1,10 @@
 package de.hennihaus.routes
 
+import de.hennihaus.models.rest.ErrorResponse
 import de.hennihaus.objectmothers.BankObjectMother.getJmsBank
-import de.hennihaus.objectmothers.ExceptionResponseObjectMother.INTERNAL_SERVER_ERROR_MESSAGE
-import de.hennihaus.objectmothers.ExceptionResponseObjectMother.getInternalServerErrorResponse
+import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInternalServerErrorResponse
 import de.hennihaus.objectmothers.GroupObjectMother.getFirstGroup
 import de.hennihaus.objectmothers.GroupObjectMother.getSecondGroup
-import de.hennihaus.plugins.ExceptionResponse
 import de.hennihaus.services.BrokerService
 import de.hennihaus.services.GroupService
 import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
@@ -46,11 +45,11 @@ class BrokerRoutesTest {
         fun `should return 204 and no content when reset was successful`() = testApplicationWith(mockModule) {
             coEvery { groupService.resetAllGroups() } returns listOf(
                 getFirstGroup(),
-                getSecondGroup()
+                getSecondGroup(),
             )
             coEvery { brokerService.resetBroker() } returns Unit
 
-            val response = testClient.delete(urlString = "/activemq")
+            val response = testClient.delete(urlString = "/v1/activemq")
 
             response shouldHaveStatus HttpStatusCode.NoContent
             response.bodyAsText().shouldBeEmpty()
@@ -61,14 +60,14 @@ class BrokerRoutesTest {
         }
 
         @Test
-        fun `should return 500 and an exception response on error`() = testApplicationWith(mockModule) {
+        fun `should return 500 and an error response when error occurs`() = testApplicationWith(mockModule) {
             coEvery { groupService.resetAllGroups() } returns emptyList()
-            coEvery { brokerService.resetBroker() } throws Exception(INTERNAL_SERVER_ERROR_MESSAGE)
+            coEvery { brokerService.resetBroker() } throws IllegalStateException()
 
-            val response = testClient.delete(urlString = "/activemq")
+            val response = testClient.delete(urlString = "/v1/activemq")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ExceptionResponse>() shouldBe getInternalServerErrorResponse()
+            response.body<ErrorResponse>() shouldBe getInternalServerErrorResponse()
             coVerifySequence {
                 groupService.resetAllGroups()
                 brokerService.resetBroker()
@@ -83,7 +82,7 @@ class BrokerRoutesTest {
             val name = getJmsBank().name
             coEvery { brokerService.deleteQueueByName(name = any()) } returns Unit
 
-            val response = testClient.delete("/activemq/$name")
+            val response = testClient.delete(urlString = "/v1/activemq/$name")
 
             response shouldHaveStatus HttpStatusCode.NoContent
             response.bodyAsText().shouldBeEmpty()
@@ -91,14 +90,14 @@ class BrokerRoutesTest {
         }
 
         @Test
-        fun `should return 500 and an exception response on error`() = testApplicationWith(mockModule) {
+        fun `should return 500 and an error response when exception occurs`() = testApplicationWith(mockModule) {
             val name = getJmsBank().name
-            coEvery { brokerService.deleteQueueByName(name = any()) } throws Exception(INTERNAL_SERVER_ERROR_MESSAGE)
+            coEvery { brokerService.deleteQueueByName(name = any()) } throws IllegalStateException()
 
-            val response = testClient.delete("/activemq/$name")
+            val response = testClient.delete(urlString = "/v1/activemq/$name")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ExceptionResponse>() shouldBe getInternalServerErrorResponse()
+            response.body<ErrorResponse>() shouldBe getInternalServerErrorResponse()
             coVerify(exactly = 1) { brokerService.deleteQueueByName(name = name) }
         }
     }

@@ -13,7 +13,7 @@ class BankServiceImpl(private val repository: BankRepository, private val stats:
     }
 
     override suspend fun getBankByJmsQueue(jmsQueue: String): Bank {
-        val bank = repository.getById(jmsQueue) ?: throw NotFoundException(message = ID_MESSAGE)
+        val bank = repository.getById(jmsQueue) ?: throw NotFoundException(message = BANK_NOT_FOUND_MESSAGE)
         return bank.copy(groups = bank.groups.map { group -> stats.setHasPassed(group = group) })
     }
 
@@ -22,6 +22,6 @@ class BankServiceImpl(private val repository: BankRepository, private val stats:
     override suspend fun saveAllBanks(banks: List<Bank>): List<Bank> = banks.map { saveBank(it) }
 
     companion object {
-        internal const val ID_MESSAGE = "No Bank for given ID found!"
+        internal const val BANK_NOT_FOUND_MESSAGE = "[bank not found by jmsQueue]"
     }
 }

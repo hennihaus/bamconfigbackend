@@ -1,21 +1,23 @@
 package de.hennihaus.routes
 
 import de.hennihaus.models.Group
-import de.hennihaus.objectmothers.ExceptionResponseObjectMother.INTERNAL_SERVER_ERROR_MESSAGE
-import de.hennihaus.objectmothers.ExceptionResponseObjectMother.getGroupNotFoundErrorResponse
-import de.hennihaus.objectmothers.ExceptionResponseObjectMother.getInternalServerErrorResponse
-import de.hennihaus.objectmothers.ExceptionResponseObjectMother.getInvalidIdErrorResponse
+import de.hennihaus.models.rest.ErrorResponse
+import de.hennihaus.models.rest.ExistsResponse
+import de.hennihaus.objectmothers.ErrorResponseObjectMother.getGroupNotFoundErrorResponse
+import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInternalServerErrorResponse
+import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInvalidIdErrorResponse
 import de.hennihaus.objectmothers.GroupObjectMother.getFirstGroup
 import de.hennihaus.objectmothers.GroupObjectMother.getSecondGroup
 import de.hennihaus.objectmothers.GroupObjectMother.getThirdGroup
-import de.hennihaus.plugins.ExceptionResponse
 import de.hennihaus.plugins.ObjectIdException
 import de.hennihaus.services.GroupService
-import de.hennihaus.services.GroupServiceImpl.Companion.ID_MESSAGE
+import de.hennihaus.services.GroupServiceImpl.Companion.GROUP_NOT_FOUND_MESSAGE
 import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -31,6 +33,7 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.datetime.LocalDateTime
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -53,16 +56,16 @@ class GroupRoutesTest {
             coEvery { groupService.getAllGroups() } returns listOf(
                 getFirstGroup(),
                 getSecondGroup(),
-                getThirdGroup()
+                getThirdGroup(),
             )
 
-            val response = testClient.get("/groups")
+            val response = testClient.get(urlString = "/v1/groups")
 
             response shouldHaveStatus HttpStatusCode.OK
             response.body<List<Group>>().shouldContainExactly(
                 getFirstGroup(),
                 getSecondGroup(),
-                getThirdGroup()
+                getThirdGroup(),
             )
             coVerify(exactly = 1) { groupService.getAllGroups() }
         }
@@ -71,7 +74,7 @@ class GroupRoutesTest {
         fun `should return 200 and an empty list when no groups`() = testApplicationWith(mockModule) {
             coEvery { groupService.getAllGroups() } returns emptyList()
 
-            val response = client.get("/groups")
+            val response = client.get(urlString = "/v1/groups")
 
             response shouldHaveStatus HttpStatusCode.OK
             response.bodyAsText() shouldBe """
@@ -82,13 +85,22 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 500 and an exception response on error`() = testApplicationWith(mockModule) {
-            coEvery { groupService.getAllGroups() } throws Exception(INTERNAL_SERVER_ERROR_MESSAGE)
+        fun `should return 500 and an error response when exception is thrown`() = testApplicationWith(mockModule) {
+            coEvery { groupService.getAllGroups() } throws IllegalStateException()
 
-            val response = testClient.get("/groups")
+            val response = testClient.get(urlString = "/v1/groups")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ExceptionResponse>() shouldBe getInternalServerErrorResponse()
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInternalServerErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInternalServerErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { groupService.getAllGroups() }
         }
     }
@@ -100,7 +112,7 @@ class GroupRoutesTest {
             val id = getFirstGroup().id.toString()
             coEvery { groupService.getGroupById(id = any()) } returns getFirstGroup()
 
-            val response = testClient.get("/groups/$id")
+            val response = testClient.get(urlString = "/v1/groups/$id")
 
             response shouldHaveStatus HttpStatusCode.OK
             response.body<Group>() shouldBe getFirstGroup()
@@ -108,14 +120,25 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 404 and not found exception response on error`() = testApplicationWith(mockModule) {
+        fun `should return 404 and not found error response when exception occurs`() = testApplicationWith(mockModule) {
             val id = ObjectId().toString()
-            coEvery { groupService.getGroupById(id = any()) } throws NotFoundException(message = ID_MESSAGE)
+            coEvery { groupService.getGroupById(id = any()) } throws NotFoundException(
+                message = GROUP_NOT_FOUND_MESSAGE,
+            )
 
-            val response = testClient.get("/groups/$id")
+            val response = testClient.get(urlString = "/v1/groups/$id")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ExceptionResponse>() shouldBe getGroupNotFoundErrorResponse()
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getGroupNotFoundErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getGroupNotFoundErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { groupService.getGroupById(id = id) }
         }
     }
@@ -127,23 +150,32 @@ class GroupRoutesTest {
             val (id, username) = getFirstGroup()
             coEvery { groupService.checkUsername(id = any(), username = any()) } returns true
 
-            val response = testClient.get("/groups/$id/$username/username")
+            val response = testClient.get(urlString = "/v1/groups/$id/check/username/$username")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.bodyAsText() shouldBe true.toString()
+            response.body<ExistsResponse>() shouldBe ExistsResponse(exists = true)
             coVerify(exactly = 1) { groupService.checkUsername(id = id.toString(), username = username) }
         }
 
         @Test
-        fun `should return 400 and an exception when id is invalid`() = testApplicationWith(mockModule) {
+        fun `should return 400 and an error response when id is invalid`() = testApplicationWith(mockModule) {
             val id = "invalidId"
             val username = getFirstGroup().username
             coEvery { groupService.checkUsername(id = any(), username = any()) } throws ObjectIdException()
 
-            val response = testClient.get("/groups/$id/$username/username")
+            val response = testClient.get(urlString = "/v1/groups/$id/check/username/$username")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ExceptionResponse>() shouldBe getInvalidIdErrorResponse()
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { groupService.checkUsername(id = id, username = username) }
         }
     }
@@ -155,23 +187,32 @@ class GroupRoutesTest {
             val (id, _, password) = getFirstGroup()
             coEvery { groupService.checkPassword(id = any(), password = any()) } returns true
 
-            val response = testClient.get("/groups/$id/$password/password")
+            val response = testClient.get(urlString = "/v1/groups/$id/check/password/$password")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.bodyAsText() shouldBe true.toString()
+            response.body<ExistsResponse>() shouldBe ExistsResponse(exists = true)
             coVerify(exactly = 1) { groupService.checkPassword(id = id.toString(), password = password) }
         }
 
         @Test
-        fun `should return 400 and an exception when id is invalid`() = testApplicationWith(mockModule) {
+        fun `should return 400 and an error response when id is invalid`() = testApplicationWith(mockModule) {
             val id = "invalidId"
             val password = getFirstGroup().password
             coEvery { groupService.checkPassword(id = any(), password = any()) } throws ObjectIdException()
 
-            val response = testClient.get("/groups/$id/$password/password")
+            val response = testClient.get(urlString = "/v1/groups/$id/check/password/$password")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ExceptionResponse>() shouldBe getInvalidIdErrorResponse()
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { groupService.checkPassword(id = id, password = password) }
         }
     }
@@ -183,35 +224,44 @@ class GroupRoutesTest {
             val (id, _, _, jmsQueue) = getFirstGroup()
             coEvery { groupService.checkJmsQueue(id = any(), jmsQueue = any()) } returns true
 
-            val response = testClient.get("/groups/$id/$jmsQueue/jmsQueue")
+            val response = testClient.get(urlString = "/v1/groups/$id/check/jmsQueue/$jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.bodyAsText() shouldBe true.toString()
+            response.body<ExistsResponse>() shouldBe ExistsResponse(exists = true)
             coVerify(exactly = 1) { groupService.checkJmsQueue(id = id.toString(), jmsQueue = jmsQueue) }
         }
 
         @Test
-        fun `should return 400 and an exception when id is invalid`() = testApplicationWith(mockModule) {
+        fun `should return 400 and an error response when id is invalid`() = testApplicationWith(mockModule) {
             val id = "invalidId"
             val jmsQueue = getFirstGroup().jmsQueue
             coEvery { groupService.checkJmsQueue(id = any(), jmsQueue = any()) } throws ObjectIdException()
 
-            val response = testClient.get("/groups/$id/$jmsQueue/jmsQueue")
+            val response = testClient.get(urlString = "/v1/groups/$id/check/jmsQueue/$jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ExceptionResponse>() shouldBe getInvalidIdErrorResponse()
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { groupService.checkJmsQueue(id = id, jmsQueue = jmsQueue) }
         }
     }
 
     @Nested
-    inner class UpdateGroup {
+    inner class SaveGroup {
         @Test
         fun `should return 200 and a updated group`() = testApplicationWith(mockModule) {
             val testGroup = getFirstGroup()
             coEvery { groupService.saveGroup(group = any()) } returns testGroup
 
-            val response = testClient.put("/groups/${testGroup.id}") {
+            val response = testClient.put(urlString = "/v1/groups/${testGroup.id}") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testGroup)
             }
@@ -225,7 +275,7 @@ class GroupRoutesTest {
         fun `should return 500 with invalid input`() = testApplicationWith(mockModule) {
             val invalidInput = "{\"invalid\":\"invalid\"}"
 
-            val response = testClient.put("/groups/invalid") {
+            val response = testClient.put(urlString = "/v1/groups/invalid") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = invalidInput)
             }
@@ -242,7 +292,7 @@ class GroupRoutesTest {
             val id = getFirstGroup().id.toString()
             coEvery { groupService.deleteGroupById(id = any()) } returns Unit
 
-            val response = testClient.delete("/groups/$id")
+            val response = testClient.delete(urlString = "/v1/groups/$id")
 
             response shouldHaveStatus HttpStatusCode.NoContent
             response.bodyAsText() shouldBe ""
@@ -250,14 +300,23 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 500 and not found exception response on error`() = testApplicationWith(mockModule) {
+        fun `should return 500 and not found error response when exception occurs`() = testApplicationWith(mockModule) {
             val id = getFirstGroup().id.toString()
-            coEvery { groupService.deleteGroupById(id = any()) } throws Exception(INTERNAL_SERVER_ERROR_MESSAGE)
+            coEvery { groupService.deleteGroupById(id = any()) } throws IllegalStateException()
 
-            val response = testClient.delete("/groups/$id")
+            val response = testClient.delete(urlString = "/v1/groups/$id")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ExceptionResponse>() shouldBe getInternalServerErrorResponse()
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInternalServerErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInternalServerErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { groupService.deleteGroupById(id = id) }
         }
     }
@@ -269,7 +328,7 @@ class GroupRoutesTest {
             val id = getFirstGroup().id.toString()
             coEvery { groupService.resetStats(id = any()) } returns getFirstGroup()
 
-            val response = testClient.delete("/groups/$id/stats")
+            val response = testClient.delete(urlString = "/v1/groups/$id/stats")
 
             response shouldHaveStatus HttpStatusCode.OK
             response.body<Group>() shouldBe getFirstGroup()
@@ -277,14 +336,23 @@ class GroupRoutesTest {
         }
 
         @Test
-        fun `should return 404 and not found exception response on error`() = testApplicationWith(mockModule) {
+        fun `should return 404 and not found error response when exception occurs`() = testApplicationWith(mockModule) {
             val id = getFirstGroup().id.toString()
-            coEvery { groupService.resetStats(id = any()) } throws NotFoundException(message = ID_MESSAGE)
+            coEvery { groupService.resetStats(id = any()) } throws NotFoundException(message = GROUP_NOT_FOUND_MESSAGE)
 
-            val response = testClient.delete("/groups/$id/stats")
+            val response = testClient.delete(urlString = "/v1/groups/$id/stats")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ExceptionResponse>() shouldBe getGroupNotFoundErrorResponse()
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getGroupNotFoundErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getGroupNotFoundErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { groupService.resetStats(id = id) }
         }
     }

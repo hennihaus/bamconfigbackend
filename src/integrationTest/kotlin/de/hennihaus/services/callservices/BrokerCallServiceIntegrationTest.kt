@@ -15,7 +15,7 @@ import de.hennihaus.objectmothers.BrokerContainerObjectMother.getTestQueues
 import de.hennihaus.objectmothers.BrokerContainerObjectMother.getTestTopics
 import de.hennihaus.objectmothers.BrokerObjectMother.JMS_BANK_A_QUEUE
 import de.hennihaus.plugins.BrokerException
-import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_DEFAULT_MESSAGE
+import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_MESSAGE
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.services.BrokerServiceImpl.Companion.DESTINATION_NAME_DELIMITER
 import de.hennihaus.services.BrokerServiceImpl.Companion.DESTINATION_TYPE_DELIMITER
@@ -204,7 +204,7 @@ class BrokerCallServiceIntegrationTest : KoinTest {
             val response = shouldThrow<BrokerException> { classUnderTest.deleteQueueByName(name = name) }
 
             response should beInstanceOf<BrokerException>()
-            response.message shouldNotBe BROKER_EXCEPTION_DEFAULT_MESSAGE
+            response.message shouldNotBe BROKER_EXCEPTION_MESSAGE
         }
     }
 
@@ -248,7 +248,7 @@ class BrokerCallServiceIntegrationTest : KoinTest {
             val response = shouldThrow<BrokerException> { classUnderTest.deleteTopicByName(name = name) }
 
             response should beInstanceOf<BrokerException>()
-            response.message shouldNotBe BROKER_EXCEPTION_DEFAULT_MESSAGE
+            response.message shouldNotBe BROKER_EXCEPTION_MESSAGE
         }
     }
 

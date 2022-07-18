@@ -6,9 +6,10 @@ import kotlinx.serialization.Serializable
 object GroupPaths {
     const val GROUPS_PATH = "/groups"
     const val ID_PATH = "/{id}"
-    const val USERNAME_EXISTS_PATH = "/{username}/username"
-    const val PASSWORD_EXISTS_PATH = "/{password}/password"
-    const val JMS_QUEUE_EXISTS_PATH = "/{jmsQueue}/jmsQueue"
+
+    const val USERNAME_EXISTS_PATH = "/check/username/{username}"
+    const val PASSWORD_EXISTS_PATH = "/check/password/{password}"
+    const val JMS_QUEUE_EXISTS_PATH = "/check/jmsQueue/{jmsQueue}"
     const val RESET_ALL_STATS_PATH = "/stats"
 }
 

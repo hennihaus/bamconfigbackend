@@ -1,0 +1,1633 @@
+{
+  "openapi" : "3.0.3",
+  "info" : {
+    "contact" : {
+      "email" : "jan-hendrik.hausner@outlook.com",
+      "name" : "Jan-Hendrik Hausner"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "https://github.com/hennihaus/bamconfigbackend/blob/master/LICENSE"
+    },
+    "title" : "BAM Business Integration - ConfigBackend API",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "description" : "Base-URL",
+    "url" : "http://localhost:8080/v1"
+  } ],
+  "paths" : {
+    "/groups" : {
+      "get" : {
+        "operationId" : "getAllGroups",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/Group"
+                  },
+                  "minItems" : 0,
+                  "title" : "Groups",
+                  "type" : "array",
+                  "uniqueItems" : true
+                }
+              }
+            },
+            "description" : "Groups"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Gets all groups",
+        "tags" : [ "Group" ]
+      }
+    },
+    "/groups/{id}" : {
+      "delete" : {
+        "operationId" : "deleteGroupById",
+        "parameters" : [ {
+          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "content" : {
+              "text/plain" : { }
+            },
+            "description" : "No Content"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Deletes a group",
+        "tags" : [ "Group" ]
+      },
+      "get" : {
+        "operationId" : "getGroupById",
+        "parameters" : [ {
+          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Group"
+                }
+              }
+            },
+            "description" : "Group"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[Resource not found]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Not Found"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Finds group by id",
+        "tags" : [ "Group" ]
+      },
+      "put" : {
+        "operationId" : "saveGroup",
+        "parameters" : [ {
+          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/Group"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Group"
+                }
+              }
+            },
+            "description" : "Group"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Creates or updates a group",
+        "tags" : [ "Group" ]
+      }
+    },
+    "/groups/{id}/check/username/{username}" : {
+      "get" : {
+        "operationId" : "checkUsername",
+        "parameters" : [ {
+          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          }
+        }, {
+          "example" : "Beispielgruppe",
+          "in" : "path",
+          "name" : "username",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "exists" : true
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ExistsResponse"
+                }
+              }
+            },
+            "description" : "Exists"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Checks existence of a group based on username",
+        "tags" : [ "Group" ]
+      }
+    },
+    "/groups/{id}/check/password/{password}" : {
+      "get" : {
+        "operationId" : "checkPassword",
+        "parameters" : [ {
+          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          }
+        }, {
+          "example" : "OOfKqWksmA",
+          "in" : "path",
+          "name" : "password",
+          "required" : true,
+          "schema" : {
+            "format" : "password",
+            "maxLength" : 50,
+            "minLength" : 8,
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "exists" : true
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ExistsResponse"
+                }
+              }
+            },
+            "description" : "Exists"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Checks existence of a group based on password",
+        "tags" : [ "Group" ]
+      }
+    },
+    "/groups/{id}/check/jmsQueue/{jmsQueue}" : {
+      "get" : {
+        "operationId" : "checkJmsQueue",
+        "parameters" : [ {
+          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          }
+        }, {
+          "example" : "ResponseLoanBrokerBeispielgruppe",
+          "in" : "path",
+          "name" : "jmsQueue",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "exists" : true
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ExistsResponse"
+                }
+              }
+            },
+            "description" : "Exists"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Checks existence of a group based on jmsQueue",
+        "tags" : [ "Group" ]
+      }
+    },
+    "/groups/{id}/stats" : {
+      "delete" : {
+        "operationId" : "resetStats",
+        "parameters" : [ {
+          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "exists" : true
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ExistsResponse"
+                }
+              }
+            },
+            "description" : "Exists"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[Resource not found]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Not Found"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Resets all group stats to zero",
+        "tags" : [ "Group" ]
+      }
+    },
+    "/banks" : {
+      "get" : {
+        "operationId" : "getAllBanks",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "examples" : {
+                  "Banks" : {
+                    "$ref" : "#/components/examples/Banks"
+                  }
+                },
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/Bank"
+                  },
+                  "minItems" : 0,
+                  "title" : "Banks",
+                  "type" : "array",
+                  "uniqueItems" : true
+                }
+              }
+            },
+            "description" : "Banks"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Gets all banks",
+        "tags" : [ "Bank" ]
+      },
+      "put" : {
+        "operationId" : "saveAllBanks",
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/Banks"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "examples" : {
+                  "Banks" : {
+                    "$ref" : "#/components/examples/Banks"
+                  }
+                },
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/Bank"
+                  },
+                  "minItems" : 0,
+                  "title" : "Banks",
+                  "type" : "array",
+                  "uniqueItems" : true
+                }
+              }
+            },
+            "description" : "Banks"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[Resource not found]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Not Found"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Overwrites all banks",
+        "tags" : [ "Bank" ]
+      }
+    },
+    "/banks/{jmsQueue}" : {
+      "get" : {
+        "operationId" : "getBankByJmsQueue",
+        "parameters" : [ {
+          "example" : "schufa",
+          "in" : "path",
+          "name" : "jmsQueue",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "examples" : {
+                  "Schufa" : {
+                    "$ref" : "#/components/examples/Schufa"
+                  },
+                  "Synchrone Bank" : {
+                    "$ref" : "#/components/examples/SyncBank"
+                  },
+                  "Asynchrone Bank" : {
+                    "$ref" : "#/components/examples/AsyncBank"
+                  }
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/Bank"
+                }
+              }
+            },
+            "description" : "Bank"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[Resource not found]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Not Found"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Finds bank by jmsQueue",
+        "tags" : [ "Bank" ]
+      },
+      "put" : {
+        "operationId" : "saveBank",
+        "parameters" : [ {
+          "example" : "schufa",
+          "in" : "path",
+          "name" : "jmsQueue",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/Bank"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "examples" : {
+                  "Schufa" : {
+                    "$ref" : "#/components/examples/Schufa"
+                  },
+                  "Synchrone Bank" : {
+                    "$ref" : "#/components/examples/SyncBank"
+                  },
+                  "Asynchrone Bank" : {
+                    "$ref" : "#/components/examples/AsyncBank"
+                  }
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/Bank"
+                }
+              }
+            },
+            "description" : "Bank"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[Resource not found]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Not Found"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Creates or updates a bank",
+        "tags" : [ "Bank" ]
+      }
+    },
+    "/tasks" : {
+      "get" : {
+        "operationId" : "getAllTask",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/Task"
+                  },
+                  "minItems" : 0,
+                  "title" : "Tasks",
+                  "type" : "array",
+                  "uniqueItems" : true
+                }
+              }
+            },
+            "description" : "Tasks"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Gets all tasks",
+        "tags" : [ "Task" ]
+      }
+    },
+    "/tasks/{id}" : {
+      "get" : {
+        "operationId" : "getTaskById",
+        "parameters" : [ {
+          "example" : "e393ce40-7c72-436e-8cf7-eb5be28278d5",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Task"
+                }
+              }
+            },
+            "description" : "Task"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[Resource not found]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Not Found"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Gets task by id",
+        "tags" : [ "Task" ]
+      },
+      "patch" : {
+        "operationId" : "patchTask",
+        "parameters" : [ {
+          "example" : "e393ce40-7c72-436e-8cf7-eb5be28278d5",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/Task"
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Task"
+                }
+              }
+            },
+            "description" : "Task"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[Resource not found]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Not Found"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Updates particular fields of a task",
+        "tags" : [ "Task" ]
+      }
+    }
+  },
+  "components" : {
+    "examples" : {
+      "Banks" : {
+        "value" : [ {
+          "jmsQueue" : "schufa",
+          "name" : "Schufa",
+          "thumbnailUrl" : "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
+          "isAsync" : false,
+          "isActive" : true,
+          "creditConfiguration" : null,
+          "groups" : [ ]
+        }, {
+          "jmsQueue" : "deutschebank",
+          "name" : "Deutsche Bank",
+          "thumbnailUrl" : "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Deutsche_Bank_logo_without_wordmark.svg/2048px-Deutsche_Bank_logo_without_wordmark.svg.png",
+          "isAsync" : false,
+          "isActive" : true,
+          "creditConfiguration" : {
+            "minAmountInEuros" : 10000,
+            "maxAmountInEuros" : 50000,
+            "minTermInMonths" : 6,
+            "maxTermInMonths" : 36,
+            "minSchufaRating" : "A",
+            "maxSchufaRating" : "P"
+          }
+        }, {
+          "jmsQueue" : "sparkasse",
+          "name" : "Sparkasse",
+          "thumbnailUrl" : "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png",
+          "isAsync" : true,
+          "isActive" : true,
+          "creditConfiguration" : {
+            "minAmountInEuros" : 10000,
+            "maxAmountInEuros" : 50000,
+            "minTermInMonths" : 6,
+            "maxTermInMonths" : 36,
+            "minSchufaRating" : "A",
+            "maxSchufaRating" : "P"
+          },
+          "groups" : [ {
+            "id" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+            "username" : "Beispielgruppe",
+            "password" : "OOfKqWksmA",
+            "jmsQueue" : "ResponseLoanBrokerBeispielgruppe",
+            "students" : [ "Angela Merkel", "Max Mustermann", "Thomas Müller" ],
+            "stats" : {
+              "schufa" : 0,
+              "deutschebank" : 0,
+              "sparkasse" : 0,
+              "psdbank" : 0,
+              "raiffeisen" : 0,
+              "volksbank" : 0,
+              "commerzbank" : 0
+            },
+            "hasPassed" : false
+          } ]
+        } ]
+      },
+      "Schufa" : {
+        "value" : {
+          "jmsQueue" : "schufa",
+          "name" : "Schufa",
+          "thumbnailUrl" : "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
+          "isAsync" : false,
+          "isActive" : true,
+          "creditConfiguration" : null,
+          "groups" : [ ]
+        }
+      },
+      "SyncBank" : {
+        "value" : {
+          "jmsQueue" : "deutschebank",
+          "name" : "Deutsche Bank",
+          "thumbnailUrl" : "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Deutsche_Bank_logo_without_wordmark.svg/2048px-Deutsche_Bank_logo_without_wordmark.svg.png",
+          "isAsync" : false,
+          "isActive" : true,
+          "creditConfiguration" : {
+            "minAmountInEuros" : 10000,
+            "maxAmountInEuros" : 50000,
+            "minTermInMonths" : 6,
+            "maxTermInMonths" : 36,
+            "minSchufaRating" : "A",
+            "maxSchufaRating" : "P"
+          },
+          "groups" : [ ]
+        }
+      },
+      "AsyncBank" : {
+        "value" : {
+          "jmsQueue" : "sparkasse",
+          "name" : "Sparkasse",
+          "thumbnailUrl" : "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png",
+          "isAsync" : true,
+          "isActive" : true,
+          "creditConfiguration" : {
+            "minAmountInEuros" : 10000,
+            "maxAmountInEuros" : 50000,
+            "minTermInMonths" : 6,
+            "maxTermInMonths" : 36,
+            "minSchufaRating" : "A",
+            "maxSchufaRating" : "P"
+          },
+          "groups" : [ {
+            "id" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+            "username" : "Beispielgruppe",
+            "password" : "OOfKqWksmA",
+            "jmsQueue" : "ResponseLoanBrokerBeispielgruppe",
+            "students" : [ "Angela Merkel", "Max Mustermann", "Thomas Müller" ],
+            "stats" : {
+              "schufa" : 0,
+              "deutschebank" : 0,
+              "sparkasse" : 0,
+              "psdbank" : 0,
+              "raiffeisen" : 0,
+              "volksbank" : 0,
+              "commerzbank" : 0
+            },
+            "hasPassed" : false
+          } ]
+        }
+      }
+    },
+    "requestBodies" : {
+      "Group" : {
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Group"
+            }
+          }
+        },
+        "required" : true
+      },
+      "Banks" : {
+        "content" : {
+          "application/json" : {
+            "examples" : {
+              "Banks" : {
+                "$ref" : "#/components/examples/Banks"
+              }
+            },
+            "schema" : {
+              "items" : {
+                "$ref" : "#/components/schemas/Bank"
+              },
+              "minItems" : 0,
+              "title" : "Banks",
+              "type" : "array",
+              "uniqueItems" : true
+            }
+          }
+        },
+        "required" : true
+      },
+      "Bank" : {
+        "content" : {
+          "application/json" : {
+            "examples" : {
+              "Schufa" : {
+                "$ref" : "#/components/examples/Schufa"
+              },
+              "Synchrone Bank" : {
+                "$ref" : "#/components/examples/SyncBank"
+              },
+              "Asynchrone Bank" : {
+                "$ref" : "#/components/examples/AsyncBank"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/components/schemas/Bank"
+            }
+          }
+        },
+        "required" : true
+      },
+      "Task" : {
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Task"
+            }
+          }
+        },
+        "required" : true
+      }
+    },
+    "responses" : {
+      "200s" : {
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "items" : {
+                "$ref" : "#/components/schemas/Task"
+              },
+              "minItems" : 0,
+              "title" : "Tasks",
+              "type" : "array",
+              "uniqueItems" : true
+            }
+          }
+        },
+        "description" : "Tasks"
+      },
+      "500" : {
+        "content" : {
+          "application/json" : {
+            "example" : {
+              "message" : "[kotlin.Exception: Internal server error]",
+              "dateTime" : "2022-01-31T07:43:30"
+            },
+            "schema" : {
+              "$ref" : "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description" : "Internal Server Error"
+      },
+      "200" : {
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Task"
+            }
+          }
+        },
+        "description" : "Task"
+      },
+      "400" : {
+        "content" : {
+          "application/json" : {
+            "example" : {
+              "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+              "dateTime" : "2022-01-31T07:43:30"
+            },
+            "schema" : {
+              "$ref" : "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description" : "Invalid Request"
+      },
+      "404" : {
+        "content" : {
+          "application/json" : {
+            "example" : {
+              "message" : "[Resource not found]",
+              "dateTime" : "2022-01-31T07:43:30"
+            },
+            "schema" : {
+              "$ref" : "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description" : "Not Found"
+      },
+      "204" : {
+        "content" : {
+          "text/plain" : { }
+        },
+        "description" : "No Content"
+      }
+    },
+    "schemas" : {
+      "Group" : {
+        "example" : {
+          "id" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "username" : "Beispielgruppe",
+          "password" : "OOfKqWksmA",
+          "jmsQueue" : "ResponseLoanBrokerBeispielgruppe",
+          "students" : [ "Angela Merkel", "Max Mustermann", "Thomas Müller" ],
+          "stats" : {
+            "schufa" : 0,
+            "deutschebank" : 0,
+            "sparkasse" : 0,
+            "psdbank" : 0,
+            "raiffeisen" : 0,
+            "volksbank" : 0,
+            "commerzbank" : 0
+          },
+          "hasPassed" : false
+        },
+        "properties" : {
+          "id" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
+          "username" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          },
+          "password" : {
+            "format" : "password",
+            "maxLength" : 50,
+            "minLength" : 8,
+            "type" : "string"
+          },
+          "jmsQueue" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          },
+          "students" : {
+            "items" : {
+              "type" : "string"
+            },
+            "minItems" : 0,
+            "title" : "Students",
+            "type" : "array",
+            "uniqueItems" : true
+          },
+          "stats" : {
+            "additionalProperties" : {
+              "format" : "int32",
+              "minimum" : 0,
+              "type" : "integer"
+            },
+            "type" : "object"
+          },
+          "hasPassed" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "hasPassed", "id", "jmsQueue", "password", "stats", "students", "username" ],
+        "type" : "object"
+      },
+      "ErrorResponse" : {
+        "properties" : {
+          "message" : {
+            "type" : "string"
+          },
+          "dateTime" : {
+            "format" : "date-time",
+            "type" : "string"
+          }
+        },
+        "required" : [ "dateTime", "message" ],
+        "type" : "object"
+      },
+      "ExistsResponse" : {
+        "properties" : {
+          "exists" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "exists" ],
+        "type" : "object"
+      },
+      "Bank" : {
+        "properties" : {
+          "jmsQueue" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          },
+          "name" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          },
+          "thumbnailUrl" : {
+            "format" : "url",
+            "pattern" : "(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})",
+            "type" : "string"
+          },
+          "isAsync" : {
+            "type" : "boolean"
+          },
+          "isActive" : {
+            "type" : "boolean"
+          },
+          "creditConfiguration" : {
+            "$ref" : "#/components/schemas/CreditConfiguration"
+          },
+          "groups" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Group"
+            },
+            "minItems" : 0,
+            "title" : "Groups",
+            "type" : "array",
+            "uniqueItems" : true
+          }
+        },
+        "required" : [ "groups", "isActive", "isAsync", "jmsQueue", "name", "thumbnailUrl" ],
+        "type" : "object"
+      },
+      "CreditConfiguration" : {
+        "properties" : {
+          "minAmountInEuros" : {
+            "format" : "int32",
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "maxAmountInEuros" : {
+            "format" : "int32",
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "minTermInMonths" : {
+            "format" : "int32",
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "maxTermInMonths" : {
+            "format" : "int32",
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "minSchufaRating" : {
+            "$ref" : "#/components/schemas/RatingLevel"
+          },
+          "maxSchufaRating" : {
+            "$ref" : "#/components/schemas/RatingLevel"
+          }
+        },
+        "required" : [ "maxAmountInEuros", "maxSchufaRating", "maxTermInMonths", "minAmountInEuros", "minSchufaRating", "minTermInMonths" ],
+        "type" : "object"
+      },
+      "RatingLevel" : {
+        "enum" : [ "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "N", "O", "P" ],
+        "type" : "string"
+      },
+      "Task" : {
+        "example" : {
+          "id" : "e393ce40-7c72-436e-8cf7-eb5be28278d5",
+          "title" : "Asynchrone Banken",
+          "description" : "<p>Es existieren eine Reihe bereits vorgegebener asynchroner Banken, welche per JMS erreichbar sind. Um die Banken zu erreichen, müssen Sie im VPN der Hochschule sein und den Port in der URL mit angeben. Sie kommunizieren nicht direkt mit den Banken, sondern mit einem ActiveMQ-Broker als Middleware. Die Messages an den Broker sind Textnachrichten, die als JSON strukturiert sind. Die Message entspricht also einem JSON-Objekt mit den Parametern als einzelne Key-Value-Pairs (siehe unten). Ein Error-Handling wie in den synchronen Services gibt es nicht. Sie übernehmen daher die Anfragegrenzen aus der internen Konfiguration der Banken. Die Rückgabewert der Banken enthält neben einem Zinsatz für den gewünschten Kredit zwischen 0 und 10% vom Datentyp Double die Request ID der Anfrage. Eine Bank hört auf einer Queue des Broker nach Nachrichten für diese Bank (Bei der Sparkasse z.B. „sparkasse“). Sie entnehmen die Antworten der Banken auf ihrer Gruppen-Queue, z.B. ResponseLoanBrokerGruppe01.</p><p>Beispiel Textnachricht Request: {\\\"requestId\\\": \\\"123\\\",\\\"amountInEuros\\\": 20000,\\\"termInMonths\\\": 12,\\\"ratingLevel\\\": \\\"B\\\",\\\"delayInMilliseconds\\\": 0,\\\"username\\\": \\\"Gruppe01\\\",\\\"password\\\": \\\"123456\\\"}</p><p>Beispiel Textnachricht Response: {\\\"requestId\\\":\\\"123\\\",\\\"lendingRate\\\":2.738343644690228}</p>",
+          "step" : 3,
+          "isOpenApiVerbose" : false,
+          "contact" : {
+            "name" : "Jan-Hendrik Hausner",
+            "email" : "jan-hendrik.hausner@outlook.com"
+          },
+          "endpoints" : [ {
+            "type" : "JMS",
+            "url" : "tcp://bambusinessintegration.wi.hs-furtwangen.de:61616",
+            "docsUrl" : ""
+          } ],
+          "parameters" : [ {
+            "name" : "requestId",
+            "type" : "STRING",
+            "description" : "Zufällige Request-ID",
+            "example" : "7729e687-415b-4594-818b-77f2800b2a08"
+          } ],
+          "responses" : [ {
+            "code" : -1,
+            "contentType" : "application/json",
+            "description" : "Kreditzins in Prozent",
+            "example" : "{ \\\"requestId\\\": \\\"123\\\", \\\"lendingRateInPercent\\\": 2.738343644690228 }"
+          } ],
+          "banks" : [ {
+            "jmsQueue" : "sparkasse",
+            "name" : "Sparkasse",
+            "thumbnailUrl" : "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png",
+            "isAsync" : true,
+            "isActive" : true,
+            "creditConfiguration" : {
+              "minAmountInEuros" : 10000,
+              "maxAmountInEuros" : 50000,
+              "minTermInMonths" : 6,
+              "maxTermInMonths" : 36,
+              "minSchufaRating" : "A",
+              "maxSchufaRating" : "P"
+            },
+            "groups" : [ {
+              "id" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+              "username" : "Beispielgruppe",
+              "password" : "OOfKqWksmA",
+              "jmsQueue" : "ResponseLoanBrokerBeispielgruppe",
+              "students" : [ "Angela Merkel", "Max Mustermann", "Thomas Müller" ],
+              "stats" : {
+                "schufa" : 0,
+                "deutschebank" : 0,
+                "sparkasse" : 0,
+                "psdbank" : 0,
+                "raiffeisen" : 0,
+                "volksbank" : 0,
+                "commerzbank" : 0
+              },
+              "hasPassed" : false
+            } ]
+          } ]
+        },
+        "properties" : {
+          "id" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
+          "title" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          },
+          "description" : {
+            "maxLength" : 2000,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "step" : {
+            "format" : "int32",
+            "maximum" : 3,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "isOpenApiVerbose" : {
+            "type" : "boolean"
+          },
+          "contact" : {
+            "$ref" : "#/components/schemas/Contact"
+          },
+          "endpoints" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Endpoint"
+            },
+            "minItems" : 0,
+            "title" : "Endpoints",
+            "type" : "array",
+            "uniqueItems" : true
+          },
+          "parameters" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Parameter"
+            },
+            "minItems" : 0,
+            "title" : "Parameters",
+            "type" : "array",
+            "uniqueItems" : true
+          },
+          "responses" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Response"
+            },
+            "minItems" : 0,
+            "title" : "Responses",
+            "type" : "array",
+            "uniqueItems" : true
+          },
+          "banks" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Bank"
+            },
+            "minItems" : 0,
+            "title" : "Banks",
+            "type" : "array",
+            "uniqueItems" : true
+          }
+        },
+        "required" : [ "banks", "contact", "description", "endpoints", "id", "isOpenApiVerbose", "parameters", "responses", "step", "title" ],
+        "type" : "object"
+      },
+      "Contact" : {
+        "properties" : {
+          "name" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          },
+          "email" : {
+            "format" : "email",
+            "pattern" : "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+            "type" : "string"
+          }
+        },
+        "required" : [ "email", "name" ],
+        "type" : "object"
+      },
+      "Endpoint" : {
+        "properties" : {
+          "type" : {
+            "$ref" : "#/components/schemas/EndpointType"
+          },
+          "url" : {
+            "format" : "url",
+            "type" : "string"
+          },
+          "docsUrl" : {
+            "format" : "url",
+            "type" : "string"
+          }
+        },
+        "required" : [ "docsUrl", "type", "url" ],
+        "type" : "object"
+      },
+      "EndpointType" : {
+        "enum" : [ "REST", "JMS" ],
+        "type" : "string"
+      },
+      "Parameter" : {
+        "properties" : {
+          "name" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          },
+          "type" : {
+            "$ref" : "#/components/schemas/ParameterType"
+          },
+          "description" : {
+            "maxLength" : 100,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "example" : {
+            "maxLength" : 50,
+            "minLength" : 1,
+            "type" : "string"
+          }
+        },
+        "required" : [ "description", "example", "name", "type" ],
+        "type" : "object"
+      },
+      "ParameterType" : {
+        "enum" : [ "STRING", "INTEGER", "LONG", "CHARACTER" ],
+        "type" : "string"
+      },
+      "Response" : {
+        "properties" : {
+          "code" : {
+            "format" : "http-status",
+            "maximum" : 1000,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "contentType" : {
+            "format" : "content-type",
+            "type" : "string",
+            "x-is-contextual" : true
+          },
+          "description" : {
+            "maxLength" : 100,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "example" : {
+            "maxLength" : 100,
+            "minLength" : 1,
+            "type" : "string"
+          }
+        },
+        "required" : [ "code", "contentType", "description", "example" ],
+        "type" : "object"
+      }
+    }
+  }
+}
