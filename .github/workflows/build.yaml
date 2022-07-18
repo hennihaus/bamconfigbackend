@@ -56,10 +56,11 @@ jobs:
           RELEASE_BRANCHES: master
           PRERELEASE_SUFFIX: beta
 
+      - name: Update Typescript package version
+        run: npm version ${{ steps.tag-version.outputs.new_tag }} --prefix ./build/${GITHUB_REPOSITORY#*/}/typescript
+
       - name: Publish Typescript beta library
-        run: |
-          - npm version ${{ steps.tag-version.outputs.new_tag }} --prefix ./build/${GITHUB_REPOSITORY#*/}/typescript
-          - npm publish package.json --prefix ./build/${GITHUB_REPOSITORY#*/}/typescript
+        run: npm publish package.json --prefix ./build/${GITHUB_REPOSITORY#*/}/typescript
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
