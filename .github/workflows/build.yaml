@@ -60,7 +60,7 @@ jobs:
         run: npm version ${{ steps.tag-version.outputs.new_tag }} --prefix ./build/${GITHUB_REPOSITORY#*/}/typescript
 
       - name: Publish Typescript beta library
-        run: npm publish package.json --prefix ./build/${GITHUB_REPOSITORY#*/}/typescript --registry https://npm.pkg.github.com/
+        run: npm publish package.json --folder ./build/${GITHUB_REPOSITORY#*/}/typescript
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
