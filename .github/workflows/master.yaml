@@ -53,6 +53,8 @@ jobs:
 
       - name: Publish Typescript library
         run: npm --prefix ./build/${GITHUB_REPOSITORY#*/}/typescript publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish Kotlin library
         run: ./gradlew -p build/${GITHUB_REPOSITORY#*/}/kotlin publish --no-daemon
