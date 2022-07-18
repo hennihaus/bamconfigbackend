@@ -7,6 +7,7 @@ import de.hennihaus.objectmothers.CreditConfigurationObjectMother.getCreditConfi
 import de.hennihaus.objectmothers.GroupObjectMother.getFirstGroup
 import de.hennihaus.objectmothers.GroupObjectMother.getSecondGroup
 import de.hennihaus.objectmothers.GroupObjectMother.getThirdGroup
+import java.net.URI
 
 object BankObjectMother {
 
@@ -20,11 +21,11 @@ object BankObjectMother {
     fun getSchufaBank(
         jmsQueue: String = SCHUFA_BANK_NAME,
         name: String = SCHUFA_BANK_NAME,
-        thumbnailUrl: String = DEFAULT_THUMBNAIL_URL,
+        thumbnailUrl: URI = URI(DEFAULT_THUMBNAIL_URL),
         isAsync: Boolean = false,
         isActive: Boolean = DEFAULT_IS_ACTIVE,
         creditConfiguration: CreditConfiguration? = null,
-        groups: List<Group> = emptyList()
+        groups: List<Group> = emptyList(),
     ) = Bank(
         jmsQueue = jmsQueue,
         name = name,
@@ -32,17 +33,17 @@ object BankObjectMother {
         isAsync = isAsync,
         isActive = isActive,
         creditConfiguration = creditConfiguration,
-        groups = groups
+        groups = groups,
     )
 
     fun getVBank(
         jmsQueue: String = V_BANK_NAME,
         name: String = V_BANK_NAME,
-        thumbnailUrl: String = "http://localhost:8085/picture.jpg",
+        thumbnailUrl: URI = URI(DEFAULT_THUMBNAIL_URL),
         isAsync: Boolean = false,
         isActive: Boolean = DEFAULT_IS_ACTIVE,
         creditConfiguration: CreditConfiguration? = getCreditConfigurationWithNoEmptyFields(),
-        groups: List<Group> = emptyList()
+        groups: List<Group> = emptyList(),
     ) = Bank(
         jmsQueue = jmsQueue,
         name = name,
@@ -50,17 +51,17 @@ object BankObjectMother {
         isAsync = isAsync,
         isActive = isActive,
         creditConfiguration = creditConfiguration,
-        groups = groups
+        groups = groups,
     )
 
     fun getJmsBank(
         jmsQueue: String = JMS_BANK_NAME,
         name: String = JMS_BANK_NAME,
-        thumbnailUrl: String = "http://localhost:8085/picture.jpg",
+        thumbnailUrl: URI = URI(DEFAULT_THUMBNAIL_URL),
         isAsync: Boolean = true,
         isActive: Boolean = DEFAULT_IS_ACTIVE,
         creditConfiguration: CreditConfiguration? = getCreditConfigurationWithNoEmptyFields(),
-        groups: List<Group> = listOf(getFirstGroup(), getSecondGroup(), getThirdGroup())
+        groups: List<Group> = listOf(getFirstGroup(), getSecondGroup(), getThirdGroup()),
     ) = Bank(
         jmsQueue = jmsQueue,
         name = name,
@@ -68,6 +69,6 @@ object BankObjectMother {
         isAsync = isAsync,
         isActive = isActive,
         creditConfiguration = creditConfiguration,
-        groups = groups
+        groups = groups,
     )
 }

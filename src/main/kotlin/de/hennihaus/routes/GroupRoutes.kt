@@ -1,5 +1,6 @@
 package de.hennihaus.routes
 
+import de.hennihaus.models.rest.ExistsResponse
 import de.hennihaus.routes.resources.Groups
 import de.hennihaus.services.GroupService
 import io.ktor.http.HttpStatusCode
@@ -18,7 +19,7 @@ fun Route.registerGroupRoutes() {
     checkUsername()
     checkPassword()
     checkJmsQueue()
-    updateGroup()
+    saveGroup()
     deleteGroupById()
     resetStats()
 }
@@ -32,47 +33,53 @@ private fun Route.getGroupById(): Route = get<Groups.Id> { request ->
     val groupService = getKoin().get<GroupService>()
     call.respond(
         message = groupService.getGroupById(
-            id = request.id
-        )
+            id = request.id,
+        ),
     )
 }
 
 private fun Route.checkUsername(): Route = get<Groups.Id.CheckUsername> { request ->
     val groupService = getKoin().get<GroupService>()
     call.respond(
-        message = groupService.checkUsername(
-            id = request.parent.id,
-            username = request.username
-        )
+        message = ExistsResponse(
+            exists = groupService.checkUsername(
+                id = request.parent.id,
+                username = request.username,
+            ),
+        ),
     )
 }
 
 private fun Route.checkPassword(): Route = get<Groups.Id.CheckPassword> { request ->
     val groupService = getKoin().get<GroupService>()
     call.respond(
-        message = groupService.checkPassword(
-            id = request.parent.id,
-            password = request.password
-        )
+        message = ExistsResponse(
+            exists = groupService.checkPassword(
+                id = request.parent.id,
+                password = request.password,
+            ),
+        ),
     )
 }
 
 private fun Route.checkJmsQueue(): Route = get<Groups.Id.CheckJmsQueue> { request ->
     val groupService = getKoin().get<GroupService>()
     call.respond(
-        message = groupService.checkJmsQueue(
-            id = request.parent.id,
-            jmsQueue = request.jmsQueue
-        )
+        message = ExistsResponse(
+            exists = groupService.checkJmsQueue(
+                id = request.parent.id,
+                jmsQueue = request.jmsQueue,
+            ),
+        ),
     )
 }
 
-private fun Route.updateGroup(): Route = put<Groups.Id> {
+private fun Route.saveGroup(): Route = put<Groups.Id> {
     val groupService = getKoin().get<GroupService>()
     call.respond(
         message = groupService.saveGroup(
-            group = call.receive()
-        )
+            group = call.receive(),
+        ),
     )
 }
 
@@ -81,7 +88,7 @@ private fun Route.deleteGroupById(): Route = delete<Groups.Id> { request ->
     groupService.deleteGroupById(id = request.id)
     call.respond(
         message = "",
-        status = HttpStatusCode.NoContent
+        status = HttpStatusCode.NoContent,
     )
 }
 
@@ -89,7 +96,7 @@ private fun Route.resetStats(): Route = delete<Groups.Id.ResetStats> { request -
     val groupService = getKoin().get<GroupService>()
     call.respond(
         message = groupService.resetStats(
-            id = request.parent.id
-        )
+            id = request.parent.id,
+        ),
     )
 }

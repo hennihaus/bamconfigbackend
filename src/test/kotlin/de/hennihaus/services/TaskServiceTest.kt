@@ -109,7 +109,7 @@ class TaskServiceTest {
             val result = shouldThrow<NotFoundException> { classUnderTest.getTaskById(id = id) }
 
             result should beInstanceOf<NotFoundException>()
-            result.message shouldBe TaskServiceImpl.ID_MESSAGE
+            result.message shouldBe TaskServiceImpl.TASK_NOT_FOUND_MESSAGE
             coVerify(exactly = 1) { repository.getById(id = ObjectId(id)) }
             coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
         }
@@ -161,7 +161,7 @@ class TaskServiceTest {
             val result = shouldThrow<NotFoundException> { classUnderTest.patchTask(id = id, task = task) }
 
             result should beInstanceOf<NotFoundException>()
-            result.message shouldBe TaskServiceImpl.ID_MESSAGE
+            result.message shouldBe TaskServiceImpl.TASK_NOT_FOUND_MESSAGE
             coVerify(exactly = 1) { repository.getById(id = withArg { it shouldBe ObjectId(id) }) }
             coVerify(exactly = 0) { github.updateOpenApi(task = any()) }
             coVerify(exactly = 0) { repository.save(entry = any()) }

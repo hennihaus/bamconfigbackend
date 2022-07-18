@@ -1,0 +1,14 @@
+{
+  "collectionType": "list",
+  "dateLibrary": "java8",
+  "enumPropertyNaming": "UPPERCASE",
+  "library": "jvm-ktor",
+  "serializationLibrary": "kotlinx_serialization",
+  "modelMutable": false,
+  "requestDateConverter": "toString",
+  "serializableModel": false,
+  "sourceFolder": "src/main/kotlin",
+  "groupId": "de.hennihaus",
+  "artifactId": "bamconfigbackend",
+  "packageName": "de.hennihaus.bamconfigbackend"
+}

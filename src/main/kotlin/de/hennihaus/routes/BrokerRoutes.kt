@@ -20,7 +20,7 @@ private fun Route.resetBroker() = delete<Broker> {
     getKoin().get<BrokerService>().resetBroker()
     call.respond(
         status = HttpStatusCode.NoContent,
-        message = ""
+        message = "",
     )
 }
 
@@ -28,6 +28,6 @@ private fun Route.deleteQueueByName() = delete<Broker.Name> { request ->
     val brokerService = getKoin().get<BrokerService>()
     call.respond(
         status = HttpStatusCode.NoContent,
-        message = brokerService.deleteQueueByName(name = request.name).let { "" }
+        message = brokerService.deleteQueueByName(name = request.name).let { "" },
     )
 }

@@ -16,7 +16,7 @@ import org.passay.PasswordGenerator
 class GroupServiceImpl(
     private val repository: GroupRepository,
     private val stats: StatsService,
-    @Property(PASSWORD_LENGTH) private val passwordLength: String
+    @Property(PASSWORD_LENGTH) private val passwordLength: String,
 ) : GroupService {
 
     override suspend fun getAllGroups(): List<Group> = repository.getAll()
@@ -25,7 +25,7 @@ class GroupServiceImpl(
 
     override suspend fun getGroupById(id: String): Group {
         val group = id.toObjectId {
-            repository.getById(id = it) ?: throw NotFoundException(message = ID_MESSAGE)
+            repository.getById(id = it) ?: throw NotFoundException(message = GROUP_NOT_FOUND_MESSAGE)
         }
         return stats.setHasPassed(group = group)
     }
@@ -68,7 +68,7 @@ class GroupServiceImpl(
                 ?.let { it.copy(stats = it.stats.mapValues { ZERO_REQUESTS }) }
                 ?.let { stats.setHasPassed(group = it) }
                 ?.also { repository.save(entry = it) }
-                ?: throw NotFoundException(message = ID_MESSAGE)
+                ?: throw NotFoundException(message = GROUP_NOT_FOUND_MESSAGE)
         }
     }
 
@@ -84,7 +84,7 @@ class GroupServiceImpl(
     }
 
     companion object {
-        internal const val ID_MESSAGE = "No Group for given ID found!"
+        internal const val GROUP_NOT_FOUND_MESSAGE = "[group not found by id]"
         private const val ZERO_REQUESTS = 0
     }
 }

@@ -20,7 +20,7 @@ class TaskServiceImpl(
 
     override suspend fun getTaskById(id: String): Task {
         val task = id.toObjectId {
-            repository.getById(id = it) ?: throw NotFoundException(message = ID_MESSAGE)
+            repository.getById(id = it) ?: throw NotFoundException(message = TASK_NOT_FOUND_MESSAGE)
         }
         return task.copy(banks = task.banks.map { updateBank(bank = it) })
     }
@@ -39,7 +39,7 @@ class TaskServiceImpl(
                 ?.also { task -> github.updateOpenApi(task = task) }
                 ?.let { task -> repository.save(entry = task) }
                 ?.let { task -> task.copy(banks = task.banks.map { bank -> updateBank(bank = bank) }) }
-                ?: throw NotFoundException(message = ID_MESSAGE)
+                ?: throw NotFoundException(message = TASK_NOT_FOUND_MESSAGE)
         }
     }
 
@@ -48,6 +48,6 @@ class TaskServiceImpl(
     )
 
     companion object {
-        internal const val ID_MESSAGE = "No Task for given ID found!"
+        internal const val TASK_NOT_FOUND_MESSAGE = "[task not found by id]"
     }
 }

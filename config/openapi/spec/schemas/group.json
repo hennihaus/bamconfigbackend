@@ -1,0 +1,88 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BAM Business Integration - Group Schema",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "Group": {
+        "type": "object",
+        "required": [
+          "id",
+          "username",
+          "password",
+          "jmsQueue",
+          "students",
+          "stats",
+          "hasPassed"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "username": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 50
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 8,
+            "maxLength": 50
+          },
+          "jmsQueue": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 50
+          },
+          "students": {
+            "type": "array",
+            "title": "Students",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "stats": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          "hasPassed": {
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "id": "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "username": "Beispielgruppe",
+          "password": "OOfKqWksmA",
+          "jmsQueue": "ResponseLoanBrokerBeispielgruppe",
+          "students": [
+            "Angela Merkel",
+            "Max Mustermann",
+            "Thomas Müller"
+          ],
+          "stats": {
+            "schufa": 0,
+            "deutschebank": 0,
+            "sparkasse": 0,
+            "psdbank": 0,
+            "raiffeisen": 0,
+            "volksbank": 0,
+            "commerzbank": 0
+          },
+          "hasPassed": false
+        }
+      }
+    }
+  }
+}

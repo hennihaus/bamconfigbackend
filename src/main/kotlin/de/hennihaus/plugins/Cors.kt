@@ -7,12 +7,16 @@ import io.ktor.server.application.install
 import io.ktor.server.plugins.cors.routing.CORS
 
 fun Application.configureCors() {
-    val allowedHost = getProperty<String>(key = "ktor.deployment.cors.allowedHost")
-    val allowedProtocol = getProperty<String>(key = "ktor.deployment.cors.allowedProtocol")
+    val frontendAllowedHost = getProperty<String>(key = "ktor.deployment.cors.frontend.allowedHost")
+    val frontendAllowedProtocol = getProperty<String>(key = "ktor.deployment.cors.frontend.allowedProtocol")
+    val swaggerAllowedHost = getProperty<String>(key = "ktor.deployment.cors.swagger.allowedHost")
+    val swaggerAllowedProtocol = getProperty<String>(key = "ktor.deployment.cors.swagger.allowedProtocol")
+
     install(CORS) {
         allowCredentials = true
 
-        allowHost(host = allowedHost, schemes = listOf(allowedProtocol))
+        allowHost(host = frontendAllowedHost, schemes = listOf(frontendAllowedProtocol))
+        allowHost(host = swaggerAllowedHost, schemes = listOf(swaggerAllowedProtocol))
 
         allowHeader(header = HttpHeaders.ContentType)
         allowHeader(header = HttpHeaders.Authorization)

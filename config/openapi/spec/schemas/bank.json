@@ -1,0 +1,254 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BAM Business Integration - Bank Schema",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "Bank": {
+        "type": "object",
+        "required": [
+          "jmsQueue",
+          "name",
+          "thumbnailUrl",
+          "isAsync",
+          "isActive",
+          "groups"
+        ],
+        "properties": {
+          "jmsQueue": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 50
+          },
+          "name": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 50
+          },
+          "thumbnailUrl": {
+            "type": "string",
+            "format": "url",
+            "pattern": "(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})"
+          },
+          "isAsync": {
+            "type": "boolean"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "creditConfiguration": {
+            "$ref": "#/components/schemas/CreditConfiguration"
+          },
+          "groups": {
+            "type": "array",
+            "title": "Groups",
+            "items": {
+              "$ref": "./group.json#/components/schemas/Group"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          }
+        }
+      },
+      "CreditConfiguration": {
+        "type": "object",
+        "required": [
+          "minAmountInEuros",
+          "maxAmountInEuros",
+          "minTermInMonths",
+          "maxTermInMonths",
+          "minSchufaRating",
+          "maxSchufaRating"
+        ],
+        "properties": {
+          "minAmountInEuros": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "maxAmountInEuros": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "minTermInMonths": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "maxTermInMonths": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "minSchufaRating": {
+            "$ref": "#/components/schemas/RatingLevel"
+          },
+          "maxSchufaRating": {
+            "$ref": "#/components/schemas/RatingLevel"
+          }
+        }
+      },
+      "RatingLevel": {
+        "type": "string",
+        "enum": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "L",
+          "N",
+          "O",
+          "P"
+        ]
+      }
+    },
+    "examples": {
+      "Banks": {
+        "value": [
+          {
+            "jmsQueue": "schufa",
+            "name": "Schufa",
+            "thumbnailUrl": "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
+            "isAsync": false,
+            "isActive": true,
+            "creditConfiguration": null,
+            "groups": []
+          },
+          {
+            "jmsQueue": "deutschebank",
+            "name": "Deutsche Bank",
+            "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Deutsche_Bank_logo_without_wordmark.svg/2048px-Deutsche_Bank_logo_without_wordmark.svg.png",
+            "isAsync": false,
+            "isActive": true,
+            "creditConfiguration": {
+              "minAmountInEuros": 10000,
+              "maxAmountInEuros": 50000,
+              "minTermInMonths": 6,
+              "maxTermInMonths": 36,
+              "minSchufaRating": "A",
+              "maxSchufaRating": "P"
+            }
+          },
+          {
+            "jmsQueue": "sparkasse",
+            "name": "Sparkasse",
+            "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png",
+            "isAsync": true,
+            "isActive": true,
+            "creditConfiguration": {
+              "minAmountInEuros": 10000,
+              "maxAmountInEuros": 50000,
+              "minTermInMonths": 6,
+              "maxTermInMonths": 36,
+              "minSchufaRating": "A",
+              "maxSchufaRating": "P"
+            },
+            "groups": [
+              {
+                "id": "e7a259c7-44f1-472f-a869-f9c71f65a209",
+                "username": "Beispielgruppe",
+                "password": "OOfKqWksmA",
+                "jmsQueue": "ResponseLoanBrokerBeispielgruppe",
+                "students": [
+                  "Angela Merkel",
+                  "Max Mustermann",
+                  "Thomas Müller"
+                ],
+                "stats": {
+                  "schufa": 0,
+                  "deutschebank": 0,
+                  "sparkasse": 0,
+                  "psdbank": 0,
+                  "raiffeisen": 0,
+                  "volksbank": 0,
+                  "commerzbank": 0
+                },
+                "hasPassed": false
+              }
+            ]
+          }
+        ]
+      },
+      "Schufa": {
+        "value": {
+          "jmsQueue": "schufa",
+          "name": "Schufa",
+          "thumbnailUrl": "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
+          "isAsync": false,
+          "isActive": true,
+          "creditConfiguration": null,
+          "groups": []
+        }
+      },
+      "SyncBank": {
+        "value": {
+          "jmsQueue": "deutschebank",
+          "name": "Deutsche Bank",
+          "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Deutsche_Bank_logo_without_wordmark.svg/2048px-Deutsche_Bank_logo_without_wordmark.svg.png",
+          "isAsync": false,
+          "isActive": true,
+          "creditConfiguration": {
+            "minAmountInEuros": 10000,
+            "maxAmountInEuros": 50000,
+            "minTermInMonths": 6,
+            "maxTermInMonths": 36,
+            "minSchufaRating": "A",
+            "maxSchufaRating": "P"
+          },
+          "groups": []
+        }
+      },
+      "AsyncBank": {
+        "value": {
+          "jmsQueue": "sparkasse",
+          "name": "Sparkasse",
+          "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png",
+          "isAsync": true,
+          "isActive": true,
+          "creditConfiguration": {
+            "minAmountInEuros": 10000,
+            "maxAmountInEuros": 50000,
+            "minTermInMonths": 6,
+            "maxTermInMonths": 36,
+            "minSchufaRating": "A",
+            "maxSchufaRating": "P"
+          },
+          "groups": [
+            {
+              "id": "e7a259c7-44f1-472f-a869-f9c71f65a209",
+              "username": "Beispielgruppe",
+              "password": "OOfKqWksmA",
+              "jmsQueue": "ResponseLoanBrokerBeispielgruppe",
+              "students": [
+                "Angela Merkel",
+                "Max Mustermann",
+                "Thomas Müller"
+              ],
+              "stats": {
+                "schufa": 0,
+                "deutschebank": 0,
+                "sparkasse": 0,
+                "psdbank": 0,
+                "raiffeisen": 0,
+                "volksbank": 0,
+                "commerzbank": 0
+              },
+              "hasPassed": false
+            }
+          ]
+        }
+      }
+    }
+  }
+}

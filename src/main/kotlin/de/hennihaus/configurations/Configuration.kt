@@ -14,4 +14,5 @@ val defaultModule = module {
 
 object Configuration {
     const val PASSWORD_LENGTH = "ktor.common.passwordLength"
+    const val API_VERSION = "ktor.deployment.apiVersion"
 }

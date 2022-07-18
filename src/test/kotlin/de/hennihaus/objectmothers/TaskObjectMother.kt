@@ -11,9 +11,7 @@ import de.hennihaus.objectmothers.BankObjectMother.getSchufaBank
 import de.hennihaus.objectmothers.BankObjectMother.getVBank
 import de.hennihaus.objectmothers.EndpointObjectMother.getActiveMqEndpoint
 import de.hennihaus.objectmothers.EndpointObjectMother.getSchufaRestEndpoint
-import de.hennihaus.objectmothers.EndpointObjectMother.getSchufaSoapEndpoint
 import de.hennihaus.objectmothers.EndpointObjectMother.getVBankRestEndpoint
-import de.hennihaus.objectmothers.EndpointObjectMother.getVBankSoapEndpoint
 import de.hennihaus.objectmothers.ParameterObjectMother.getAmountInEurosParameter
 import de.hennihaus.objectmothers.ParameterObjectMother.getDelayInMillisecondsParameter
 import de.hennihaus.objectmothers.ParameterObjectMother.getPasswordParameter
@@ -128,7 +126,6 @@ object TaskObjectMother {
 
     private fun getSchufaEndpoints(): List<Endpoint> = listOf(
         getSchufaRestEndpoint(),
-        getSchufaSoapEndpoint(),
     )
 
     private fun getSchufaParameters(): List<Parameter> = listOf(
@@ -152,7 +149,6 @@ object TaskObjectMother {
 
     private fun getSynchronousBankEndpoints(): List<Endpoint> = listOf(
         getVBankRestEndpoint(),
-        getVBankSoapEndpoint(),
     )
 
     private fun getSynchronousBankParameters(): List<Parameter> = listOf(

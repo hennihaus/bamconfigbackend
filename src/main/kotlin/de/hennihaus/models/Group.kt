@@ -5,13 +5,12 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.litote.kmongo.Id
-import org.litote.kmongo.newId
 
 @Serializable
 data class Group(
     @Contextual
     @SerialName(ID_FIELD)
-    val id: Id<Group> = newId(),
+    val id: Id<Group>,
     val username: String,
     val password: String,
     val jmsQueue: String,

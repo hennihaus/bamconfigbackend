@@ -7,7 +7,7 @@ import de.hennihaus.objectmothers.GroupObjectMother.getFirstGroup
 import de.hennihaus.objectmothers.GroupObjectMother.getSecondGroup
 import de.hennihaus.objectmothers.GroupObjectMother.getThirdGroup
 import de.hennihaus.repositories.GroupRepository
-import de.hennihaus.services.GroupServiceImpl.Companion.ID_MESSAGE
+import de.hennihaus.services.GroupServiceImpl.Companion.GROUP_NOT_FOUND_MESSAGE
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -37,7 +37,7 @@ class GroupServiceTest {
     private val classUnderTest = GroupServiceImpl(
         repository = repository,
         stats = stats,
-        passwordLength = passwordLength
+        passwordLength = passwordLength,
     )
 
     @BeforeEach
@@ -56,7 +56,7 @@ class GroupServiceTest {
             coEvery { repository.getAll() } returns listOf(
                 getSecondGroup(),
                 getThirdGroup(),
-                getFirstGroup()
+                getFirstGroup(),
             )
 
             val response: List<Group> = classUnderTest.getAllGroups()
@@ -64,7 +64,7 @@ class GroupServiceTest {
             response.shouldContainExactly(
                 getFirstGroup(),
                 getSecondGroup(),
-                getThirdGroup()
+                getThirdGroup(),
             )
             coVerifySequence {
                 repository.getAll()
@@ -110,7 +110,7 @@ class GroupServiceTest {
             val result = shouldThrow<NotFoundException> { classUnderTest.getGroupById(id = id) }
 
             result should beInstanceOf<NotFoundException>()
-            result.message shouldBe ID_MESSAGE
+            result.message shouldBe GROUP_NOT_FOUND_MESSAGE
             coVerify(exactly = 1) { repository.getById(id = withArg { it shouldBe ObjectId(id) }) }
             coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
         }
@@ -358,7 +358,7 @@ class GroupServiceTest {
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
             coEvery { repository.getAll() } returns listOf(getFirstGroup())
-            coEvery { repository.save(entry = any()) } throws NotFoundException(message = ID_MESSAGE)
+            coEvery { repository.save(entry = any()) } throws NotFoundException(message = GROUP_NOT_FOUND_MESSAGE)
 
             val result = shouldThrow<NotFoundException> { classUnderTest.resetAllGroups() }
 
@@ -410,7 +410,7 @@ class GroupServiceTest {
             val result = shouldThrow<NotFoundException> { classUnderTest.resetStats(id = id) }
 
             result should beInstanceOf<NotFoundException>()
-            result.message shouldBe ID_MESSAGE
+            result.message shouldBe GROUP_NOT_FOUND_MESSAGE
             coVerify(exactly = 1) { repository.getById(id = ObjectId(id)) }
             coVerify(exactly = 0) { stats.setHasPassed(group = any()) }
             coVerify(exactly = 0) { repository.save(entry = any()) }

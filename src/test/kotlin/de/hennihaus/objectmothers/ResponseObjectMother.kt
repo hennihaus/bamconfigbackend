@@ -33,72 +33,72 @@ object ResponseObjectMother {
 
     fun getSchufaOkResponse(
         code: HttpStatusCode = HttpStatusCode.fromValue(value = OK_CODE.toInt()),
-        mediaType: ContentType = ContentType.Application.Json,
+        contentType: ContentType = ContentType.Application.Json,
         description: String = SCHUFA_OK_DESCRIPTION,
         example: String = SCHUFA_OK_EXAMPLE,
     ) = Response(
         code = code,
-        mediaType = mediaType,
+        contentType = contentType,
         description = description,
         example = example,
     )
 
     fun getBankOkResponse(
         code: HttpStatusCode = HttpStatusCode.fromValue(value = OK_CODE.toInt()),
-        mediaType: ContentType = ContentType.Application.Json,
+        contentType: ContentType = ContentType.Application.Json,
         description: String = BANK_OK_DESCRIPTION,
         example: String = BANK_OK_EXAMPLE,
     ) = Response(
         code = code,
-        mediaType = mediaType,
+        contentType = contentType,
         description = description,
         example = example,
     )
 
     fun getBadRequestResponse(
         code: HttpStatusCode = HttpStatusCode.fromValue(value = BAD_REQUEST_CODE.toInt()),
-        mediaType: ContentType = ContentType.Application.Json,
+        contentType: ContentType = ContentType.Application.Json,
         description: String = BAD_REQUEST_DESCRIPTION,
         example: String = BAD_REQUEST_EXAMPLE,
     ) = Response(
         code = code,
-        mediaType = mediaType,
+        contentType = contentType,
         description = description,
         example = example,
     )
 
     fun getNotFoundResponse(
         code: HttpStatusCode = HttpStatusCode.fromValue(value = NOT_FOUND_CODE.toInt()),
-        mediaType: ContentType = ContentType.Application.Json,
+        contentType: ContentType = ContentType.Application.Json,
         description: String = NOT_FOUND_DESCRIPTION,
         example: String = NOT_FOUND_EXAMPLE,
     ) = Response(
         code = code,
-        mediaType = mediaType,
+        contentType = contentType,
         description = description,
         example = example,
     )
 
     fun getInternalServerErrorResponse(
         code: HttpStatusCode = HttpStatusCode.fromValue(value = INTERNAL_SERVER_ERROR_CODE.toInt()),
-        mediaType: ContentType = ContentType.Application.Json,
+        contentType: ContentType = ContentType.Application.Json,
         description: String = INTERNAL_SERVER_ERROR_DESCRIPTION,
         example: String = INTERNAL_SERVER_ERROR_EXAMPLE,
     ) = Response(
         code = code,
-        mediaType = mediaType,
+        contentType = contentType,
         description = description,
         example = example,
     )
 
     fun getJmsResponse(
         code: HttpStatusCode = HttpStatusCode.fromValue(value = JMS_CODE.toInt()),
-        mediaType: ContentType = ContentType.Application.Json,
+        contentType: ContentType = ContentType.Application.Json,
         description: String = JMS_DESCRIPTION,
         example: String = JMS_EXAMPLE,
     ) = Response(
         code = code,
-        mediaType = mediaType,
+        contentType = contentType,
         description = description,
         example = example,
     )

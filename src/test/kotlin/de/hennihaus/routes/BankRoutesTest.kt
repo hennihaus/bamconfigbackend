@@ -1,19 +1,20 @@
 package de.hennihaus.routes
 
 import de.hennihaus.models.Bank
+import de.hennihaus.models.rest.ErrorResponse
 import de.hennihaus.objectmothers.BankObjectMother.getJmsBank
 import de.hennihaus.objectmothers.BankObjectMother.getSchufaBank
 import de.hennihaus.objectmothers.BankObjectMother.getVBank
-import de.hennihaus.objectmothers.ExceptionResponseObjectMother.INTERNAL_SERVER_ERROR_MESSAGE
-import de.hennihaus.objectmothers.ExceptionResponseObjectMother.getBankNotFoundErrorResponse
-import de.hennihaus.objectmothers.ExceptionResponseObjectMother.getInternalServerErrorResponse
-import de.hennihaus.plugins.ExceptionResponse
+import de.hennihaus.objectmothers.ErrorResponseObjectMother.getBankNotFoundErrorResponse
+import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInternalServerErrorResponse
 import de.hennihaus.services.BankService
-import de.hennihaus.services.BankServiceImpl.Companion.ID_MESSAGE
+import de.hennihaus.services.BankServiceImpl.Companion.BANK_NOT_FOUND_MESSAGE
 import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -28,6 +29,7 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -49,16 +51,16 @@ class BankRoutesTest {
             coEvery { bankService.getAllBanks() } returns listOf(
                 getSchufaBank(),
                 getVBank(),
-                getJmsBank()
+                getJmsBank(),
             )
 
-            val response = testClient.get("/banks")
+            val response = testClient.get(urlString = "/v1/banks")
 
             response shouldHaveStatus HttpStatusCode.OK
             response.body<List<Bank>>().shouldContainExactly(
                 getSchufaBank(),
                 getVBank(),
-                getJmsBank()
+                getJmsBank(),
             )
             coVerify(exactly = 1) { bankService.getAllBanks() }
         }
@@ -67,7 +69,7 @@ class BankRoutesTest {
         fun `should return 200 and an empty list when no banks available`() = testApplicationWith(mockModule) {
             coEvery { bankService.getAllBanks() } returns emptyList()
 
-            val response = client.get("/banks")
+            val response = testClient.get(urlString = "/v1/banks")
 
             response shouldHaveStatus HttpStatusCode.OK
             response.bodyAsText() shouldBe """
@@ -78,13 +80,22 @@ class BankRoutesTest {
         }
 
         @Test
-        fun `should return 500 and an exception response on error`() = testApplicationWith(mockModule) {
-            coEvery { bankService.getAllBanks() } throws Exception(INTERNAL_SERVER_ERROR_MESSAGE)
+        fun `should return 500 and an error response when exception occurs`() = testApplicationWith(mockModule) {
+            coEvery { bankService.getAllBanks() } throws IllegalStateException()
 
-            val response = testClient.get("/banks")
+            val response = testClient.get(urlString = "/v1/banks")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ExceptionResponse>() shouldBe getInternalServerErrorResponse()
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInternalServerErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInternalServerErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { bankService.getAllBanks() }
         }
     }
@@ -96,7 +107,7 @@ class BankRoutesTest {
             val jmsQueue = getSchufaBank().jmsQueue
             coEvery { bankService.getBankByJmsQueue(jmsQueue = any()) } returns getSchufaBank()
 
-            val response = testClient.get("/banks/$jmsQueue")
+            val response = testClient.get(urlString = "/v1/banks/$jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.OK
             response.body<Bank>() shouldBe getSchufaBank()
@@ -104,26 +115,37 @@ class BankRoutesTest {
         }
 
         @Test
-        fun `should return 404 and not found exception response on error`() = testApplicationWith(mockModule) {
+        fun `should return 404 and not found error response when exception occurs`() = testApplicationWith(mockModule) {
             val jmsQueue = "unknown"
-            coEvery { bankService.getBankByJmsQueue(jmsQueue = any()) } throws NotFoundException(message = ID_MESSAGE)
+            coEvery { bankService.getBankByJmsQueue(jmsQueue = any()) } throws NotFoundException(
+                message = BANK_NOT_FOUND_MESSAGE,
+            )
 
-            val response = testClient.get("/banks/$jmsQueue")
+            val response = testClient.get(urlString = "/v1/banks/$jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ExceptionResponse>() shouldBe getBankNotFoundErrorResponse()
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getBankNotFoundErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getBankNotFoundErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { bankService.getBankByJmsQueue(jmsQueue = jmsQueue) }
         }
     }
 
     @Nested
-    inner class UpdateAllBanks {
+    inner class SaveAllBanks {
         @Test
         fun `should return 200 and a list of updated banks`() = testApplicationWith(mockModule) {
             val testBanks = listOf(getSchufaBank(), getVBank(), getSchufaBank())
             coEvery { bankService.saveAllBanks(banks = any()) } returns testBanks
 
-            val response = testClient.put("/banks") {
+            val response = testClient.put(urlString = "/v1/banks") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testBanks)
             }
@@ -137,7 +159,7 @@ class BankRoutesTest {
         fun `should return 500 with invalid input`() = testApplicationWith(mockModule) {
             val invalidInput = "[{\"invalid\":\"invalid\"}]"
 
-            val response = testClient.put("/banks") {
+            val response = testClient.put(urlString = "/v1/banks") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = invalidInput)
             }
@@ -148,13 +170,13 @@ class BankRoutesTest {
     }
 
     @Nested
-    inner class UpdateBank {
+    inner class SaveBank {
         @Test
         fun `should return 200 and an updated bank`() = testApplicationWith(mockModule) {
             val testBank = getSchufaBank()
             coEvery { bankService.saveBank(bank = any()) } returns testBank
 
-            val response = testClient.put("/banks/${testBank.jmsQueue}") {
+            val response = testClient.put(urlString = "/v1/banks/${testBank.jmsQueue}") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testBank)
             }
@@ -168,7 +190,7 @@ class BankRoutesTest {
         fun `should return 500 with invalid input`() = testApplicationWith(mockModule) {
             val invalidInput = "{\"invalid\":\"invalid\"}"
 
-            val response = testClient.put("/banks/invalid") {
+            val response = testClient.put(urlString = "/v1/banks/invalid") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = invalidInput)
             }

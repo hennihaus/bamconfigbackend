@@ -13,7 +13,7 @@ object GroupObjectMother {
     const val DEFAULT_PASSWORD = "0123456789"
     const val DEFAULT_HAS_PASSED = false
     val DEFAULT_STUDENTS = listOf(
-        "Angelar Merkel",
+        "Angela Merkel",
         "Max Mustermann",
         "Thomas Müller",
     )

@@ -44,14 +44,14 @@ class BankRepository(private val db: CoroutineDatabase) : Repository<Bank, Strin
     override suspend fun getById(id: String): Bank? {
         return col.aggregate<Bank>(
             match(
-                filter = Bank::jmsQueue eq id
+                filter = Bank::jmsQueue eq id,
             ),
             lookup(
                 from = Group::class.simpleName?.lowercase() as String,
                 localField = Bank::groups.name,
                 foreignField = ID_FIELD,
-                newAs = Bank::groups.name
-            )
+                newAs = Bank::groups.name,
+            ),
         ).first()
     }
 
@@ -73,8 +73,8 @@ class BankRepository(private val db: CoroutineDatabase) : Repository<Bank, Strin
                 from = Group::class.simpleName?.lowercase() as String,
                 localField = Bank::groups.name,
                 foreignField = ID_FIELD,
-                newAs = Bank::groups.name
-            )
+                newAs = Bank::groups.name,
+            ),
         ).toList()
     }
 
@@ -98,18 +98,18 @@ class BankRepository(private val db: CoroutineDatabase) : Repository<Bank, Strin
     override suspend fun save(entry: Bank): Bank {
         col.updateOne(
             target = entry,
-            options = UpdateOptions().upsert(true)
+            options = UpdateOptions().upsert(true),
         )
         col.updateOne(
             filter = Bank::jmsQueue eq entry.jmsQueue,
             update = set(
                 SetTo(
                     Bank::groups, entry.groups.map { group -> group.id.toString().toObjectId { it } }
-                )
-            )
+                ),
+            ),
         )
         return getById(id = entry.jmsQueue) ?: throw NotFoundException(
-            message = BankServiceImpl.ID_MESSAGE
+            message = BankServiceImpl.BANK_NOT_FOUND_MESSAGE,
         )
     }
 }

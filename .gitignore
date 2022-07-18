@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### OpenApi ###
+docs/.openapi-generator
+docs/.openapi-generator-ignore
+docs/README.md
