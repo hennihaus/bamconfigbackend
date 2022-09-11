@@ -25,7 +25,7 @@ class GithubCallServiceTest {
                 content = "",
                 status = HttpStatusCode.InternalServerError,
             )
-            classUnderTest = GithubCallServiceImpl(
+            classUnderTest = GithubCallService(
                 engine = engine,
                 config = getGithubConfiguration(),
             )
@@ -46,7 +46,7 @@ class GithubCallServiceTest {
                 content = "{}",
                 status = HttpStatusCode.OK,
             )
-            classUnderTest = GithubCallServiceImpl(
+            classUnderTest = GithubCallService(
                 engine = engine,
                 config = getGithubConfiguration(),
             )
@@ -68,7 +68,7 @@ class GithubCallServiceTest {
                 content = "",
                 status = HttpStatusCode.InternalServerError,
             )
-            classUnderTest = GithubCallServiceImpl(
+            classUnderTest = GithubCallService(
                 engine = engine,
                 config = getGithubConfiguration(),
             )
@@ -91,7 +91,7 @@ class GithubCallServiceTest {
                 content = "",
                 status = HttpStatusCode.InternalServerError,
             )
-            classUnderTest = GithubCallServiceImpl(
+            classUnderTest = GithubCallService(
                 engine = engine,
                 config = getGithubConfiguration(),
             )

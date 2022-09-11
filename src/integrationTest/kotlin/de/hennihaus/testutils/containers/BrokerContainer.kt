@@ -2,8 +2,8 @@ package de.hennihaus.testutils.containers
 
 import de.hennihaus.models.generated.broker.GetQueuesResponse
 import de.hennihaus.models.generated.broker.GetTopicsResponse
-import de.hennihaus.services.BrokerServiceImpl.Companion.DESTINATION_NAME_DELIMITER
-import de.hennihaus.services.BrokerServiceImpl.Companion.DESTINATION_TYPE_DELIMITER
+import de.hennihaus.services.BrokerService.Companion.DESTINATION_NAME_DELIMITER
+import de.hennihaus.services.BrokerService.Companion.DESTINATION_TYPE_DELIMITER
 import de.hennihaus.services.callservices.resources.Broker
 import de.hennihaus.testutils.model.Job
 import de.hennihaus.testutils.model.generated.GetJobsResponse

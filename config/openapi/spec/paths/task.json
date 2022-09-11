@@ -41,16 +41,16 @@
         }
       }
     },
-    "/tasks/{id}": {
+    "/tasks/{uuid}": {
       "get": {
         "tags": [
           "Task"
         ],
         "operationId": "getTaskById",
-        "summary": "Gets task by id",
+        "summary": "Gets task by UUID",
         "parameters": [
           {
-            "$ref": "#/components/parameters/id"
+            "$ref": "#/components/parameters/uuid"
           }
         ],
         "responses": {
@@ -76,7 +76,7 @@
         "summary": "Updates particular fields of a task",
         "parameters": [
           {
-            "$ref": "#/components/parameters/id"
+            "$ref": "#/components/parameters/uuid"
           }
         ],
         "requestBody": {
@@ -92,6 +92,37 @@
           "404": {
             "$ref": "../commons/commons.json#/components/responses/404"
           },
+          "409": {
+            "$ref": "../commons/commons.json#/components/responses/409"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/tasks/{uuid}/check/title/{title}": {
+      "get": {
+        "tags": [
+          "Task"
+        ],
+        "operationId": "checkTitle",
+        "summary": "Checks existence of a task based on title",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          },
+          {
+            "$ref": "#/components/parameters/title"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "../commons/commons.json#/components/responses/200"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
           "500": {
             "$ref": "../commons/commons.json#/components/responses/500"
           }
@@ -101,15 +132,26 @@
   },
   "components": {
     "parameters": {
-      "id": {
-        "name": "id",
+      "uuid": {
+        "name": "uuid",
         "in": "path",
         "required": true,
-        "example": "e393ce40-7c72-436e-8cf7-eb5be28278d5",
+        "example": "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
         "schema": {
           "type": "string",
           "format": "uuid",
           "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        }
+      },
+      "title": {
+        "name": "title",
+        "in": "path",
+        "required": true,
+        "example": "Asynchrone Banken",
+        "schema": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 50
         }
       }
     },

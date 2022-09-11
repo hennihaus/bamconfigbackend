@@ -14,12 +14,9 @@ object ContentTypeSerializer : KSerializer<ContentType> {
         kind = PrimitiveKind.STRING,
     )
 
-    override fun deserialize(decoder: Decoder): ContentType {
-        val type = decoder.decodeString()
-        return ContentType.parse(value = type)
+    override fun deserialize(decoder: Decoder): ContentType = decoder.decodeString().let {
+        ContentType.parse(value = it)
     }
 
-    override fun serialize(encoder: Encoder, value: ContentType) {
-        encoder.encodeString(value = "$value")
-    }
+    override fun serialize(encoder: Encoder, value: ContentType) = encoder.encodeString(value = "$value")
 }

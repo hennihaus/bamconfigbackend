@@ -1,7 +1,7 @@
 package de.hennihaus.objectmothers
 
-import de.hennihaus.models.CreditConfiguration
-import de.hennihaus.models.RatingLevel
+import de.hennihaus.models.generated.CreditConfiguration
+import de.hennihaus.models.generated.RatingLevel
 
 object CreditConfigurationObjectMother {
 

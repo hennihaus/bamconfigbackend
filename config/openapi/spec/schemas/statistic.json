@@ -1,0 +1,41 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BAM Business Integration - Statistic Schema",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "Statistic": {
+        "type": "object",
+        "required": [
+          "bankId",
+          "teamId"
+        ],
+        "properties": {
+          "bankId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "teamId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "requestsCount": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        },
+        "example": {
+          "bankId": "78eefcd4-2459-412e-857f-60f7c5d531c9",
+          "teamId": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "requestsCount": 0
+        }
+      }
+    }
+  }
+}

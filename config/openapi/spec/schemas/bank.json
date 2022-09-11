@@ -10,20 +10,26 @@
       "Bank": {
         "type": "object",
         "required": [
-          "jmsQueue",
+          "uuid",
           "name",
+          "jmsQueue",
           "thumbnailUrl",
           "isAsync",
           "isActive",
-          "groups"
+          "teams"
         ],
         "properties": {
-          "jmsQueue": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "name": {
             "type": "string",
             "minLength": 6,
             "maxLength": 50
           },
-          "name": {
+          "jmsQueue": {
             "type": "string",
             "minLength": 6,
             "maxLength": 50
@@ -42,11 +48,11 @@
           "creditConfiguration": {
             "$ref": "#/components/schemas/CreditConfiguration"
           },
-          "groups": {
+          "teams": {
             "type": "array",
-            "title": "Groups",
+            "title": "Teams",
             "items": {
-              "$ref": "./group.json#/components/schemas/Group"
+              "$ref": "./team.json#/components/schemas/Team"
             },
             "minItems": 0,
             "uniqueItems": true
@@ -117,17 +123,53 @@
       "Banks": {
         "value": [
           {
-            "jmsQueue": "schufa",
+            "uuid": "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
             "name": "Schufa",
+            "jmsQueue": "schufa",
             "thumbnailUrl": "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
             "isAsync": false,
             "isActive": true,
             "creditConfiguration": null,
-            "groups": []
+            "teams": [
+              {
+                "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+                "username": "Beispielteam",
+                "password": "OOfKqWksmA",
+                "jmsQueue": "ResponseLoanBrokerBeispielteam",
+                "students": [
+                  {
+                    "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
+                    "firstname": "Max",
+                    "lastname": "Mustermann"
+                  },
+                  {
+                    "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
+                    "firstname": "Angela",
+                    "lastname": "Merkel"
+                  },
+                  {
+                    "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
+                    "firstname": "Thomas",
+                    "lastname": "Müller"
+                  }
+                ],
+                "statistics": {
+                  "Schufa": 0,
+                  "Deutsche Bank": 0,
+                  "Sparkasse": 0,
+                  "PSD Bank": 0,
+                  "Raiffeisen": 0,
+                  "Volksbank": 0,
+                  "Commerzbank": 0
+                },
+                "hasPassed": false
+              }
+            ]
           },
           {
-            "jmsQueue": "deutschebank",
+            "uuid": "bf6981d4-0413-4767-8232-c7179b169bc7",
             "name": "Deutsche Bank",
+            "jmsQueue": "deutschebank",
             "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Deutsche_Bank_logo_without_wordmark.svg/2048px-Deutsche_Bank_logo_without_wordmark.svg.png",
             "isAsync": false,
             "isActive": true,
@@ -138,11 +180,47 @@
               "maxTermInMonths": 36,
               "minSchufaRating": "A",
               "maxSchufaRating": "P"
-            }
+            },
+            "teams": [
+              {
+                "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+                "username": "Beispielteam",
+                "password": "OOfKqWksmA",
+                "jmsQueue": "ResponseLoanBrokerBeispielteam",
+                "students": [
+                  {
+                    "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
+                    "firstname": "Max",
+                    "lastname": "Mustermann"
+                  },
+                  {
+                    "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
+                    "firstname": "Angela",
+                    "lastname": "Merkel"
+                  },
+                  {
+                    "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
+                    "firstname": "Thomas",
+                    "lastname": "Müller"
+                  }
+                ],
+                "statistics": {
+                  "Schufa": 0,
+                  "Deutsche Bank": 0,
+                  "Sparkasse": 0,
+                  "PSD Bank": 0,
+                  "Raiffeisen": 0,
+                  "Volksbank": 0,
+                  "Commerzbank": 0
+                },
+                "hasPassed": false
+              }
+            ]
           },
           {
-            "jmsQueue": "sparkasse",
+            "uuid": "78eefcd4-2459-412e-857f-60f7c5d531c9",
             "name": "Sparkasse",
+            "jmsQueue": "sparkasse",
             "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png",
             "isAsync": true,
             "isActive": true,
@@ -154,25 +232,37 @@
               "minSchufaRating": "A",
               "maxSchufaRating": "P"
             },
-            "groups": [
+            "teams": [
               {
-                "id": "e7a259c7-44f1-472f-a869-f9c71f65a209",
-                "username": "Beispielgruppe",
+                "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+                "username": "Beispielteam",
                 "password": "OOfKqWksmA",
-                "jmsQueue": "ResponseLoanBrokerBeispielgruppe",
+                "jmsQueue": "ResponseLoanBrokerBeispielteam",
                 "students": [
-                  "Angela Merkel",
-                  "Max Mustermann",
-                  "Thomas Müller"
+                  {
+                    "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
+                    "firstname": "Max",
+                    "lastname": "Mustermann"
+                  },
+                  {
+                    "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
+                    "firstname": "Angela",
+                    "lastname": "Merkel"
+                  },
+                  {
+                    "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
+                    "firstname": "Thomas",
+                    "lastname": "Müller"
+                  }
                 ],
-                "stats": {
-                  "schufa": 0,
-                  "deutschebank": 0,
-                  "sparkasse": 0,
-                  "psdbank": 0,
-                  "raiffeisen": 0,
-                  "volksbank": 0,
-                  "commerzbank": 0
+                "statistics": {
+                  "Schufa": 0,
+                  "Deutsche Bank": 0,
+                  "Sparkasse": 0,
+                  "PSD Bank": 0,
+                  "Raiffeisen": 0,
+                  "Volksbank": 0,
+                  "Commerzbank": 0
                 },
                 "hasPassed": false
               }
@@ -182,19 +272,55 @@
       },
       "Schufa": {
         "value": {
-          "jmsQueue": "schufa",
+          "uuid": "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
           "name": "Schufa",
+          "jmsQueue": "schufa",
           "thumbnailUrl": "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
           "isAsync": false,
           "isActive": true,
           "creditConfiguration": null,
-          "groups": []
+          "teams": [
+            {
+              "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+              "username": "Beispielteam",
+              "password": "OOfKqWksmA",
+              "jmsQueue": "ResponseLoanBrokerBeispielteam",
+              "students": [
+                {
+                  "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
+                  "firstname": "Max",
+                  "lastname": "Mustermann"
+                },
+                {
+                  "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
+                  "firstname": "Angela",
+                  "lastname": "Merkel"
+                },
+                {
+                  "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
+                  "firstname": "Thomas",
+                  "lastname": "Müller"
+                }
+              ],
+              "statistics": {
+                "Schufa": 0,
+                "Deutsche Bank": 0,
+                "Sparkasse": 0,
+                "PSD Bank": 0,
+                "Raiffeisen": 0,
+                "Volksbank": 0,
+                "Commerzbank": 0
+              },
+              "hasPassed": false
+            }
+          ]
         }
       },
       "SyncBank": {
         "value": {
-          "jmsQueue": "deutschebank",
+          "uuid": "bf6981d4-0413-4767-8232-c7179b169bc7",
           "name": "Deutsche Bank",
+          "jmsQueue": "deutschebank",
           "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Deutsche_Bank_logo_without_wordmark.svg/2048px-Deutsche_Bank_logo_without_wordmark.svg.png",
           "isAsync": false,
           "isActive": true,
@@ -206,13 +332,48 @@
             "minSchufaRating": "A",
             "maxSchufaRating": "P"
           },
-          "groups": []
+          "teams": [
+            {
+              "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+              "username": "Beispielteam",
+              "password": "OOfKqWksmA",
+              "jmsQueue": "ResponseLoanBrokerBeispielteam",
+              "students": [
+                {
+                  "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
+                  "firstname": "Max",
+                  "lastname": "Mustermann"
+                },
+                {
+                  "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
+                  "firstname": "Angela",
+                  "lastname": "Merkel"
+                },
+                {
+                  "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
+                  "firstname": "Thomas",
+                  "lastname": "Müller"
+                }
+              ],
+              "statistics": {
+                "Schufa": 0,
+                "Deutsche Bank": 0,
+                "Sparkasse": 0,
+                "PSD Bank": 0,
+                "Raiffeisen": 0,
+                "Volksbank": 0,
+                "Commerzbank": 0
+              },
+              "hasPassed": false
+            }
+          ]
         }
       },
       "AsyncBank": {
         "value": {
-          "jmsQueue": "sparkasse",
+          "uuid": "78eefcd4-2459-412e-857f-60f7c5d531c9",
           "name": "Sparkasse",
+          "jmsQueue": "sparkasse",
           "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png",
           "isAsync": true,
           "isActive": true,
@@ -224,25 +385,37 @@
             "minSchufaRating": "A",
             "maxSchufaRating": "P"
           },
-          "groups": [
+          "teams": [
             {
-              "id": "e7a259c7-44f1-472f-a869-f9c71f65a209",
-              "username": "Beispielgruppe",
+              "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+              "username": "Beispielteam",
               "password": "OOfKqWksmA",
-              "jmsQueue": "ResponseLoanBrokerBeispielgruppe",
+              "jmsQueue": "ResponseLoanBrokerBeispielteam",
               "students": [
-                "Angela Merkel",
-                "Max Mustermann",
-                "Thomas Müller"
+                {
+                  "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
+                  "firstname": "Max",
+                  "lastname": "Mustermann"
+                },
+                {
+                  "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
+                  "firstname": "Angela",
+                  "lastname": "Merkel"
+                },
+                {
+                  "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
+                  "firstname": "Thomas",
+                  "lastname": "Müller"
+                }
               ],
-              "stats": {
-                "schufa": 0,
-                "deutschebank": 0,
-                "sparkasse": 0,
-                "psdbank": 0,
-                "raiffeisen": 0,
-                "volksbank": 0,
-                "commerzbank": 0
+              "statistics": {
+                "Schufa": 0,
+                "Deutsche Bank": 0,
+                "Sparkasse": 0,
+                "PSD Bank": 0,
+                "Raiffeisen": 0,
+                "Volksbank": 0,
+                "Commerzbank": 0
               },
               "hasPassed": false
             }

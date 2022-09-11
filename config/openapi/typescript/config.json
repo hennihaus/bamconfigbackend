@@ -3,6 +3,7 @@
   "fileNaming": "kebab-case",
   "npmName": "@hennihaus/bamconfigbackend",
   "npmVersion": "0.0.0",
+  "sortModelPropertiesByRequiredFlag": false,
   "stringEnums": true,
   "supportsES6": true,
   "withInterfaces": true

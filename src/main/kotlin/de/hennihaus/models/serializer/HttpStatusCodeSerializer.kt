@@ -14,12 +14,9 @@ object HttpStatusCodeSerializer : KSerializer<HttpStatusCode> {
         kind = PrimitiveKind.INT,
     )
 
-    override fun deserialize(decoder: Decoder): HttpStatusCode {
-        val code = decoder.decodeInt()
-        return HttpStatusCode.fromValue(value = code)
+    override fun deserialize(decoder: Decoder): HttpStatusCode = decoder.decodeInt().let {
+        HttpStatusCode.fromValue(value = it)
     }
 
-    override fun serialize(encoder: Encoder, value: HttpStatusCode) {
-        encoder.encodeInt(value = value.value)
-    }
+    override fun serialize(encoder: Encoder, value: HttpStatusCode) = encoder.encodeInt(value = value.value)
 }

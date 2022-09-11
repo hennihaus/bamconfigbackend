@@ -1,0 +1,125 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BAM Business Integration - Team Schema",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "Team": {
+        "type": "object",
+        "required": [
+          "uuid",
+          "username",
+          "password",
+          "jmsQueue",
+          "students",
+          "statistics",
+          "hasPassed"
+        ],
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "username": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 50
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 10,
+            "maxLength": 50
+          },
+          "jmsQueue": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 50
+          },
+          "students": {
+            "type": "array",
+            "title": "Students",
+            "items": {
+              "$ref": "#/components/schemas/Student"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "statistics": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          "hasPassed": {
+            "type": "boolean"
+          }
+        },
+        "example": {
+          "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "username": "Beispielteam",
+          "password": "OOfKqWksmA",
+          "jmsQueue": "ResponseLoanBrokerBeispielteam",
+          "students": [
+            {
+              "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
+              "firstname": "Max",
+              "lastname": "Mustermann"
+            },
+            {
+              "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
+              "firstname": "Angela",
+              "lastname": "Merkel"
+            },
+            {
+              "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
+              "firstname": "Thomas",
+              "lastname": "Müller"
+            }
+          ],
+          "statistics": {
+            "Schufa": 0,
+            "Deutsche Bank": 0,
+            "Sparkasse": 0,
+            "PSD Bank": 0,
+            "Raiffeisen": 0,
+            "Volksbank": 0,
+            "Commerzbank": 0
+          },
+          "hasPassed": false
+        }
+      },
+      "Student": {
+        "type": "object",
+        "required": [
+          "uuid",
+          "firstname",
+          "lastname"
+        ],
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "firstname": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 50
+          },
+          "lastname": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 50
+          }
+        }
+      }
+    }
+  }
+}

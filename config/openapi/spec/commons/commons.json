@@ -54,6 +54,20 @@
           }
         }
       },
+      "409": {
+        "description": "Conflict in Database",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "message": "[could not serialize access due to concurrent update]",
+              "dateTime": "2022-01-31T07:43:30"
+            }
+          }
+        }
+      },
       "500": {
         "description": "Internal Server Error",
         "content": {

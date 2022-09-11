@@ -1,185 +1,178 @@
 package de.hennihaus.repositories
 
-import com.mongodb.client.model.UpdateOptions
-import de.hennihaus.configurations.MongoConfiguration.ID_FIELD
-import de.hennihaus.models.Bank
-import de.hennihaus.models.Group
-import de.hennihaus.models.Task
-import de.hennihaus.services.TaskServiceImpl
-import de.hennihaus.utils.toObjectId
-import io.ktor.server.plugins.NotFoundException
-import org.bson.types.ObjectId
+import de.hennihaus.models.generated.Task
+import de.hennihaus.repositories.entities.TaskEntity
+import de.hennihaus.repositories.mappers.toTask
+import de.hennihaus.repositories.tables.ContactTable
+import de.hennihaus.repositories.tables.EndpointTable
+import de.hennihaus.repositories.tables.ParameterTable
+import de.hennihaus.repositories.tables.ResponseTable
+import de.hennihaus.repositories.tables.TaskParameterTable
+import de.hennihaus.repositories.tables.TaskResponseTable
+import de.hennihaus.repositories.tables.TaskTable
+import de.hennihaus.utils.batchUpsert
+import de.hennihaus.utils.inTransaction
+import de.hennihaus.utils.upsert
+import kotlinx.coroutines.Dispatchers
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.annotation.Single
-import org.litote.kmongo.MongoOperator.`in`
-import org.litote.kmongo.SetTo
-import org.litote.kmongo.coroutine.CoroutineCollection
-import org.litote.kmongo.coroutine.CoroutineDatabase
-import org.litote.kmongo.coroutine.aggregate
-import org.litote.kmongo.coroutine.updateOne
-import org.litote.kmongo.eq
-import org.litote.kmongo.expr
-import org.litote.kmongo.from
-import org.litote.kmongo.id.toId
-import org.litote.kmongo.lookup
-import org.litote.kmongo.match
-import org.litote.kmongo.set
-import org.litote.kmongo.variable
-import org.litote.kmongo.variableDefinition
+import java.util.UUID
 
 @Single
-class TaskRepository(private val db: CoroutineDatabase) : Repository<Task, ObjectId> {
+class TaskRepository : Repository<Task, UUID> {
 
-    override val col: CoroutineCollection<Task>
-        get() = db.getCollection()
-
-    /**
-     * db.task.aggregate([
-     *      {
-     *          $match: {
-     *              _id: "<ID>"
-     *          }
-     *      },
-     *      {
-     *          $lookup: {
-     *              from: "bank",
-     *              let: {
-     *                  bank_ids: "$banks"
-     *              },
-     *              pipeline: [
-     *                  {
-     *                      $match: {
-     *                          $expr: {
-     *                              $in: [ "$_id", "$$bank_ids" ]
-     *                          }
-     *                      }
-     *                  },
-     *                  {
-     *                      $lookup: {
-     *                          from: "group",
-     *                          localField: "groups",
-     *                          foreignField: "_id",
-     *                          as: "groups"
-     *                      }
-     *                  }
-     *              ],
-     *              as: "banks"
-     *          }
-     *      }
-     * ]);
-     */
-    override suspend fun getById(id: ObjectId): Task? {
-        return col.aggregate<Task>(
-            match(
-                filter = Task::id eq id.toId()
-            ),
-            lookup(
-                from = Bank::class.simpleName?.lowercase() as String,
-                let = listOf(
-                    Task::banks.variableDefinition()
-                ),
-                resultProperty = Task::banks,
-                pipeline = arrayOf(
-                    match(
-                        expr(
-                            `in` from listOf(Bank::jmsQueue, Task::banks.variable)
-                        ),
-                    ),
-                    lookup(
-                        from = Group::class.simpleName?.lowercase() as String,
-                        localField = Bank::groups.name,
-                        foreignField = ID_FIELD,
-                        newAs = Bank::groups.name,
-                    ),
-                ),
-            ),
-        ).first()
+    override suspend fun getById(id: UUID): Task? = inTransaction {
+        TaskEntity.findById(id = id)
+            ?.toTask()
     }
 
-    /**
-     * db.task.aggregate([
-     *      {
-     *          $lookup: {
-     *              from: "bank",
-     *              let: {
-     *                  bank_ids: "$banks"
-     *              },
-     *              pipeline: [
-     *                  {
-     *                      $match: {
-     *                          $expr: {
-     *                              $in: [ "$_id", "$$bank_ids" ]
-     *                          }
-     *                      }
-     *                  },
-     *                  {
-     *                      $lookup: {
-     *                          from: "group",
-     *                          localField: "groups",
-     *                          foreignField: "_id",
-     *                          as: "groups"
-     *                      }
-     *                  }
-     *              ],
-     *              as: "bank"
-     *          }
-     *      }
-     * ]);
-     */
-    override suspend fun getAll(): List<Task> {
-        return col.aggregate<Task>(
-            lookup(
-                from = Bank::class.simpleName?.lowercase() as String,
-                let = listOf(
-                    Task::banks.variableDefinition()
-                ),
-                resultProperty = Task::banks,
-                pipeline = arrayOf(
-                    match(
-                        expr(
-                            `in` from listOf(Bank::jmsQueue, Task::banks.variable)
-                        )
-                    ),
-                    lookup(
-                        from = Group::class.simpleName?.lowercase() as String,
-                        localField = Bank::groups.name,
-                        foreignField = ID_FIELD,
-                        newAs = Bank::groups.name,
-                    ),
-                ),
-            ),
-        ).toList()
+    override suspend fun getAll(): List<Task> = inTransaction {
+        TaskEntity.all().map {
+            it.toTask()
+        }
     }
 
-    /**
-     * db.tasks.updateOne(
-     *      {
-     *          _id: ObjectId("<ID>")
-     *      },
-     *      {
-     *          $set: {
-     *              banks: [
-     *                  "<BANK_ID/BANK_JMS_QUEUE>"
-     *              ]
-     *          }
-     *      }
-     * );
-     */
-    override suspend fun save(entry: Task): Task {
-        col.updateOne(
-            target = entry,
-            options = UpdateOptions().upsert(true),
-        )
-        col.updateOne(
-            filter = Task::id eq entry.id,
-            update = set(
-                SetTo(
-                    property = Task::banks,
-                    value = entry.banks.map { bank -> bank.jmsQueue },
-                ),
-            ),
-        )
-        return getById(id = entry.id.toString().toObjectId { it }) ?: throw NotFoundException(
-            message = TaskServiceImpl.TASK_NOT_FOUND_MESSAGE,
-        )
+    override suspend fun deleteById(id: UUID): Boolean = inTransaction {
+        TaskEntity.findById(id = id)
+            ?.delete()
+            ?.let { true }
+            ?: false
+    }
+
+    override suspend fun save(entry: Task, repetitionAttempts: Int): Task = inTransaction(
+        repetitionAttempts = repetitionAttempts,
+    ) {
+        val now = Clock.System.now()
+
+        entry.saveContact(now = now)
+        entry.saveTask(now = now)
+        entry.saveEndpoints()
+        entry.saveParameters(now = now)
+        entry.saveResponses(now = now)
+
+        TaskEntity.findById(id = entry.uuid)
+            ?.toTask()
+            ?: throw IllegalStateException(TASK_NOT_FOUND_MESSAGE)
+    }
+
+    suspend fun getTaskByTitle(title: String): Task? = newSuspendedTransaction(context = Dispatchers.IO) {
+        TaskEntity.find { TaskTable.title eq title }
+            .singleOrNull()
+            ?.toTask()
+    }
+
+    private fun Task.saveContact(now: Instant) {
+        ContactTable.upsert(conflictColumns = listOf(ContactTable.id)) { contactTable ->
+            contactTable[id] = contact.uuid
+            contactTable[firstname] = contact.firstname
+            contactTable[lastname] = contact.lastname
+            contactTable[email] = contact.email
+            contactTable[lastUpdated] = now
+        }
+        ContactTable.deleteWhere {
+            ContactTable.id neq contact.uuid and (
+                ContactTable.id notInSubQuery TaskTable
+                    .slice(column = TaskTable.contactId)
+                    .selectAll()
+                    .withDistinct()
+                )
+        }
+    }
+
+    private fun Task.saveTask(now: Instant) {
+        TaskTable.upsert(conflictColumns = listOf(TaskTable.id)) { taskTable ->
+            taskTable[id] = this@saveTask.uuid
+            taskTable[contactId] = contact.uuid
+            taskTable[integrationStep] = this@saveTask.integrationStep.value
+            taskTable[title] = this@saveTask.title
+            taskTable[description] = this@saveTask.description
+            taskTable[isOpenApiVerbose] = this@saveTask.isOpenApiVerbose
+            taskTable[lastUpdated] = now
+        }
+    }
+
+    private fun Task.saveEndpoints() {
+        EndpointTable.batchUpsert(
+            data = endpoints,
+            conflictColumns = listOf(EndpointTable.id),
+        ) { endpointTable, endpoint ->
+            endpointTable[id] = endpoint.uuid
+            endpointTable[taskId] = uuid
+            endpointTable[type] = endpoint.type.value
+            endpointTable[url] = "${endpoint.url}"
+            endpointTable[docsUrl] = "${endpoint.docsUrl}"
+        }
+        EndpointTable.deleteWhere {
+            EndpointTable.taskId eq uuid and (EndpointTable.id notInList endpoints.map { it.uuid })
+        }
+    }
+
+    private fun Task.saveParameters(now: Instant) {
+        ParameterTable.batchUpsert(
+            data = parameters,
+            conflictColumns = listOf(ParameterTable.id),
+        ) { parameterTable, parameter ->
+            parameterTable[id] = parameter.uuid
+            parameterTable[name] = parameter.name
+            parameterTable[type] = parameter.type.value
+            parameterTable[description] = parameter.description
+            parameterTable[example] = parameter.example
+            parameterTable[lastUpdated] = now
+        }
+        TaskParameterTable.batchUpsert(
+            data = parameters,
+            conflictColumns = listOf(TaskParameterTable.taskId, TaskParameterTable.parameterId),
+        ) { table, parameter ->
+            table[taskId] = uuid
+            table[parameterId] = parameter.uuid
+        }
+        TaskParameterTable.deleteWhere {
+            TaskParameterTable.taskId eq uuid and (TaskParameterTable.parameterId notInList parameters.map { it.uuid })
+        }
+        ParameterTable.deleteWhere {
+            ParameterTable.id notInSubQuery TaskParameterTable
+                .slice(column = TaskParameterTable.parameterId)
+                .selectAll()
+                .withDistinct()
+        }
+    }
+
+    private fun Task.saveResponses(now: Instant) {
+        ResponseTable.batchUpsert(
+            data = responses,
+            conflictColumns = listOf(ResponseTable.id),
+        ) { responseTable, response ->
+            responseTable[id] = response.uuid
+            responseTable[httpStatusCode] = response.httpStatusCode.value
+            responseTable[contentType] = "${response.contentType}"
+            responseTable[description] = response.description
+            responseTable[example] = response.example
+            responseTable[lastUpdated] = now
+        }
+        TaskResponseTable.batchUpsert(
+            data = responses,
+            conflictColumns = listOf(TaskResponseTable.taskId, TaskResponseTable.responseId),
+        ) { taskResponseTable, response ->
+            taskResponseTable[taskId] = uuid
+            taskResponseTable[responseId] = response.uuid
+        }
+        TaskResponseTable.deleteWhere {
+            TaskResponseTable.taskId eq uuid and (TaskResponseTable.responseId notInList responses.map { it.uuid })
+        }
+        ResponseTable.deleteWhere {
+            ResponseTable.id notInSubQuery TaskResponseTable
+                .slice(column = TaskResponseTable.responseId)
+                .selectAll()
+                .withDistinct()
+        }
+    }
+
+    companion object {
+        private const val TASK_NOT_FOUND_MESSAGE = "Task not found in database"
     }
 }

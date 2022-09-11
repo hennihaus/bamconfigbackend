@@ -1,16 +1,19 @@
 package de.hennihaus.routes
 
-import de.hennihaus.models.Task
-import de.hennihaus.models.rest.ErrorResponse
+import de.hennihaus.models.generated.ErrorResponse
+import de.hennihaus.models.generated.ExistsResponse
+import de.hennihaus.models.generated.Task
+import de.hennihaus.objectmothers.ErrorResponseObjectMother.getConflictErrorResponse
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInternalServerErrorResponse
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInvalidIdErrorResponse
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getTaskNotFoundErrorResponse
 import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask
-import de.hennihaus.plugins.ObjectIdException
+import de.hennihaus.plugins.TransactionException
+import de.hennihaus.plugins.UUIDException
 import de.hennihaus.services.TaskService
-import de.hennihaus.services.TaskServiceImpl.Companion.TASK_NOT_FOUND_MESSAGE
+import de.hennihaus.services.TaskService.Companion.TASK_NOT_FOUND_MESSAGE
 import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
@@ -32,17 +35,21 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.datetime.LocalDateTime
-import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.koin.dsl.module
+import java.util.UUID
 
 class TaskRoutesTest {
 
     private val taskService = mockk<TaskService>()
 
-    private val mockModule = module { single { taskService } }
+    private val mockModule = module {
+        single {
+            taskService
+        }
+    }
 
     @BeforeEach
     fun init() = clearAllMocks()
@@ -106,23 +113,23 @@ class TaskRoutesTest {
     @Nested
     inner class GetTaskById {
         @Test
-        fun `should return 200 and a task by id`() = testApplicationWith(mockModule) {
-            val id = getSchufaTask().id.toString()
+        fun `should return 200 and a task by uuid`() = testApplicationWith(mockModule) {
+            val uuid = "${getSchufaTask().uuid}"
             coEvery { taskService.getTaskById(id = any()) } returns getSchufaTask()
 
-            val response = testClient.get(urlString = "/v1/tasks/$id")
+            val response = testClient.get(urlString = "/v1/tasks/$uuid")
 
             response shouldHaveStatus HttpStatusCode.OK
             response.body<Task>() shouldBe getSchufaTask()
-            coVerify(exactly = 1) { taskService.getTaskById(id = id) }
+            coVerify(exactly = 1) { taskService.getTaskById(id = uuid) }
         }
 
         @Test
         fun `should return 404 and not found error response when exception occurs`() = testApplicationWith(mockModule) {
-            val id = ObjectId().toString()
+            val uuid = "${UUID.randomUUID()}"
             coEvery { taskService.getTaskById(id = any()) } throws NotFoundException(message = TASK_NOT_FOUND_MESSAGE)
 
-            val response = testClient.get(urlString = "/v1/tasks/$id")
+            val response = testClient.get(urlString = "/v1/tasks/$uuid")
 
             response shouldHaveStatus HttpStatusCode.NotFound
             response.body<ErrorResponse>() should {
@@ -135,7 +142,44 @@ class TaskRoutesTest {
                     property = LocalDateTime::second,
                 )
             }
-            coVerify(exactly = 1) { taskService.getTaskById(id = id) }
+            coVerify(exactly = 1) { taskService.getTaskById(id = uuid) }
+        }
+    }
+
+    @Nested
+    inner class CheckTitle {
+        @Test
+        fun `should return 200 and true when title exists`() = testApplicationWith(mockModule) {
+            val (uuid, title) = getSchufaTask()
+            coEvery { taskService.checkTitle(id = any(), title = any()) } returns true
+
+            val response = testClient.get(urlString = "/v1/tasks/$uuid/check/title/$title")
+
+            response shouldHaveStatus HttpStatusCode.OK
+            response.body<ExistsResponse>() shouldBe ExistsResponse(exists = true)
+            coVerify(exactly = 1) { taskService.checkTitle(id = "$uuid", title = title) }
+        }
+
+        @Test
+        fun `should return 400 and an error response when uuid is invalid`() = testApplicationWith(mockModule) {
+            val uuid = "invalidUUID"
+            val title = getSchufaTask().title
+            coEvery { taskService.checkTitle(id = any(), title = any()) } throws UUIDException()
+
+            val response = testClient.get(urlString = "/v1/tasks/$uuid/check/title/$title")
+
+            response shouldHaveStatus HttpStatusCode.BadRequest
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
+            coVerify(exactly = 1) { taskService.checkTitle(id = uuid, title = title) }
         }
     }
 
@@ -146,23 +190,23 @@ class TaskRoutesTest {
             val testTask = getSchufaTask()
             coEvery { taskService.patchTask(id = any(), task = any()) } returns testTask
 
-            val response = testClient.patch(urlString = "/v1/tasks/${testTask.id}") {
+            val response = testClient.patch(urlString = "/v1/tasks/${testTask.uuid}") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testTask)
             }
 
             response shouldHaveStatus HttpStatusCode.OK
             response.body<Task>() shouldBe testTask
-            coVerify(exactly = 1) { taskService.patchTask(id = testTask.id.toString(), task = testTask) }
+            coVerify(exactly = 1) { taskService.patchTask(id = "${testTask.uuid}", task = testTask) }
         }
 
         @Test
-        fun `should return 400 and error response when id is invalid`() = testApplicationWith(mockModule) {
-            val id = "invalidId"
+        fun `should return 400 and error response when uuid is invalid`() = testApplicationWith(mockModule) {
+            val uuid = "invalidUUID"
             val testTask = getSchufaTask()
-            coEvery { taskService.patchTask(id = any(), task = any()) } throws ObjectIdException()
+            coEvery { taskService.patchTask(id = any(), task = any()) } throws UUIDException()
 
-            val response = testClient.patch(urlString = "/v1/tasks/$id") {
+            val response = testClient.patch(urlString = "/v1/tasks/$uuid") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testTask)
             }
@@ -178,7 +222,31 @@ class TaskRoutesTest {
                     property = LocalDateTime::second,
                 )
             }
-            coVerify(exactly = 1) { taskService.patchTask(id = id, task = testTask) }
+            coVerify(exactly = 1) { taskService.patchTask(id = uuid, task = testTask) }
+        }
+
+        @Test
+        fun `should return 409 and an error response when transaction failed`() = testApplicationWith(mockModule) {
+            val testTask = getSchufaTask()
+            coEvery { taskService.patchTask(id = any(), task = any()) } throws TransactionException()
+
+            val response = testClient.patch(urlString = "/v1/tasks/${testTask.uuid}") {
+                contentType(type = ContentType.Application.Json)
+                setBody(body = testTask)
+            }
+
+            response shouldHaveStatus HttpStatusCode.Conflict
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getConflictErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getConflictErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
+            coVerify(exactly = 1) { taskService.patchTask(id = "${testTask.uuid}", task = testTask) }
         }
     }
 }

@@ -19,35 +19,47 @@
     }
   ],
   "paths": {
-    "/groups": {
-      "$ref": "./paths/group.json#/paths/~1groups"
+    "/teams": {
+      "$ref": "./paths/team.json#/paths/~1teams"
     },
-    "/groups/{id}": {
-      "$ref": "./paths/group.json#/paths/~1groups~1{id}"
+    "/teams/{uuid}": {
+      "$ref": "./paths/team.json#/paths/~1teams~1{uuid}"
     },
-    "/groups/{id}/check/username/{username}": {
-      "$ref": "./paths/group.json#/paths/~1groups~1{id}~1check~1username~1{username}"
+    "/teams/{uuid}/statistics": {
+      "$ref": "./paths/team.json#/paths/~1teams~1{uuid}~1statistics"
     },
-    "/groups/{id}/check/password/{password}": {
-      "$ref": "./paths/group.json#/paths/~1groups~1{id}~1check~1password~1{password}"
+    "/teams/{uuid}/check/username/{username}": {
+      "$ref": "./paths/team.json#/paths/~1teams~1{uuid}~1check~1username~1{username}"
     },
-    "/groups/{id}/check/jmsQueue/{jmsQueue}": {
-      "$ref": "./paths/group.json#/paths/~1groups~1{id}~1check~1jmsQueue~1{jmsQueue}"
+    "/teams/{uuid}/check/password/{password}": {
+      "$ref": "./paths/team.json#/paths/~1teams~1{uuid}~1check~1password~1{password}"
     },
-    "/groups/{id}/stats": {
-      "$ref": "./paths/group.json#/paths/~1groups~1{id}~1stats"
+    "/teams/{uuid}/check/jmsQueue/{jmsQueue}": {
+      "$ref": "./paths/team.json#/paths/~1teams~1{uuid}~1check~1jmsQueue~1{jmsQueue}"
+    },
+    "/statistics/increment": {
+      "$ref": "./paths/statistic.json#/paths/~1statistics~1increment"
     },
     "/banks": {
       "$ref": "./paths/bank.json#/paths/~1banks"
     },
-    "/banks/{jmsQueue}": {
-      "$ref": "./paths/bank.json#/paths/~1banks~1{jmsQueue}"
+    "/banks/{uuid}": {
+      "$ref": "./paths/bank.json#/paths/~1banks~1{uuid}"
     },
     "/tasks": {
       "$ref": "./paths/task.json#/paths/~1tasks"
     },
-    "/tasks/{id}": {
-      "$ref": "./paths/task.json#/paths/~1tasks~1{id}"
+    "/tasks/{uuid}": {
+      "$ref": "./paths/task.json#/paths/~1tasks~1{uuid}"
+    },
+    "/tasks/{uuid}/check/title/{title}": {
+      "$ref": "./paths/task.json#/paths/~1tasks~1{uuid}~1check~1title~1{title}"
+    },
+    "/activemq": {
+      "$ref": "./paths/broker.json#/paths/~1activemq"
+    },
+    "/activemq/{name}": {
+      "$ref": "./paths/broker.json#/paths/~1activemq~1{name}"
     }
   }
 }

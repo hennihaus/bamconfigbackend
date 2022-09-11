@@ -26,7 +26,7 @@ class BrokerCallServiceTest {
                 content = File("./src/test/resources/broker/getQueuesErrorResponse.json").readText(),
                 status = HttpStatusCode.OK,
             )
-            classUnderTest = BrokerCallServiceImpl(
+            classUnderTest = BrokerCallService(
                 engine = engine,
                 config = getBrokerConfiguration(),
             )
@@ -45,11 +45,11 @@ class BrokerCallServiceTest {
         fun `should throw an exception when request is invalid`() = runBlocking {
             val engine = MockEngineBuilder.getMockEngine(
                 content = File("./src/test/resources/broker/getTopicsErrorResponse.json").readText(),
-                status = HttpStatusCode.OK
+                status = HttpStatusCode.OK,
             )
-            classUnderTest = BrokerCallServiceImpl(
+            classUnderTest = BrokerCallService(
                 engine = engine,
-                config = getBrokerConfiguration()
+                config = getBrokerConfiguration(),
             )
 
             val result: BrokerException = shouldThrowExactly {
@@ -66,9 +66,9 @@ class BrokerCallServiceTest {
         fun `should throw an exception when request is invalid`() = runBlocking {
             val engine = MockEngineBuilder.getMockEngine(
                 content = File("./src/test/resources/broker/deleteJobsErrorResponse.json").readText(),
-                status = HttpStatusCode.OK
+                status = HttpStatusCode.OK,
             )
-            classUnderTest = BrokerCallServiceImpl(
+            classUnderTest = BrokerCallService(
                 engine = engine,
                 config = getBrokerConfiguration(),
             )

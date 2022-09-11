@@ -17,8 +17,8 @@ import de.hennihaus.objectmothers.BrokerObjectMother.JMS_BANK_A_QUEUE
 import de.hennihaus.plugins.BrokerException
 import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_MESSAGE
 import de.hennihaus.plugins.initKoin
-import de.hennihaus.services.BrokerServiceImpl.Companion.DESTINATION_NAME_DELIMITER
-import de.hennihaus.services.BrokerServiceImpl.Companion.DESTINATION_TYPE_DELIMITER
+import de.hennihaus.services.BrokerService.Companion.DESTINATION_NAME_DELIMITER
+import de.hennihaus.services.BrokerService.Companion.DESTINATION_TYPE_DELIMITER
 import de.hennihaus.testutils.containers.BrokerContainer
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.assertions.throwables.shouldThrow

@@ -1,0 +1,33 @@
+package de.hennihaus.repositories.mappers
+
+import de.hennihaus.models.generated.Student
+import de.hennihaus.models.generated.Team
+import de.hennihaus.repositories.entities.StatisticEntity
+import de.hennihaus.repositories.entities.StudentEntity
+import de.hennihaus.repositories.entities.TeamEntity
+import de.hennihaus.services.StatisticService.Companion.ZERO_REQUESTS
+
+fun TeamEntity.toTeam() = Team(
+    uuid = id.value,
+    username = username,
+    password = password,
+    jmsQueue = jmsQueue,
+    students = students.map { it.toStudent() },
+    statistics = statistics.associate { it.toPair() },
+    /**
+     * This is just a placeholder calculation.
+     * HasPassed is calculated in control layer with [StatisticService]
+     */
+    hasPassed = statistics.all { it.requestsCount > ZERO_REQUESTS },
+)
+
+private fun StudentEntity.toStudent() = Student(
+    uuid = id.value,
+    firstname = firstname,
+    lastname = lastname,
+)
+
+private fun StatisticEntity.toPair() = Pair(
+    first = bank.name,
+    second = requestsCount,
+)

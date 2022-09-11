@@ -1,10 +1,12 @@
 package de.hennihaus.objectmothers
 
-import de.hennihaus.models.rest.ErrorResponse
-import de.hennihaus.plugins.ObjectIdException
-import de.hennihaus.services.BankServiceImpl.Companion.BANK_NOT_FOUND_MESSAGE
-import de.hennihaus.services.GroupServiceImpl.Companion.GROUP_NOT_FOUND_MESSAGE
-import de.hennihaus.services.TaskServiceImpl.Companion.TASK_NOT_FOUND_MESSAGE
+import de.hennihaus.models.generated.ErrorResponse
+import de.hennihaus.plugins.TransactionException
+import de.hennihaus.plugins.UUIDException
+import de.hennihaus.services.BankService.Companion.BANK_NOT_FOUND_MESSAGE
+import de.hennihaus.services.StatisticService.Companion.STATISTIC_NOT_FOUND_MESSAGE
+import de.hennihaus.services.TaskService.Companion.TASK_NOT_FOUND_MESSAGE
+import de.hennihaus.services.TeamService.Companion.TEAM_NOT_FOUND_MESSAGE
 import de.hennihaus.utils.withoutNanos
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -16,15 +18,15 @@ object ErrorResponseObjectMother {
     const val DEFAULT_ZONE_ID = "Europe/Berlin"
 
     fun getInvalidIdErrorResponse(
-        message: String = ObjectIdException().message,
+        message: String = UUIDException().message,
         dateTime: Instant = Clock.System.now(),
     ) = ErrorResponse(
         message = message,
         dateTime = dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos(),
     )
 
-    fun getGroupNotFoundErrorResponse(
-        message: String = GROUP_NOT_FOUND_MESSAGE,
+    fun getTeamNotFoundErrorResponse(
+        message: String = TEAM_NOT_FOUND_MESSAGE,
         dateTime: Instant = Clock.System.now(),
     ) = ErrorResponse(
         message = message,
@@ -41,6 +43,22 @@ object ErrorResponseObjectMother {
 
     fun getTaskNotFoundErrorResponse(
         message: String = TASK_NOT_FOUND_MESSAGE,
+        dateTime: Instant = Clock.System.now(),
+    ) = ErrorResponse(
+        message = message,
+        dateTime = dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos(),
+    )
+
+    fun getStatisticNotFoundErrorResponse(
+        message: String = STATISTIC_NOT_FOUND_MESSAGE,
+        dateTime: Instant = Clock.System.now(),
+    ) = ErrorResponse(
+        message = message,
+        dateTime = dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos(),
+    )
+
+    fun getConflictErrorResponse(
+        message: String = "[${TransactionException().message}]",
         dateTime: Instant = Clock.System.now(),
     ) = ErrorResponse(
         message = message,

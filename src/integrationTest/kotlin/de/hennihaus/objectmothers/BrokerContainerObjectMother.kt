@@ -3,7 +3,7 @@ package de.hennihaus.objectmothers
 import de.hennihaus.objectmothers.BrokerObjectMother.CONNECTION_QUEUES_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.CONSUMED_QUEUES_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.DEAD_LETTER_QUEUE
-import de.hennihaus.objectmothers.BrokerObjectMother.FIRST_GROUP_QUEUE
+import de.hennihaus.objectmothers.BrokerObjectMother.FIRST_TEAM_QUEUE
 import de.hennihaus.objectmothers.BrokerObjectMother.IS_MASTER_BROKER_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.JMS_BANK_A_QUEUE
 import de.hennihaus.objectmothers.BrokerObjectMother.MESSAGE_TO_DLQ_INFO
@@ -23,7 +23,7 @@ object BrokerContainerObjectMother {
     fun getTestQueues(): List<String> = listOf(
         DEAD_LETTER_QUEUE,
         JMS_BANK_A_QUEUE,
-        FIRST_GROUP_QUEUE,
+        FIRST_TEAM_QUEUE,
     )
 
     fun getTestTopics(): List<String> = listOf(
@@ -32,9 +32,9 @@ object BrokerContainerObjectMother {
         "$CONSUMED_QUEUES_INFO.$JMS_BANK_A_QUEUE",
         IS_MASTER_BROKER_INFO,
         "$MESSAGE_TO_DLQ_INFO.$JMS_BANK_A_QUEUE",
-        "$MESSAGE_TO_DLQ_INFO.$FIRST_GROUP_QUEUE",
+        "$MESSAGE_TO_DLQ_INFO.$FIRST_TEAM_QUEUE",
         "$PRODUCED_QUEUES_INFO.$JMS_BANK_A_QUEUE",
-        "$PRODUCED_QUEUES_INFO.$FIRST_GROUP_QUEUE",
+        "$PRODUCED_QUEUES_INFO.$FIRST_TEAM_QUEUE",
         QUEUE_CREATION_DELETION_INFO,
         TOPIC_CREATION_DELETION_INFO,
         JMS_BANK_A_QUEUE,
@@ -42,6 +42,6 @@ object BrokerContainerObjectMother {
 
     fun getTestJobs(): Map<String, Job> = mapOf(
         JMS_BANK_A_QUEUE to Job(message = DEFAULT_TEST_MESSAGE),
-        FIRST_GROUP_QUEUE to Job(message = DEFAULT_TEST_MESSAGE),
+        FIRST_TEAM_QUEUE to Job(message = DEFAULT_TEST_MESSAGE),
     )
 }

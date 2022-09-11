@@ -20,12 +20,12 @@ group = "de.hennihaus"
 version = "0.0.1"
 
 application {
-    mainClass.set("io.ktor.server.cio.EngineMain")
+    mainClass.set("de.hennihaus.Application")
 }
 
 tasks.shadowJar {
     manifest {
-        attributes("Main-Class" to "io.ktor.server.cio.EngineMain")
+        attributes("Main-Class" to "de.hennihaus.Application")
     }
 }
 
@@ -39,7 +39,7 @@ sourceSets {
     main {
         java.srcDirs(
             "build/generated/ksp/main/kotlin",
-            // "build/generated/openapi/src/main/kotlin",
+            "build/generated/openapi/src/main/kotlin",
         )
     }
 }
@@ -59,7 +59,8 @@ configurations.all {
 dependencies {
     val ktorVersion: String by project
     val logbackVersion: String by project
-    val kmongoVersion: String by project
+    val exposedVersion: String by project
+    val postgresVersion: String by project
     val passayVersion: String by project
     val kotestVersion: String by project
     val kotestLibrariesVersion: String by project
@@ -68,6 +69,7 @@ dependencies {
     val koinVersion: String by project
     val koinAnnotationsVersion: String by project
     val kotlinDateTimeVersion: String by project
+    val julToSlf4jVersion: String by project
 
     // ktor common plugins
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
@@ -100,13 +102,18 @@ dependencies {
     testImplementation("io.insert-koin:koin-test:$koinVersion")
     testImplementation("io.insert-koin:koin-test-junit5:$koinVersion")
 
-    // mongodb plugins
-    implementation("org.litote.kmongo:kmongo-coroutine-serialization:$kmongoVersion")
-    implementation("org.litote.kmongo:kmongo-id-serialization:$kmongoVersion")
+    // exposed plugins
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
+    implementation("org.postgresql:postgresql:$postgresVersion")
 
     // utility plugins
     implementation("org.passay:passay:$passayVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:$kotlinDateTimeVersion")
+    implementation("org.slf4j:jul-to-slf4j:$julToSlf4jVersion")
 
     // test plugins
     testImplementation("io.mockk:mockk:$mockkVersion")
@@ -223,7 +230,7 @@ tasks {
         generatorName.set("kotlin")
         outputDir.set("$buildDir/generated/openapi")
         configFile.set("$projectDir/config/openapi/kotlin/config.json")
-        packageName.set("de.hennihaus")
+        modelPackage.set("de.hennihaus.models.generated")
         typeMappings.set(kotlinTypeMappings)
         importMappings.set(kotlinImportMappings)
     }

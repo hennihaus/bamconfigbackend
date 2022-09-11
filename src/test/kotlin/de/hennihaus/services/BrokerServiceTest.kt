@@ -1,10 +1,10 @@
 package de.hennihaus.services
 
-import de.hennihaus.objectmothers.BankObjectMother.getJmsBank
+import de.hennihaus.objectmothers.BankObjectMother.getAsyncBank
 import de.hennihaus.objectmothers.BrokerObjectMother.CONNECTION_QUEUES_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.CONSUMED_QUEUES_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.DEAD_LETTER_QUEUE
-import de.hennihaus.objectmothers.BrokerObjectMother.FIRST_GROUP_QUEUE
+import de.hennihaus.objectmothers.BrokerObjectMother.FIRST_TEAM_QUEUE
 import de.hennihaus.objectmothers.BrokerObjectMother.IS_MASTER_BROKER_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.JMS_BANK_A_QUEUE
 import de.hennihaus.objectmothers.BrokerObjectMother.MESSAGE_TO_DLQ_INFO
@@ -13,7 +13,7 @@ import de.hennihaus.objectmothers.BrokerObjectMother.QUEUE_CREATION_DELETION_INF
 import de.hennihaus.objectmothers.BrokerObjectMother.TOPIC_CREATION_DELETION_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.getQueuesResponse
 import de.hennihaus.objectmothers.BrokerObjectMother.getTopicsResponse
-import de.hennihaus.services.callservices.BrokerCallServiceImpl
+import de.hennihaus.services.callservices.BrokerCallService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.should
 import io.kotest.matchers.types.beInstanceOf
@@ -29,9 +29,9 @@ import org.junit.jupiter.api.Test
 
 class BrokerServiceTest {
 
-    private val brokerCall = mockk<BrokerCallServiceImpl>()
+    private val brokerCall = mockk<BrokerCallService>()
 
-    private val classUnderTest = BrokerServiceImpl(
+    private val classUnderTest = BrokerService(
         brokerCall = brokerCall
     )
 
@@ -42,7 +42,7 @@ class BrokerServiceTest {
     inner class DeleteQueueByName {
         @Test
         fun `should delete a queue by name`() = runBlocking {
-            val name = getJmsBank().name
+            val name = getAsyncBank().name
             coEvery { brokerCall.deleteQueueByName(name = any()) } returns mockk()
 
             classUnderTest.deleteQueueByName(name = name)
@@ -52,7 +52,7 @@ class BrokerServiceTest {
 
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
-            val name = getJmsBank().name
+            val name = getAsyncBank().name
             coEvery { brokerCall.deleteQueueByName(name = name) } throws Exception()
 
             val result = shouldThrow<Exception> { classUnderTest.deleteQueueByName(name = name) }
@@ -77,7 +77,7 @@ class BrokerServiceTest {
             coVerifySequence {
                 brokerCall.getAllQueues()
                 brokerCall.deleteQueueByName(name = JMS_BANK_A_QUEUE)
-                brokerCall.deleteQueueByName(name = FIRST_GROUP_QUEUE)
+                brokerCall.deleteQueueByName(name = FIRST_TEAM_QUEUE)
                 brokerCall.deleteQueueByName(name = DEAD_LETTER_QUEUE)
 
                 brokerCall.getAllTopics()
@@ -86,9 +86,9 @@ class BrokerServiceTest {
                 brokerCall.deleteTopicByName(name = "$CONSUMED_QUEUES_INFO.$JMS_BANK_A_QUEUE")
                 brokerCall.deleteTopicByName(name = IS_MASTER_BROKER_INFO)
                 brokerCall.deleteTopicByName(name = "$MESSAGE_TO_DLQ_INFO.$JMS_BANK_A_QUEUE")
-                brokerCall.deleteTopicByName(name = "$MESSAGE_TO_DLQ_INFO.$FIRST_GROUP_QUEUE")
+                brokerCall.deleteTopicByName(name = "$MESSAGE_TO_DLQ_INFO.$FIRST_TEAM_QUEUE")
                 brokerCall.deleteTopicByName(name = "$PRODUCED_QUEUES_INFO.$JMS_BANK_A_QUEUE")
-                brokerCall.deleteTopicByName(name = "$PRODUCED_QUEUES_INFO.$FIRST_GROUP_QUEUE")
+                brokerCall.deleteTopicByName(name = "$PRODUCED_QUEUES_INFO.$FIRST_TEAM_QUEUE")
                 brokerCall.deleteTopicByName(name = QUEUE_CREATION_DELETION_INFO)
                 brokerCall.deleteTopicByName(name = TOPIC_CREATION_DELETION_INFO)
                 brokerCall.deleteTopicByName(name = JMS_BANK_A_QUEUE)
