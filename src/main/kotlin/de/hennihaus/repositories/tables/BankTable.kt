@@ -7,6 +7,12 @@ import de.hennihaus.repositories.tables.BankTableDescription.BANK_LAST_UPDATED_C
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_NAME_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_THUMBNAIL_URL_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_UUID_COLUMN
+import de.hennihaus.repositories.tables.CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MAX_AMOUNT_IN_EUROS_COLUMN
+import de.hennihaus.repositories.tables.CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MAX_SCHUFA_RATING_COLUMN
+import de.hennihaus.repositories.tables.CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MAX_TERM_IN_MONTHS_COLUMN
+import de.hennihaus.repositories.tables.CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MIN_AMOUNT_IN_EUROS_COLUMN
+import de.hennihaus.repositories.tables.CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MIN_SCHUFA_RATING_COLUMN
+import de.hennihaus.repositories.tables.CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MIN_TERM_IN_MONTHS_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_UUID_COLUMN
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
@@ -26,24 +32,12 @@ object CreditConfigurationTable : UUIDTable(
     columnName = CreditConfigurationTableDescription.CREDIT_CONFIGURATION_UUID_COLUMN,
 ) {
     val bankId = reference(name = BANK_UUID_COLUMN, foreign = BankTable)
-    val minAmountInEuros = integer(
-        name = CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MIN_AMOUNT_IN_EUROS_COLUMN,
-    )
-    val maxAmountInEuros = integer(
-        name = CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MAX_AMOUNT_IN_EUROS_COLUMN,
-    )
-    val minTermInMonths = integer(
-        name = CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MIN_TERM_IN_MONTHS_COLUMN,
-    )
-    val maxTermInMonths = integer(
-        name = CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MAX_TERM_IN_MONTHS_COLUMN,
-    )
-    val minSchufaRating = text(
-        name = CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MIN_SCHUFA_RATING_COLUMN,
-    )
-    val maxSchufaRating = text(
-        name = CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MAX_SCHUFA_RATING_COLUMN,
-    )
+    val minAmountInEuros = integer(name = CREDIT_CONFIGURATION_MIN_AMOUNT_IN_EUROS_COLUMN)
+    val maxAmountInEuros = integer(name = CREDIT_CONFIGURATION_MAX_AMOUNT_IN_EUROS_COLUMN)
+    val minTermInMonths = integer(name = CREDIT_CONFIGURATION_MIN_TERM_IN_MONTHS_COLUMN)
+    val maxTermInMonths = integer(name = CREDIT_CONFIGURATION_MAX_TERM_IN_MONTHS_COLUMN)
+    val minSchufaRating = text(name = CREDIT_CONFIGURATION_MIN_SCHUFA_RATING_COLUMN)
+    val maxSchufaRating = text(name = CREDIT_CONFIGURATION_MAX_SCHUFA_RATING_COLUMN)
 }
 
 object BankTableDescription {
