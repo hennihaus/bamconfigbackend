@@ -83,7 +83,7 @@ class TeamRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetAll {
         @Test
-        fun `should return at least one team`() = runBlocking<Unit> {
+        fun `should return at a minimum one team`() = runBlocking<Unit> {
             val result: List<Team> = classUnderTest.getAll()
 
             result.shouldNotBeEmpty()

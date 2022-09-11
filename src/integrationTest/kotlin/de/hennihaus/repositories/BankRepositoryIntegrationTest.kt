@@ -80,7 +80,7 @@ class BankRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetAll {
         @Test
-        fun `should return at least one bank`() = runBlocking<Unit> {
+        fun `should return at a minimum one bank`() = runBlocking<Unit> {
             val result: List<Bank> = classUnderTest.getAll()
 
             result.shouldNotBeEmpty()

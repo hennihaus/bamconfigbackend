@@ -88,7 +88,7 @@ class TaskRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetAll {
         @Test
-        fun `should return at least one task`() = runBlocking<Unit> {
+        fun `should return at a minimum one task`() = runBlocking<Unit> {
             val result: List<Task> = classUnderTest.getAll()
 
             result.shouldNotBeEmpty()
