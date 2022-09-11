@@ -1,14 +1,15 @@
 package de.hennihaus.objectmothers
 
-import de.hennihaus.models.Bank
-import de.hennihaus.models.Contact
-import de.hennihaus.models.Endpoint
-import de.hennihaus.models.Parameter
-import de.hennihaus.models.Response
-import de.hennihaus.models.Task
-import de.hennihaus.objectmothers.BankObjectMother.getJmsBank
+import de.hennihaus.models.generated.Bank
+import de.hennihaus.models.generated.Contact
+import de.hennihaus.models.generated.Endpoint
+import de.hennihaus.models.generated.IntegrationStep
+import de.hennihaus.models.generated.Parameter
+import de.hennihaus.models.generated.Response
+import de.hennihaus.models.generated.Task
+import de.hennihaus.objectmothers.BankObjectMother.getAsyncBank
 import de.hennihaus.objectmothers.BankObjectMother.getSchufaBank
-import de.hennihaus.objectmothers.BankObjectMother.getVBank
+import de.hennihaus.objectmothers.BankObjectMother.getSyncBank
 import de.hennihaus.objectmothers.EndpointObjectMother.getActiveMqEndpoint
 import de.hennihaus.objectmothers.EndpointObjectMother.getSchufaRestEndpoint
 import de.hennihaus.objectmothers.EndpointObjectMother.getVBankRestEndpoint
@@ -26,29 +27,32 @@ import de.hennihaus.objectmothers.ResponseObjectMother.getInternalServerErrorRes
 import de.hennihaus.objectmothers.ResponseObjectMother.getJmsResponse
 import de.hennihaus.objectmothers.ResponseObjectMother.getNotFoundResponse
 import de.hennihaus.objectmothers.ResponseObjectMother.getSchufaOkResponse
-import org.bson.types.ObjectId
-import org.litote.kmongo.Id
-import org.litote.kmongo.id.toId
+import java.util.UUID
 
 object TaskObjectMother {
 
+    const val DEFAULT_SCHUFA_UUID = "72255554-d295-4684-9ff8-8d262849bb3d"
     const val DEFAULT_SCHUFA_TITLE = "Schufa-Auskunft"
     const val DEFAULT_SCHUFA_DESCRIPTION = "<p>Schufa-Auskunft-Beschreibung (\"1. Integrationsschritt\")</p>"
 
-    const val DEFAULT_SYNC_BANK_TITLE = "Synchrone Bank"
+    const val DEFAULT_SYNC_BANK_UUID = "e2aba7e5-9bb8-458b-a927-8e672b1370f2"
+    const val DEFAULT_SYNC_BANK_TITLE = "Deutsche Bank"
     const val DEFAULT_SYNC_BANK_DESCRIPTION = "<p>Synchrone-Bank-Beschreibung (\"2. Integrationsschritt\")</p>"
 
+    const val DEFAULT_ASYNC_BANK_UUID = "4ff1f9cb-e65d-4c8f-908a-d036700b757e"
     const val DEFAULT_ASYNC_BANK_TITLE = "Asynchrone Banken"
     const val DEFAULT_ASYNC_BANK_DESCRIPTION = "<p>Asynchrone-Bank-Beschreibung (\"3. Integrationsschritt\")</p>"
 
-    const val DEFAULT_CONTACT_NAME = "Jan-Hendrik Hausner"
+    const val DEFAULT_CONTACT_UUID = "ba16bd92-9e64-4de6-916f-d0c4ea91a530"
+    const val DEFAULT_CONTACT_FIRSTNAME = "Jan-Hendrik"
+    const val DEFAULT_CONTACT_LASTNAME = "Hausner"
     const val DEFAULT_CONTACT_EMAIL = "jan-hendrik.hausner@outlook.com"
 
     fun getSchufaTask(
-        id: Id<Task> = ObjectId("6150281b8031b5b4e70a881e").toId(),
+        uuid: UUID = UUID.fromString(DEFAULT_SCHUFA_UUID),
         title: String = DEFAULT_SCHUFA_TITLE,
         description: String = DEFAULT_SCHUFA_DESCRIPTION,
-        step: Int = 1,
+        integrationStep: IntegrationStep = IntegrationStep.SCHUFA_STEP,
         isOpenApiVerbose: Boolean = true,
         contact: Contact = getDefaultContact(),
         endpoints: List<Endpoint> = getSchufaEndpoints(),
@@ -56,10 +60,10 @@ object TaskObjectMother {
         responses: List<Response> = getSchufaResponses(),
         banks: List<Bank> = getSchufaBanks(),
     ) = Task(
-        id = id,
+        uuid = uuid,
         title = title,
         description = description,
-        step = step,
+        integrationStep = integrationStep,
         isOpenApiVerbose = isOpenApiVerbose,
         contact = contact,
         endpoints = endpoints,
@@ -69,10 +73,10 @@ object TaskObjectMother {
     )
 
     fun getSynchronousBankTask(
-        id: Id<Task> = ObjectId("61502fa9afad97203db562b3").toId(),
+        uuid: UUID = UUID.fromString(DEFAULT_SYNC_BANK_UUID),
         title: String = DEFAULT_SYNC_BANK_TITLE,
         description: String = DEFAULT_SYNC_BANK_DESCRIPTION,
-        step: Int = 2,
+        integrationStep: IntegrationStep = IntegrationStep.SYNC_BANK_STEP,
         isOpenApiVerbose: Boolean = true,
         contact: Contact = getDefaultContact(),
         endpoints: List<Endpoint> = getSynchronousBankEndpoints(),
@@ -80,10 +84,10 @@ object TaskObjectMother {
         responses: List<Response> = getSynchronousBankResponses(),
         banks: List<Bank> = getSynchronousBanks(),
     ) = Task(
-        id = id,
+        uuid = uuid,
         title = title,
         description = description,
-        step = step,
+        integrationStep = integrationStep,
         isOpenApiVerbose = isOpenApiVerbose,
         contact = contact,
         endpoints = endpoints,
@@ -93,10 +97,10 @@ object TaskObjectMother {
     )
 
     fun getAsynchronousBankTask(
-        id: Id<Task> = ObjectId("61503edf6354bd996d9e89a6").toId(),
+        uuid: UUID = UUID.fromString(DEFAULT_ASYNC_BANK_UUID),
         title: String = DEFAULT_ASYNC_BANK_TITLE,
         description: String = DEFAULT_ASYNC_BANK_DESCRIPTION,
-        step: Int = 3,
+        integrationStep: IntegrationStep = IntegrationStep.ASYNC_BANK_STEP,
         isOpenApiVerbose: Boolean = false,
         contact: Contact = getDefaultContact(),
         endpoints: List<Endpoint> = getAsynchronousBankEndpoints(),
@@ -104,10 +108,10 @@ object TaskObjectMother {
         responses: List<Response> = getAsynchronousBankResponses(),
         banks: List<Bank> = getAsynchronousBanks(),
     ) = Task(
-        id = id,
+        uuid = uuid,
         title = title,
         description = description,
-        step = step,
+        integrationStep = integrationStep,
         isOpenApiVerbose = isOpenApiVerbose,
         contact = contact,
         endpoints = endpoints,
@@ -117,10 +121,14 @@ object TaskObjectMother {
     )
 
     fun getDefaultContact(
-        name: String = DEFAULT_CONTACT_NAME,
+        uuid: UUID = UUID.fromString(DEFAULT_CONTACT_UUID),
+        firstname: String = DEFAULT_CONTACT_FIRSTNAME,
+        lastname: String = DEFAULT_CONTACT_LASTNAME,
         email: String = DEFAULT_CONTACT_EMAIL,
     ) = Contact(
-        name = name,
+        uuid = uuid,
+        firstname = firstname,
+        lastname = lastname,
         email = email,
     )
 
@@ -168,7 +176,7 @@ object TaskObjectMother {
     )
 
     private fun getSynchronousBanks(): List<Bank> = listOf(
-        getVBank(),
+        getSyncBank(),
     )
 
     private fun getAsynchronousBankEndpoints(): List<Endpoint> = listOf(
@@ -190,6 +198,6 @@ object TaskObjectMother {
     )
 
     private fun getAsynchronousBanks(): List<Bank> = listOf(
-        getJmsBank(),
+        getAsyncBank(),
     )
 }

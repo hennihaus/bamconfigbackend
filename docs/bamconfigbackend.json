@@ -17,25 +17,25 @@
     "url" : "http://localhost:8080/v1"
   } ],
   "paths" : {
-    "/groups" : {
+    "/teams" : {
       "get" : {
-        "operationId" : "getAllGroups",
+        "operationId" : "getAllTeams",
         "responses" : {
           "200" : {
             "content" : {
               "application/json" : {
                 "schema" : {
                   "items" : {
-                    "$ref" : "#/components/schemas/Group"
+                    "$ref" : "#/components/schemas/Team"
                   },
                   "minItems" : 0,
-                  "title" : "Groups",
+                  "title" : "Teams",
                   "type" : "array",
                   "uniqueItems" : true
                 }
               }
             },
-            "description" : "Groups"
+            "description" : "Teams"
           },
           "500" : {
             "content" : {
@@ -52,17 +52,17 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Gets all groups",
-        "tags" : [ "Group" ]
+        "summary" : "Gets all teams",
+        "tags" : [ "Team" ]
       }
     },
-    "/groups/{id}" : {
+    "/teams/{uuid}" : {
       "delete" : {
-        "operationId" : "deleteGroupById",
+        "operationId" : "deleteTeamById",
         "parameters" : [ {
-          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
           "in" : "path",
-          "name" : "id",
+          "name" : "uuid",
           "required" : true,
           "schema" : {
             "format" : "uuid",
@@ -106,15 +106,15 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Deletes a group",
-        "tags" : [ "Group" ]
+        "summary" : "Deletes a team",
+        "tags" : [ "Team" ]
       },
       "get" : {
-        "operationId" : "getGroupById",
+        "operationId" : "getTeamById",
         "parameters" : [ {
-          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
           "in" : "path",
-          "name" : "id",
+          "name" : "uuid",
           "required" : true,
           "schema" : {
             "format" : "uuid",
@@ -127,11 +127,11 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/Group"
+                  "$ref" : "#/components/schemas/Team"
                 }
               }
             },
-            "description" : "Group"
+            "description" : "Team"
           },
           "400" : {
             "content" : {
@@ -176,15 +176,15 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Finds group by id",
-        "tags" : [ "Group" ]
+        "summary" : "Finds team by UUID",
+        "tags" : [ "Team" ]
       },
       "put" : {
-        "operationId" : "saveGroup",
+        "operationId" : "saveTeam",
         "parameters" : [ {
-          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
           "in" : "path",
-          "name" : "id",
+          "name" : "uuid",
           "required" : true,
           "schema" : {
             "format" : "uuid",
@@ -193,18 +193,18 @@
           }
         } ],
         "requestBody" : {
-          "$ref" : "#/components/requestBodies/Group"
+          "$ref" : "#/components/requestBodies/Team"
         },
         "responses" : {
           "200" : {
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/Group"
+                  "$ref" : "#/components/schemas/Team"
                 }
               }
             },
-            "description" : "Group"
+            "description" : "Team"
           },
           "400" : {
             "content" : {
@@ -219,6 +219,20 @@
               }
             },
             "description" : "Invalid Request"
+          },
+          "409" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[could not serialize access due to concurrent update]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Conflict in Database"
           },
           "500" : {
             "content" : {
@@ -235,17 +249,103 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Creates or updates a group",
-        "tags" : [ "Group" ]
+        "summary" : "Creates or updates a team",
+        "tags" : [ "Team" ]
       }
     },
-    "/groups/{id}/check/username/{username}" : {
+    "/teams/{uuid}/statistics" : {
+      "delete" : {
+        "operationId" : "resetStatistics",
+        "parameters" : [ {
+          "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "in" : "path",
+          "name" : "uuid",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Team"
+                }
+              }
+            },
+            "description" : "Team"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[Resource not found]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Not Found"
+          },
+          "409" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[could not serialize access due to concurrent update]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Conflict in Database"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Resets all team statistics to zero",
+        "tags" : [ "Team" ]
+      }
+    },
+    "/teams/{uuid}/check/username/{username}" : {
       "get" : {
         "operationId" : "checkUsername",
         "parameters" : [ {
-          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
           "in" : "path",
-          "name" : "id",
+          "name" : "uuid",
           "required" : true,
           "schema" : {
             "format" : "uuid",
@@ -253,7 +353,7 @@
             "type" : "string"
           }
         }, {
-          "example" : "Beispielgruppe",
+          "example" : "Beispielteam",
           "in" : "path",
           "name" : "username",
           "required" : true,
@@ -306,17 +406,17 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Checks existence of a group based on username",
-        "tags" : [ "Group" ]
+        "summary" : "Checks existence of a team based on username",
+        "tags" : [ "Team" ]
       }
     },
-    "/groups/{id}/check/password/{password}" : {
+    "/teams/{uuid}/check/password/{password}" : {
       "get" : {
         "operationId" : "checkPassword",
         "parameters" : [ {
-          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
           "in" : "path",
-          "name" : "id",
+          "name" : "uuid",
           "required" : true,
           "schema" : {
             "format" : "uuid",
@@ -378,17 +478,17 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Checks existence of a group based on password",
-        "tags" : [ "Group" ]
+        "summary" : "Checks existence of a team based on password",
+        "tags" : [ "Team" ]
       }
     },
-    "/groups/{id}/check/jmsQueue/{jmsQueue}" : {
+    "/teams/{uuid}/check/jmsQueue/{jmsQueue}" : {
       "get" : {
         "operationId" : "checkJmsQueue",
         "parameters" : [ {
-          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
+          "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
           "in" : "path",
-          "name" : "id",
+          "name" : "uuid",
           "required" : true,
           "schema" : {
             "format" : "uuid",
@@ -396,7 +496,7 @@
             "type" : "string"
           }
         }, {
-          "example" : "ResponseLoanBrokerBeispielgruppe",
+          "example" : "ResponseLoanBrokerBeispielteam",
           "in" : "path",
           "name" : "jmsQueue",
           "required" : true,
@@ -449,37 +549,26 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Checks existence of a group based on jmsQueue",
-        "tags" : [ "Group" ]
+        "summary" : "Checks existence of a team based on jmsQueue",
+        "tags" : [ "Team" ]
       }
     },
-    "/groups/{id}/stats" : {
-      "delete" : {
-        "operationId" : "resetStats",
-        "parameters" : [ {
-          "example" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "format" : "uuid",
-            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
-            "type" : "string"
-          }
-        } ],
+    "/statistics/increment" : {
+      "patch" : {
+        "operationId" : "incrementStatistic",
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/Statistic"
+        },
         "responses" : {
           "200" : {
             "content" : {
               "application/json" : {
-                "example" : {
-                  "exists" : true
-                },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ExistsResponse"
+                  "$ref" : "#/components/schemas/Statistic"
                 }
               }
             },
-            "description" : "Exists"
+            "description" : "Statistic"
           },
           "400" : {
             "content" : {
@@ -524,8 +613,8 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Resets all group stats to zero",
-        "tags" : [ "Group" ]
+        "summary" : "Increments requests count by one without transaction conflicts",
+        "tags" : [ "Statistic" ]
       }
     },
     "/banks" : {
@@ -570,88 +659,15 @@
         },
         "summary" : "Gets all banks",
         "tags" : [ "Bank" ]
-      },
-      "put" : {
-        "operationId" : "saveAllBanks",
-        "requestBody" : {
-          "$ref" : "#/components/requestBodies/Banks"
-        },
-        "responses" : {
-          "200" : {
-            "content" : {
-              "application/json" : {
-                "examples" : {
-                  "Banks" : {
-                    "$ref" : "#/components/examples/Banks"
-                  }
-                },
-                "schema" : {
-                  "items" : {
-                    "$ref" : "#/components/schemas/Bank"
-                  },
-                  "minItems" : 0,
-                  "title" : "Banks",
-                  "type" : "array",
-                  "uniqueItems" : true
-                }
-              }
-            },
-            "description" : "Banks"
-          },
-          "400" : {
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
-                  "dateTime" : "2022-01-31T07:43:30"
-                },
-                "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description" : "Invalid Request"
-          },
-          "404" : {
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "message" : "[Resource not found]",
-                  "dateTime" : "2022-01-31T07:43:30"
-                },
-                "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description" : "Not Found"
-          },
-          "500" : {
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
-                  "dateTime" : "2022-01-31T07:43:30"
-                },
-                "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description" : "Internal Server Error"
-          }
-        },
-        "summary" : "Overwrites all banks",
-        "tags" : [ "Bank" ]
       }
     },
-    "/banks/{jmsQueue}" : {
+    "/banks/{uuid}" : {
       "get" : {
-        "operationId" : "getBankByJmsQueue",
+        "operationId" : "getBankById",
         "parameters" : [ {
-          "example" : "schufa",
+          "example" : "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
           "in" : "path",
-          "name" : "jmsQueue",
+          "name" : "uuid",
           "required" : true,
           "schema" : {
             "maxLength" : 50,
@@ -710,15 +726,15 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Finds bank by jmsQueue",
+        "summary" : "Finds bank by UUID",
         "tags" : [ "Bank" ]
       },
       "put" : {
         "operationId" : "saveBank",
         "parameters" : [ {
-          "example" : "schufa",
+          "example" : "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
           "in" : "path",
-          "name" : "jmsQueue",
+          "name" : "uuid",
           "required" : true,
           "schema" : {
             "maxLength" : 50,
@@ -779,6 +795,20 @@
             },
             "description" : "Not Found"
           },
+          "409" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[could not serialize access due to concurrent update]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Conflict in Database"
+          },
           "500" : {
             "content" : {
               "application/json" : {
@@ -794,7 +824,7 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Creates or updates a bank",
+        "summary" : "Updates a bank",
         "tags" : [ "Bank" ]
       }
     },
@@ -837,13 +867,13 @@
         "tags" : [ "Task" ]
       }
     },
-    "/tasks/{id}" : {
+    "/tasks/{uuid}" : {
       "get" : {
         "operationId" : "getTaskById",
         "parameters" : [ {
-          "example" : "e393ce40-7c72-436e-8cf7-eb5be28278d5",
+          "example" : "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
           "in" : "path",
-          "name" : "id",
+          "name" : "uuid",
           "required" : true,
           "schema" : {
             "format" : "uuid",
@@ -905,15 +935,15 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Gets task by id",
+        "summary" : "Gets task by UUID",
         "tags" : [ "Task" ]
       },
       "patch" : {
         "operationId" : "patchTask",
         "parameters" : [ {
-          "example" : "e393ce40-7c72-436e-8cf7-eb5be28278d5",
+          "example" : "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
           "in" : "path",
-          "name" : "id",
+          "name" : "uuid",
           "required" : true,
           "schema" : {
             "format" : "uuid",
@@ -963,6 +993,20 @@
             },
             "description" : "Not Found"
           },
+          "409" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[could not serialize access due to concurrent update]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Conflict in Database"
+          },
           "500" : {
             "content" : {
               "application/json" : {
@@ -981,22 +1025,203 @@
         "summary" : "Updates particular fields of a task",
         "tags" : [ "Task" ]
       }
+    },
+    "/tasks/{uuid}/check/title/{title}" : {
+      "get" : {
+        "operationId" : "checkTitle",
+        "parameters" : [ {
+          "example" : "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
+          "in" : "path",
+          "name" : "uuid",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          }
+        }, {
+          "example" : "Asynchrone Banken",
+          "in" : "path",
+          "name" : "title",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Task"
+                }
+              }
+            },
+            "description" : "Task"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Checks existence of a task based on title",
+        "tags" : [ "Task" ]
+      }
+    },
+    "/activemq" : {
+      "delete" : {
+        "operationId" : "resetBroker",
+        "responses" : {
+          "204" : {
+            "content" : {
+              "text/plain" : { }
+            },
+            "description" : "No Content"
+          },
+          "409" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[could not serialize access due to concurrent update]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Conflict in Database"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Resets broker and all team passwords",
+        "tags" : [ "Broker" ]
+      }
+    },
+    "/activemq/{name}" : {
+      "delete" : {
+        "operationId" : "deleteQueueByName",
+        "parameters" : [ {
+          "example" : "ResponseLoanBrokerBeispielteam",
+          "in" : "path",
+          "name" : "name",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 50,
+            "minLength" : 6,
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "content" : {
+              "text/plain" : { }
+            },
+            "description" : "No Content"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "[kotlin.Exception: Internal server error]",
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Deletes a queue",
+        "tags" : [ "Broker" ]
+      }
     }
   },
   "components" : {
     "examples" : {
       "Banks" : {
         "value" : [ {
-          "jmsQueue" : "schufa",
+          "uuid" : "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
           "name" : "Schufa",
+          "jmsQueue" : "schufa",
           "thumbnailUrl" : "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
           "isAsync" : false,
           "isActive" : true,
           "creditConfiguration" : null,
-          "groups" : [ ]
+          "teams" : [ {
+            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+            "username" : "Beispielteam",
+            "password" : "OOfKqWksmA",
+            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "students" : [ {
+              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
+              "firstname" : "Max",
+              "lastname" : "Mustermann"
+            }, {
+              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
+              "firstname" : "Angela",
+              "lastname" : "Merkel"
+            }, {
+              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
+              "firstname" : "Thomas",
+              "lastname" : "Müller"
+            } ],
+            "statistics" : {
+              "Schufa" : 0,
+              "Deutsche Bank" : 0,
+              "Sparkasse" : 0,
+              "PSD Bank" : 0,
+              "Raiffeisen" : 0,
+              "Volksbank" : 0,
+              "Commerzbank" : 0
+            },
+            "hasPassed" : false
+          } ]
         }, {
-          "jmsQueue" : "deutschebank",
+          "uuid" : "bf6981d4-0413-4767-8232-c7179b169bc7",
           "name" : "Deutsche Bank",
+          "jmsQueue" : "deutschebank",
           "thumbnailUrl" : "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Deutsche_Bank_logo_without_wordmark.svg/2048px-Deutsche_Bank_logo_without_wordmark.svg.png",
           "isAsync" : false,
           "isActive" : true,
@@ -1007,10 +1232,40 @@
             "maxTermInMonths" : 36,
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
-          }
+          },
+          "teams" : [ {
+            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+            "username" : "Beispielteam",
+            "password" : "OOfKqWksmA",
+            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "students" : [ {
+              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
+              "firstname" : "Max",
+              "lastname" : "Mustermann"
+            }, {
+              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
+              "firstname" : "Angela",
+              "lastname" : "Merkel"
+            }, {
+              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
+              "firstname" : "Thomas",
+              "lastname" : "Müller"
+            } ],
+            "statistics" : {
+              "Schufa" : 0,
+              "Deutsche Bank" : 0,
+              "Sparkasse" : 0,
+              "PSD Bank" : 0,
+              "Raiffeisen" : 0,
+              "Volksbank" : 0,
+              "Commerzbank" : 0
+            },
+            "hasPassed" : false
+          } ]
         }, {
-          "jmsQueue" : "sparkasse",
+          "uuid" : "78eefcd4-2459-412e-857f-60f7c5d531c9",
           "name" : "Sparkasse",
+          "jmsQueue" : "sparkasse",
           "thumbnailUrl" : "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png",
           "isAsync" : true,
           "isActive" : true,
@@ -1022,20 +1277,32 @@
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
           },
-          "groups" : [ {
-            "id" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
-            "username" : "Beispielgruppe",
+          "teams" : [ {
+            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+            "username" : "Beispielteam",
             "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseLoanBrokerBeispielgruppe",
-            "students" : [ "Angela Merkel", "Max Mustermann", "Thomas Müller" ],
-            "stats" : {
-              "schufa" : 0,
-              "deutschebank" : 0,
-              "sparkasse" : 0,
-              "psdbank" : 0,
-              "raiffeisen" : 0,
-              "volksbank" : 0,
-              "commerzbank" : 0
+            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "students" : [ {
+              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
+              "firstname" : "Max",
+              "lastname" : "Mustermann"
+            }, {
+              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
+              "firstname" : "Angela",
+              "lastname" : "Merkel"
+            }, {
+              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
+              "firstname" : "Thomas",
+              "lastname" : "Müller"
+            } ],
+            "statistics" : {
+              "Schufa" : 0,
+              "Deutsche Bank" : 0,
+              "Sparkasse" : 0,
+              "PSD Bank" : 0,
+              "Raiffeisen" : 0,
+              "Volksbank" : 0,
+              "Commerzbank" : 0
             },
             "hasPassed" : false
           } ]
@@ -1043,19 +1310,49 @@
       },
       "Schufa" : {
         "value" : {
-          "jmsQueue" : "schufa",
+          "uuid" : "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
           "name" : "Schufa",
+          "jmsQueue" : "schufa",
           "thumbnailUrl" : "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
           "isAsync" : false,
           "isActive" : true,
           "creditConfiguration" : null,
-          "groups" : [ ]
+          "teams" : [ {
+            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+            "username" : "Beispielteam",
+            "password" : "OOfKqWksmA",
+            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "students" : [ {
+              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
+              "firstname" : "Max",
+              "lastname" : "Mustermann"
+            }, {
+              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
+              "firstname" : "Angela",
+              "lastname" : "Merkel"
+            }, {
+              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
+              "firstname" : "Thomas",
+              "lastname" : "Müller"
+            } ],
+            "statistics" : {
+              "Schufa" : 0,
+              "Deutsche Bank" : 0,
+              "Sparkasse" : 0,
+              "PSD Bank" : 0,
+              "Raiffeisen" : 0,
+              "Volksbank" : 0,
+              "Commerzbank" : 0
+            },
+            "hasPassed" : false
+          } ]
         }
       },
       "SyncBank" : {
         "value" : {
-          "jmsQueue" : "deutschebank",
+          "uuid" : "bf6981d4-0413-4767-8232-c7179b169bc7",
           "name" : "Deutsche Bank",
+          "jmsQueue" : "deutschebank",
           "thumbnailUrl" : "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Deutsche_Bank_logo_without_wordmark.svg/2048px-Deutsche_Bank_logo_without_wordmark.svg.png",
           "isAsync" : false,
           "isActive" : true,
@@ -1067,13 +1364,42 @@
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
           },
-          "groups" : [ ]
+          "teams" : [ {
+            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+            "username" : "Beispielteam",
+            "password" : "OOfKqWksmA",
+            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "students" : [ {
+              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
+              "firstname" : "Max",
+              "lastname" : "Mustermann"
+            }, {
+              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
+              "firstname" : "Angela",
+              "lastname" : "Merkel"
+            }, {
+              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
+              "firstname" : "Thomas",
+              "lastname" : "Müller"
+            } ],
+            "statistics" : {
+              "Schufa" : 0,
+              "Deutsche Bank" : 0,
+              "Sparkasse" : 0,
+              "PSD Bank" : 0,
+              "Raiffeisen" : 0,
+              "Volksbank" : 0,
+              "Commerzbank" : 0
+            },
+            "hasPassed" : false
+          } ]
         }
       },
       "AsyncBank" : {
         "value" : {
-          "jmsQueue" : "sparkasse",
+          "uuid" : "78eefcd4-2459-412e-857f-60f7c5d531c9",
           "name" : "Sparkasse",
+          "jmsQueue" : "sparkasse",
           "thumbnailUrl" : "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png",
           "isAsync" : true,
           "isActive" : true,
@@ -1085,20 +1411,32 @@
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
           },
-          "groups" : [ {
-            "id" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
-            "username" : "Beispielgruppe",
+          "teams" : [ {
+            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+            "username" : "Beispielteam",
             "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseLoanBrokerBeispielgruppe",
-            "students" : [ "Angela Merkel", "Max Mustermann", "Thomas Müller" ],
-            "stats" : {
-              "schufa" : 0,
-              "deutschebank" : 0,
-              "sparkasse" : 0,
-              "psdbank" : 0,
-              "raiffeisen" : 0,
-              "volksbank" : 0,
-              "commerzbank" : 0
+            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "students" : [ {
+              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
+              "firstname" : "Max",
+              "lastname" : "Mustermann"
+            }, {
+              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
+              "firstname" : "Angela",
+              "lastname" : "Merkel"
+            }, {
+              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
+              "firstname" : "Thomas",
+              "lastname" : "Müller"
+            } ],
+            "statistics" : {
+              "Schufa" : 0,
+              "Deutsche Bank" : 0,
+              "Sparkasse" : 0,
+              "PSD Bank" : 0,
+              "Raiffeisen" : 0,
+              "Volksbank" : 0,
+              "Commerzbank" : 0
             },
             "hasPassed" : false
           } ]
@@ -1106,32 +1444,21 @@
       }
     },
     "requestBodies" : {
-      "Group" : {
+      "Team" : {
         "content" : {
           "application/json" : {
             "schema" : {
-              "$ref" : "#/components/schemas/Group"
+              "$ref" : "#/components/schemas/Team"
             }
           }
         },
         "required" : true
       },
-      "Banks" : {
+      "Statistic" : {
         "content" : {
           "application/json" : {
-            "examples" : {
-              "Banks" : {
-                "$ref" : "#/components/examples/Banks"
-              }
-            },
             "schema" : {
-              "items" : {
-                "$ref" : "#/components/schemas/Bank"
-              },
-              "minItems" : 0,
-              "title" : "Banks",
-              "type" : "array",
-              "uniqueItems" : true
+              "$ref" : "#/components/schemas/Statistic"
             }
           }
         },
@@ -1238,6 +1565,20 @@
         },
         "description" : "Not Found"
       },
+      "409" : {
+        "content" : {
+          "application/json" : {
+            "example" : {
+              "message" : "[could not serialize access due to concurrent update]",
+              "dateTime" : "2022-01-31T07:43:30"
+            },
+            "schema" : {
+              "$ref" : "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description" : "Conflict in Database"
+      },
       "204" : {
         "content" : {
           "text/plain" : { }
@@ -1246,26 +1587,38 @@
       }
     },
     "schemas" : {
-      "Group" : {
+      "Team" : {
         "example" : {
-          "id" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
-          "username" : "Beispielgruppe",
+          "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "username" : "Beispielteam",
           "password" : "OOfKqWksmA",
-          "jmsQueue" : "ResponseLoanBrokerBeispielgruppe",
-          "students" : [ "Angela Merkel", "Max Mustermann", "Thomas Müller" ],
-          "stats" : {
-            "schufa" : 0,
-            "deutschebank" : 0,
-            "sparkasse" : 0,
-            "psdbank" : 0,
-            "raiffeisen" : 0,
-            "volksbank" : 0,
-            "commerzbank" : 0
+          "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+          "students" : [ {
+            "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
+            "firstname" : "Max",
+            "lastname" : "Mustermann"
+          }, {
+            "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
+            "firstname" : "Angela",
+            "lastname" : "Merkel"
+          }, {
+            "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
+            "firstname" : "Thomas",
+            "lastname" : "Müller"
+          } ],
+          "statistics" : {
+            "Schufa" : 0,
+            "Deutsche Bank" : 0,
+            "Sparkasse" : 0,
+            "PSD Bank" : 0,
+            "Raiffeisen" : 0,
+            "Volksbank" : 0,
+            "Commerzbank" : 0
           },
           "hasPassed" : false
         },
         "properties" : {
-          "id" : {
+          "uuid" : {
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
@@ -1278,7 +1631,7 @@
           "password" : {
             "format" : "password",
             "maxLength" : 50,
-            "minLength" : 8,
+            "minLength" : 10,
             "type" : "string"
           },
           "jmsQueue" : {
@@ -1288,16 +1641,16 @@
           },
           "students" : {
             "items" : {
-              "type" : "string"
+              "$ref" : "#/components/schemas/Student"
             },
             "minItems" : 0,
             "title" : "Students",
             "type" : "array",
             "uniqueItems" : true
           },
-          "stats" : {
+          "statistics" : {
             "additionalProperties" : {
-              "format" : "int32",
+              "format" : "int64",
               "minimum" : 0,
               "type" : "integer"
             },
@@ -1307,7 +1660,28 @@
             "type" : "boolean"
           }
         },
-        "required" : [ "hasPassed", "id", "jmsQueue", "password", "stats", "students", "username" ],
+        "required" : [ "hasPassed", "jmsQueue", "password", "statistics", "students", "username", "uuid" ],
+        "type" : "object"
+      },
+      "Student" : {
+        "properties" : {
+          "uuid" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
+          "firstname" : {
+            "maxLength" : 50,
+            "minLength" : 2,
+            "type" : "string"
+          },
+          "lastname" : {
+            "maxLength" : 50,
+            "minLength" : 2,
+            "type" : "string"
+          }
+        },
+        "required" : [ "firstname", "lastname", "uuid" ],
         "type" : "object"
       },
       "ErrorResponse" : {
@@ -1332,14 +1706,45 @@
         "required" : [ "exists" ],
         "type" : "object"
       },
+      "Statistic" : {
+        "example" : {
+          "bankId" : "78eefcd4-2459-412e-857f-60f7c5d531c9",
+          "teamId" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "requestsCount" : 0
+        },
+        "properties" : {
+          "bankId" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
+          "teamId" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
+          "requestsCount" : {
+            "format" : "int64",
+            "minimum" : 0,
+            "type" : "integer"
+          }
+        },
+        "required" : [ "bankId", "teamId" ],
+        "type" : "object"
+      },
       "Bank" : {
         "properties" : {
-          "jmsQueue" : {
+          "uuid" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
+          "name" : {
             "maxLength" : 50,
             "minLength" : 6,
             "type" : "string"
           },
-          "name" : {
+          "jmsQueue" : {
             "maxLength" : 50,
             "minLength" : 6,
             "type" : "string"
@@ -1358,17 +1763,17 @@
           "creditConfiguration" : {
             "$ref" : "#/components/schemas/CreditConfiguration"
           },
-          "groups" : {
+          "teams" : {
             "items" : {
-              "$ref" : "#/components/schemas/Group"
+              "$ref" : "#/components/schemas/Team"
             },
             "minItems" : 0,
-            "title" : "Groups",
+            "title" : "Teams",
             "type" : "array",
             "uniqueItems" : true
           }
         },
-        "required" : [ "groups", "isActive", "isAsync", "jmsQueue", "name", "thumbnailUrl" ],
+        "required" : [ "isActive", "isAsync", "jmsQueue", "name", "teams", "thumbnailUrl", "uuid" ],
         "type" : "object"
       },
       "CreditConfiguration" : {
@@ -1409,33 +1814,39 @@
       },
       "Task" : {
         "example" : {
-          "id" : "e393ce40-7c72-436e-8cf7-eb5be28278d5",
+          "uuid" : "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
           "title" : "Asynchrone Banken",
-          "description" : "<p>Es existieren eine Reihe bereits vorgegebener asynchroner Banken, welche per JMS erreichbar sind. Um die Banken zu erreichen, müssen Sie im VPN der Hochschule sein und den Port in der URL mit angeben. Sie kommunizieren nicht direkt mit den Banken, sondern mit einem ActiveMQ-Broker als Middleware. Die Messages an den Broker sind Textnachrichten, die als JSON strukturiert sind. Die Message entspricht also einem JSON-Objekt mit den Parametern als einzelne Key-Value-Pairs (siehe unten). Ein Error-Handling wie in den synchronen Services gibt es nicht. Sie übernehmen daher die Anfragegrenzen aus der internen Konfiguration der Banken. Die Rückgabewert der Banken enthält neben einem Zinsatz für den gewünschten Kredit zwischen 0 und 10% vom Datentyp Double die Request ID der Anfrage. Eine Bank hört auf einer Queue des Broker nach Nachrichten für diese Bank (Bei der Sparkasse z.B. „sparkasse“). Sie entnehmen die Antworten der Banken auf ihrer Gruppen-Queue, z.B. ResponseLoanBrokerGruppe01.</p><p>Beispiel Textnachricht Request: {\\\"requestId\\\": \\\"123\\\",\\\"amountInEuros\\\": 20000,\\\"termInMonths\\\": 12,\\\"ratingLevel\\\": \\\"B\\\",\\\"delayInMilliseconds\\\": 0,\\\"username\\\": \\\"Gruppe01\\\",\\\"password\\\": \\\"123456\\\"}</p><p>Beispiel Textnachricht Response: {\\\"requestId\\\":\\\"123\\\",\\\"lendingRate\\\":2.738343644690228}</p>",
-          "step" : 3,
+          "description" : "<p>Es existieren eine Reihe bereits vorgegebener asynchroner Banken, welche per JMS erreichbar sind. Um die Banken zu erreichen, müssen Sie im VPN der Hochschule sein und den Port in der URL mit angeben. Sie kommunizieren nicht direkt mit den Banken, sondern mit einem ActiveMQ-Broker als Middleware. Die Messages an den Broker sind Textnachrichten, die als JSON strukturiert sind. Die Message entspricht also einem JSON-Objekt mit den Parametern als einzelne Key-Value-Pairs (siehe unten). Ein Error-Handling wie in den synchronen Services gibt es nicht. Sie übernehmen daher die Anfragegrenzen aus der internen Konfiguration der Banken. Die Rückgabewert der Banken enthält neben einem Zinsatz für den gewünschten Kredit zwischen 0 und 10% vom Datentyp Double die Request ID der Anfrage. Eine Bank hört auf einer Queue des Broker nach Nachrichten für diese Bank (Bei der Sparkasse z.B. „sparkasse“). Sie entnehmen die Antworten der Banken auf ihrer Team-Queue, z.B. ResponseLoanBrokerTeam01.</p><p>Beispiel Textnachricht Request: {\\\"requestId\\\": \\\"123\\\",\\\"amountInEuros\\\": 20000,\\\"termInMonths\\\": 12,\\\"ratingLevel\\\": \\\"B\\\",\\\"delayInMilliseconds\\\": 0,\\\"username\\\": \\\"Team01\\\",\\\"password\\\": \\\"123456\\\"}</p><p>Beispiel Textnachricht Response: {\\\"requestId\\\":\\\"123\\\",\\\"lendingRate\\\":2.738343644690228}</p>",
+          "integrationStep" : "3",
           "isOpenApiVerbose" : false,
           "contact" : {
-            "name" : "Jan-Hendrik Hausner",
+            "uuid" : "ba16bd92-9e64-4de6-916f-d0c4ea91a530",
+            "firstname" : "Jan-Hendrik",
+            "lastname" : "Hausner",
             "email" : "jan-hendrik.hausner@outlook.com"
           },
           "endpoints" : [ {
+            "uuid" : "35540453-ea3d-4f87-a19f-486c29e68b4f",
             "type" : "JMS",
             "url" : "tcp://bambusinessintegration.wi.hs-furtwangen.de:61616",
             "docsUrl" : ""
           } ],
           "parameters" : [ {
+            "uuid" : "0ae3aa19-e421-4c5f-bb9a-d9f932689e5f",
             "name" : "requestId",
             "type" : "STRING",
             "description" : "Zufällige Request-ID",
-            "example" : "7729e687-415b-4594-818b-77f2800b2a08"
+            "example" : "42455280-4a1b-43d7-97a8-cc0beaaa0829"
           } ],
           "responses" : [ {
-            "code" : -1,
+            "uuid" : "45d2b3fd-f87f-4dde-a8cd-36c02612cd50",
+            "httpStatusCode" : -1,
             "contentType" : "application/json",
             "description" : "Kreditzins in Prozent",
-            "example" : "{ \\\"requestId\\\": \\\"123\\\", \\\"lendingRateInPercent\\\": 2.738343644690228 }"
+            "example" : "{ \"requestId\": \"123\", \"lendingRateInPercent\": 2.738343644690228 }"
           } ],
           "banks" : [ {
+            "uuid" : "78eefcd4-2459-412e-857f-60f7c5d531c9",
             "jmsQueue" : "sparkasse",
             "name" : "Sparkasse",
             "thumbnailUrl" : "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Sparkasse.svg/2000px-Sparkasse.svg.png",
@@ -1449,27 +1860,39 @@
               "minSchufaRating" : "A",
               "maxSchufaRating" : "P"
             },
-            "groups" : [ {
-              "id" : "e7a259c7-44f1-472f-a869-f9c71f65a209",
-              "username" : "Beispielgruppe",
+            "teams" : [ {
+              "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+              "username" : "Beispielteam",
               "password" : "OOfKqWksmA",
-              "jmsQueue" : "ResponseLoanBrokerBeispielgruppe",
-              "students" : [ "Angela Merkel", "Max Mustermann", "Thomas Müller" ],
-              "stats" : {
-                "schufa" : 0,
-                "deutschebank" : 0,
-                "sparkasse" : 0,
-                "psdbank" : 0,
-                "raiffeisen" : 0,
-                "volksbank" : 0,
-                "commerzbank" : 0
+              "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+              "students" : [ {
+                "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
+                "firstname" : "Max",
+                "lastname" : "Mustermann"
+              }, {
+                "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
+                "firstname" : "Angela",
+                "lastname" : "Merkel"
+              }, {
+                "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
+                "firstname" : "Thomas",
+                "lastname" : "Müller"
+              } ],
+              "statistics" : {
+                "Schufa" : 0,
+                "Deutsche Bank" : 0,
+                "Sparkasse" : 0,
+                "PSD Bank" : 0,
+                "Raiffeisen" : 0,
+                "Volksbank" : 0,
+                "Commerzbank" : 0
               },
               "hasPassed" : false
             } ]
           } ]
         },
         "properties" : {
-          "id" : {
+          "uuid" : {
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
@@ -1484,11 +1907,8 @@
             "minLength" : 0,
             "type" : "string"
           },
-          "step" : {
-            "format" : "int32",
-            "maximum" : 3,
-            "minimum" : 1,
-            "type" : "integer"
+          "integrationStep" : {
+            "$ref" : "#/components/schemas/IntegrationStep"
           },
           "isOpenApiVerbose" : {
             "type" : "boolean"
@@ -1533,27 +1953,49 @@
             "uniqueItems" : true
           }
         },
-        "required" : [ "banks", "contact", "description", "endpoints", "id", "isOpenApiVerbose", "parameters", "responses", "step", "title" ],
+        "required" : [ "banks", "contact", "description", "endpoints", "integrationStep", "isOpenApiVerbose", "parameters", "responses", "title", "uuid" ],
         "type" : "object"
+      },
+      "IntegrationStep" : {
+        "enum" : [ 1, 2, 3 ],
+        "format" : "int32",
+        "minimum" : 1,
+        "type" : "integer",
+        "x-enum-varnames" : [ "SCHUFA_STEP", "SYNC_BANK_STEP", "ASYNC_BANK_STEP" ]
       },
       "Contact" : {
         "properties" : {
-          "name" : {
+          "uuid" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
+          "firstname" : {
             "maxLength" : 50,
-            "minLength" : 6,
+            "minLength" : 2,
+            "type" : "string"
+          },
+          "lastname" : {
+            "maxLength" : 50,
+            "minLength" : 2,
             "type" : "string"
           },
           "email" : {
             "format" : "email",
-            "pattern" : "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+            "pattern" : "^[A-Za-z0-9._+%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$",
             "type" : "string"
           }
         },
-        "required" : [ "email", "name" ],
+        "required" : [ "email", "firstname", "lastname", "uuid" ],
         "type" : "object"
       },
       "Endpoint" : {
         "properties" : {
+          "uuid" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
           "type" : {
             "$ref" : "#/components/schemas/EndpointType"
           },
@@ -1566,7 +2008,7 @@
             "type" : "string"
           }
         },
-        "required" : [ "docsUrl", "type", "url" ],
+        "required" : [ "docsUrl", "type", "url", "uuid" ],
         "type" : "object"
       },
       "EndpointType" : {
@@ -1575,9 +2017,14 @@
       },
       "Parameter" : {
         "properties" : {
+          "uuid" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
           "name" : {
             "maxLength" : 50,
-            "minLength" : 6,
+            "minLength" : 2,
             "type" : "string"
           },
           "type" : {
@@ -1594,7 +2041,7 @@
             "type" : "string"
           }
         },
-        "required" : [ "description", "example", "name", "type" ],
+        "required" : [ "description", "example", "name", "type", "uuid" ],
         "type" : "object"
       },
       "ParameterType" : {
@@ -1603,16 +2050,21 @@
       },
       "Response" : {
         "properties" : {
-          "code" : {
+          "uuid" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
+          "httpStatusCode" : {
             "format" : "http-status",
-            "maximum" : 1000,
+            "maximum" : 999,
             "minimum" : 1,
             "type" : "integer"
           },
           "contentType" : {
             "format" : "content-type",
-            "type" : "string",
-            "x-is-contextual" : true
+            "minLength" : 1,
+            "type" : "string"
           },
           "description" : {
             "maxLength" : 100,
@@ -1620,12 +2072,11 @@
             "type" : "string"
           },
           "example" : {
-            "maxLength" : 100,
             "minLength" : 1,
             "type" : "string"
           }
         },
-        "required" : [ "code", "contentType", "description", "example" ],
+        "required" : [ "contentType", "description", "example", "httpStatusCode", "uuid" ],
         "type" : "object"
       }
     }

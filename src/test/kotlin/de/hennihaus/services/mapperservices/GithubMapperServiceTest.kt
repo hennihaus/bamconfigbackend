@@ -1,8 +1,9 @@
 package de.hennihaus.services.mapperservices
 
+import de.hennihaus.models.generated.IntegrationStep
 import de.hennihaus.models.generated.openapi.BankApi
 import de.hennihaus.models.generated.openapi.SchufaApi
-import de.hennihaus.objectmothers.BankObjectMother.getVBank
+import de.hennihaus.objectmothers.BankObjectMother.getSyncBank
 import de.hennihaus.objectmothers.GithubObjectMother
 import de.hennihaus.objectmothers.OpenApiObjectMother.getNonUpdatedBankApi
 import de.hennihaus.objectmothers.OpenApiObjectMother.getNonUpdatedSchufaApi
@@ -14,10 +15,10 @@ import de.hennihaus.objectmothers.ParameterObjectMother.SOCIAL_SECURITY_NUMBER_P
 import de.hennihaus.objectmothers.ResponseObjectMother.OK_CODE
 import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask
-import de.hennihaus.services.mapperservices.GithubMapperServiceImpl.Companion.AMOUNT_IN_EUROS_PARAMETER
-import de.hennihaus.services.mapperservices.GithubMapperServiceImpl.Companion.NO_BANK_STEP_MESSAGE
-import de.hennihaus.services.mapperservices.GithubMapperServiceImpl.Companion.NO_CONFIGURATION_MESSAGE
-import de.hennihaus.services.mapperservices.GithubMapperServiceImpl.Companion.NO_SCHUFA_STEP_MESSAGE
+import de.hennihaus.services.mapperservices.GithubMapperService.Companion.AMOUNT_IN_EUROS_PARAMETER
+import de.hennihaus.services.mapperservices.GithubMapperService.Companion.NO_BANK_STEP_MESSAGE
+import de.hennihaus.services.mapperservices.GithubMapperService.Companion.NO_CONFIGURATION_MESSAGE
+import de.hennihaus.services.mapperservices.GithubMapperService.Companion.NO_SCHUFA_STEP_MESSAGE
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
@@ -29,7 +30,7 @@ class GithubMapperServiceTest {
 
     private val defaultTitle = GithubObjectMother.DEFAULT_TITLE
 
-    private val classUnderTest = GithubMapperServiceImpl(
+    private val classUnderTest = GithubMapperService(
         defaultTitle = defaultTitle,
     )
 
@@ -68,7 +69,7 @@ class GithubMapperServiceTest {
         @Test
         fun `should throw an exception when task step != SCHUFA_STEP`() = runBlocking {
             val api = getNonUpdatedSchufaApi()
-            val task = getSchufaTask(step = -1)
+            val task = getSchufaTask(integrationStep = IntegrationStep.SYNC_BANK_STEP)
 
             val result: IllegalStateException = shouldThrowExactly {
                 classUnderTest.updateSchufaApi(
@@ -150,9 +151,9 @@ class GithubMapperServiceTest {
         }
 
         @Test
-        fun `should throw an exception when task step != BANK_STEP`() = runBlocking {
+        fun `should throw an exception when task step != SYNC_BANK_STEP`() = runBlocking {
             val api = getNonUpdatedBankApi()
-            val task = getSynchronousBankTask(step = -1)
+            val task = getSynchronousBankTask(integrationStep = IntegrationStep.SCHUFA_STEP)
 
             val result: IllegalStateException = shouldThrowExactly {
                 classUnderTest.updateBankApi(
@@ -220,7 +221,7 @@ class GithubMapperServiceTest {
             val api = getNonUpdatedBankApi()
             val task = getSynchronousBankTask(
                 banks = listOf(
-                    getVBank(
+                    getSyncBank(
                         creditConfiguration = null,
                     ),
                 ),

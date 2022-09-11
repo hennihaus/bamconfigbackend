@@ -1,18 +1,23 @@
 package de.hennihaus.repositories
 
-import de.hennihaus.configurations.MongoConfiguration
-import de.hennihaus.models.Bank
-import de.hennihaus.objectmothers.BankObjectMother.getJmsBank
-import de.hennihaus.objectmothers.MongoContainerObjectMother
+import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
+import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
+import de.hennihaus.models.generated.Bank
+import de.hennihaus.objectmothers.BankObjectMother.getAsyncBank
+import de.hennihaus.objectmothers.CreditConfigurationObjectMother.getCreditConfigurationWithNoEmptyFields
+import de.hennihaus.objectmothers.ExposedContainerObjectMother
+import de.hennihaus.objectmothers.TeamObjectMother.getFirstTeam
+import de.hennihaus.objectmothers.TeamObjectMother.getSecondTeam
+import de.hennihaus.objectmothers.TeamObjectMother.getThirdTeam
 import de.hennihaus.plugins.initKoin
-import de.hennihaus.testutils.containers.MongoContainer
+import de.hennihaus.testutils.containers.ExposedContainer
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.ints.shouldBeGreaterThanOrEqual
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.collections.shouldNotBeEmpty
+import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.kotest.matchers.nulls.shouldBeNull
-import io.kotest.matchers.should
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.beInstanceOf
+import io.kotest.matchers.nulls.shouldNotBeNull
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -28,7 +33,7 @@ import org.koin.test.junit5.KoinTestExtension
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BankRepositoryIntegrationTest : KoinTest {
 
-    private val mongoContainer = MongoContainer.INSTANCE
+    private val exposedContainer = ExposedContainer.INSTANCE
     private val classUnderTest: BankRepository by inject()
 
     @JvmField
@@ -37,14 +42,14 @@ class BankRepositoryIntegrationTest : KoinTest {
     val koinTestExtension = KoinTestExtension.create {
         initKoin(
             properties = mapOf(
-                MongoConfiguration.DATABASE_HOST to mongoContainer.host,
-                MongoConfiguration.DATABASE_PORT to mongoContainer.firstMappedPort.toString(),
+                DATABASE_HOST to exposedContainer.host,
+                DATABASE_PORT to exposedContainer.firstMappedPort.toString(),
             )
         )
     }
 
     @BeforeEach
-    fun init() = MongoContainer.resetState()
+    fun init() = ExposedContainer.resetState()
 
     @AfterAll
     fun cleanUp() = stopKoin()
@@ -52,20 +57,21 @@ class BankRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetById {
         @Test
-        fun `should find a bank by jmsQueue`() = runBlocking<Unit> {
-            val jmsQueue = MongoContainerObjectMother.BANK_JMS_QUEUE
+        fun `should find a bank by id`() = runBlocking<Unit> {
+            val id = ExposedContainerObjectMother.BANK_UUID
 
-            val result: Bank? = classUnderTest.getById(id = jmsQueue)
+            val result: Bank? = classUnderTest.getById(id = id)
 
-            result should beInstanceOf<Bank>()
-            result!!.groups.size shouldBeGreaterThanOrEqual 1
+            result.shouldNotBeNull()
+            result.creditConfiguration.shouldNotBeNull()
+            result.teams.shouldNotBeEmpty()
         }
 
         @Test
-        fun `should return null when jmsQueue is not in db`() = runBlocking {
-            val jmsQueue = "unknown"
+        fun `should return null when id is not in db`() = runBlocking {
+            val id = ExposedContainerObjectMother.UNKNOWN_UUID
 
-            val result: Bank? = classUnderTest.getById(id = jmsQueue)
+            val result: Bank? = classUnderTest.getById(id = id)
 
             result.shouldBeNull()
         }
@@ -77,59 +83,72 @@ class BankRepositoryIntegrationTest : KoinTest {
         fun `should return at least one bank`() = runBlocking<Unit> {
             val result: List<Bank> = classUnderTest.getAll()
 
-            result.size shouldBeGreaterThanOrEqual 1
-            result.find { it.isAsync }!!.groups.size shouldBeGreaterThanOrEqual 1
-        }
-    }
-
-    @Nested
-    inner class Save {
-        @Test
-        fun `should save an existing bank`() = runBlocking {
-            val bank = getJmsBank(
-                jmsQueue = MongoContainerObjectMother.BANK_JMS_QUEUE,
-                name = "NewBankName",
-                groups = listOf(MongoContainerObjectMother.getFirstGroup())
-            )
-
-            val result: Bank = classUnderTest.save(entry = bank)
-
-            result shouldBe bank
-            classUnderTest.getById(id = bank.jmsQueue) shouldBe bank
-        }
-
-        @Test
-        fun `should save a bank when no existing bank is in db`() = runBlocking {
-            val bank = getJmsBank(
-                jmsQueue = "newBank",
-                groups = listOf(MongoContainerObjectMother.getFirstGroup())
-            )
-
-            val result: Bank = classUnderTest.save(entry = bank)
-
-            result shouldBe bank
-            classUnderTest.getById(id = bank.jmsQueue) shouldBe bank
+            result.shouldNotBeEmpty()
         }
     }
 
     @Nested
     inner class DeleteById {
         @Test
-        fun `should return true when one bank was deleted by jmsQueue`() = runBlocking {
-            val jmsQueue = MongoContainerObjectMother.BANK_JMS_QUEUE
+        fun `should return true when one bank was deleted by id`() = runBlocking {
+            val id = ExposedContainerObjectMother.BANK_UUID
 
-            val result: Boolean = classUnderTest.deleteById(id = jmsQueue)
+            val result: Boolean = classUnderTest.deleteById(id = id)
 
             result.shouldBeTrue()
         }
 
         @Test
-        fun `should return false when no bank was deleted by jmsQueue`() = runBlocking {
-            val jmsQueue = "unknown"
+        fun `should return false when no bank was deleted by name`() = runBlocking {
+            val id = ExposedContainerObjectMother.UNKNOWN_UUID
 
-            val result: Boolean = classUnderTest.deleteById(id = jmsQueue)
+            val result: Boolean = classUnderTest.deleteById(id = id)
 
             result.shouldBeFalse()
+        }
+    }
+
+    @Nested
+    inner class Save {
+        @Test
+        fun `should save an existing bank with creditConfiguration`() = runBlocking<Unit> {
+            val bank = getAsyncBank(
+                uuid = ExposedContainerObjectMother.BANK_UUID,
+                jmsQueue = "NewJmsName",
+                creditConfiguration = getCreditConfigurationWithNoEmptyFields(
+                    minAmountInEuros = 0,
+                ),
+                teams = listOf(
+                    getFirstTeam(),
+                    getSecondTeam(),
+                    getThirdTeam(),
+                ),
+            )
+
+            val result: Bank = classUnderTest.save(entry = bank)
+
+            result.shouldBeEqualToIgnoringFields(
+                other = bank,
+                property = Bank::teams,
+            )
+            result.teams shouldHaveSize bank.teams.size
+        }
+
+        @Test
+        fun `should save an existing bank without creditConfiguration`() = runBlocking<Unit> {
+            val bank = getAsyncBank(
+                uuid = ExposedContainerObjectMother.BANK_UUID,
+                jmsQueue = "NewJmsName",
+                creditConfiguration = null,
+            )
+
+            val result: Bank = classUnderTest.save(entry = bank)
+
+            result.shouldBeEqualToIgnoringFields(
+                other = bank,
+                property = Bank::teams,
+            )
+            result.teams shouldHaveSize bank.teams.size
         }
     }
 }

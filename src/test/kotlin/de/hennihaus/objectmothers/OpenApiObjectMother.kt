@@ -40,9 +40,11 @@ import de.hennihaus.objectmothers.ResponseObjectMother.NOT_FOUND_DESCRIPTION
 import de.hennihaus.objectmothers.ResponseObjectMother.OK_CODE
 import de.hennihaus.objectmothers.ResponseObjectMother.SCHUFA_OK_DESCRIPTION
 import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_CONTACT_EMAIL
-import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_CONTACT_NAME
+import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_CONTACT_FIRSTNAME
+import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_CONTACT_LASTNAME
 import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_SCHUFA_DESCRIPTION
 import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_SCHUFA_TITLE
+import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_SYNC_BANK_TITLE
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -98,7 +100,7 @@ object OpenApiObjectMother {
     )
 
     fun getUpdatedBankInfo(
-        title: String = "$DEFAULT_TITLE - ${TaskObjectMother.DEFAULT_SYNC_BANK_TITLE}",
+        title: String = "$DEFAULT_TITLE - $DEFAULT_SYNC_BANK_TITLE",
         contact: BankContact = getUpdatedBankContact(),
         description: String = TaskObjectMother.DEFAULT_SYNC_BANK_DESCRIPTION,
     ): BankInfo = bankApi.info.copy(
@@ -124,7 +126,7 @@ object OpenApiObjectMother {
     )
 
     fun getUpdatedSchufaContact(
-        name: String = DEFAULT_CONTACT_NAME,
+        name: String = "$DEFAULT_CONTACT_FIRSTNAME $DEFAULT_CONTACT_LASTNAME",
         email: String = DEFAULT_CONTACT_EMAIL,
     ) = SchufaContact(
         name = name,
@@ -132,7 +134,7 @@ object OpenApiObjectMother {
     )
 
     fun getUpdatedBankContact(
-        name: String = DEFAULT_CONTACT_NAME,
+        name: String = "$DEFAULT_CONTACT_FIRSTNAME $DEFAULT_CONTACT_LASTNAME",
         email: String = DEFAULT_CONTACT_EMAIL,
     ) = BankContact(
         name = name,

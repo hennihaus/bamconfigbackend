@@ -1,9 +1,10 @@
 package de.hennihaus.plugins
 
-import de.hennihaus.models.rest.ErrorResponse
+import de.hennihaus.models.generated.ErrorResponse
 import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_MESSAGE
+import de.hennihaus.plugins.ErrorMessage.EXPOSED_TRANSACTION_EXCEPTION
 import de.hennihaus.plugins.ErrorMessage.MISSING_PROPERTY_MESSAGE
-import de.hennihaus.plugins.ErrorMessage.OBJECT_ID_EXCEPTION_MESSAGE
+import de.hennihaus.plugins.ErrorMessage.UUID_EXCEPTION_MESSAGE
 import de.hennihaus.utils.withoutNanos
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -29,12 +30,12 @@ fun Application.configureErrorHandling() {
                 .withoutNanos()
 
             when (throwable) {
-                is ObjectIdException -> call.respond(
+                is UUIDException -> call.respond(
                     status = HttpStatusCode.BadRequest,
                     message = ErrorResponse(
                         message = throwable.message,
                         dateTime = dateTime,
-                    ),
+                    )
                 )
                 is NotFoundException -> call.respond(
                     status = HttpStatusCode.NotFound,
@@ -42,6 +43,13 @@ fun Application.configureErrorHandling() {
                         message = "${throwable.message}",
                         dateTime = dateTime,
                     ),
+                )
+                is TransactionException -> call.respond(
+                    status = HttpStatusCode.Conflict,
+                    message = ErrorResponse(
+                        message = "[${throwable.message}]",
+                        dateTime = dateTime,
+                    )
                 )
                 else -> call.respond(
                     status = HttpStatusCode.InternalServerError,
@@ -56,15 +64,19 @@ fun Application.configureErrorHandling() {
 }
 
 object ErrorMessage {
-    const val OBJECT_ID_EXCEPTION_MESSAGE = """
-        [id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}]
+    @Suppress("MaxLineLength")
+    const val UUID_EXCEPTION_MESSAGE = """
+        [id must match the expected pattern [a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89abAB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}]
     """
     const val BROKER_EXCEPTION_MESSAGE = "Error while calling ActiveMQ"
+    const val EXPOSED_TRANSACTION_EXCEPTION = "Exposed transaction failed"
     const val MISSING_PROPERTY_MESSAGE = "Missing property"
 }
 
-class ObjectIdException(override val message: String = OBJECT_ID_EXCEPTION_MESSAGE) : RuntimeException()
+class UUIDException(override val message: String = UUID_EXCEPTION_MESSAGE) : RuntimeException()
 
-class BrokerException(override val message: String?) : RuntimeException(message ?: BROKER_EXCEPTION_MESSAGE)
+class BrokerException(message: String?) : RuntimeException(message ?: BROKER_EXCEPTION_MESSAGE)
+
+class TransactionException(message: String? = null) : RuntimeException(message ?: EXPOSED_TRANSACTION_EXCEPTION)
 
 class PropertyNotFoundException(key: String) : IllegalStateException("$MISSING_PROPERTY_MESSAGE $key")

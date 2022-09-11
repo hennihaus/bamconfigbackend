@@ -1,0 +1,329 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BAM Business Integration - Team API",
+    "contact": {
+      "name": "Jan-Hendrik Hausner",
+      "email": "jan-hendrik.hausner@outlook.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://github.com/hennihaus/bamconfigbackend/blob/master/LICENSE"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/v1",
+      "description": "Base-URL"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Team"
+    }
+  ],
+  "paths": {
+    "/teams": {
+      "get": {
+        "tags": [
+          "Team"
+        ],
+        "operationId": "getAllTeams",
+        "summary": "Gets all teams",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200s"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/teams/{uuid}": {
+      "get": {
+        "tags": [
+          "Team"
+        ],
+        "operationId": "getTeamById",
+        "summary": "Finds team by UUID",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "404": {
+            "$ref": "../commons/commons.json#/components/responses/404"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Team"
+        ],
+        "operationId": "saveTeam",
+        "summary": "Creates or updates a team",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/Team"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "409": {
+            "$ref": "../commons/commons.json#/components/responses/409"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Team"
+        ],
+        "operationId": "deleteTeamById",
+        "summary": "Deletes a team",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "../commons/commons.json#/components/responses/204"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/teams/{uuid}/statistics": {
+      "delete": {
+        "tags": [
+          "Team"
+        ],
+        "operationId": "resetStatistics",
+        "summary": "Resets all team statistics to zero",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "404": {
+            "$ref": "../commons/commons.json#/components/responses/404"
+          },
+          "409": {
+            "$ref": "../commons/commons.json#/components/responses/409"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/teams/{uuid}/check/username/{username}": {
+      "get": {
+        "tags": [
+          "Team"
+        ],
+        "operationId": "checkUsername",
+        "summary": "Checks existence of a team based on username",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "../commons/commons.json#/components/responses/200"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/teams/{uuid}/check/password/{password}": {
+      "get": {
+        "tags": [
+          "Team"
+        ],
+        "operationId": "checkPassword",
+        "summary": "Checks existence of a team based on password",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          },
+          {
+            "$ref": "#/components/parameters/password"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "../commons/commons.json#/components/responses/200"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/teams/{uuid}/check/jmsQueue/{jmsQueue}": {
+      "get": {
+        "tags": [
+          "Team"
+        ],
+        "operationId": "checkJmsQueue",
+        "summary": "Checks existence of a team based on jmsQueue",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuid"
+          },
+          {
+            "$ref": "#/components/parameters/jmsQueue"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "../commons/commons.json#/components/responses/200"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "uuid": {
+        "name": "uuid",
+        "in": "path",
+        "required": true,
+        "example": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        }
+      },
+      "username": {
+        "name": "username",
+        "in": "path",
+        "required": true,
+        "example": "Beispielteam",
+        "schema": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 50
+        }
+      },
+      "password": {
+        "name": "password",
+        "in": "path",
+        "required": true,
+        "example": "OOfKqWksmA",
+        "schema": {
+          "type": "string",
+          "format": "password",
+          "minLength": 8,
+          "maxLength": 50
+        }
+      },
+      "jmsQueue": {
+        "name": "jmsQueue",
+        "in": "path",
+        "required": true,
+        "example": "ResponseLoanBrokerBeispielteam",
+        "schema": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 50
+        }
+      }
+    },
+    "requestBodies": {
+      "Team": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../schemas/team.json#/components/schemas/Team"
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Team",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "../schemas/team.json#/components/schemas/Team"
+            }
+          }
+        }
+      },
+      "200s": {
+        "description": "Teams",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "title": "Teams",
+              "items": {
+                "$ref": "../schemas/team.json#/components/schemas/Team"
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

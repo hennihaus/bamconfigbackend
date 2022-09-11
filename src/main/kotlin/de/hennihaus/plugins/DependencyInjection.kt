@@ -2,8 +2,8 @@ package de.hennihaus.plugins
 
 import de.hennihaus.configurations.brokerModule
 import de.hennihaus.configurations.defaultModule
+import de.hennihaus.configurations.exposedModule
 import de.hennihaus.configurations.githubModule
-import de.hennihaus.configurations.mongoModule
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.routing.Route
@@ -22,7 +22,7 @@ fun Application.configureDependencyInjection(vararg koinModules: Module) = insta
 
 fun KoinApplication.initKoin(
     properties: Map<String, String> = emptyMap(),
-    vararg modules: Module = arrayOf(defaultModule, mongoModule, brokerModule, githubModule),
+    vararg modules: Module = arrayOf(defaultModule, exposedModule, brokerModule, githubModule),
 ) {
     slf4jLogger()
     environmentProperties()

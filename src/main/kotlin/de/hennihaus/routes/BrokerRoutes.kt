@@ -2,7 +2,7 @@ package de.hennihaus.routes
 
 import de.hennihaus.routes.resources.Broker
 import de.hennihaus.services.BrokerService
-import de.hennihaus.services.GroupService
+import de.hennihaus.services.TeamService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.resources.delete
@@ -16,7 +16,7 @@ fun Route.registerBrokerRoutes() {
 }
 
 private fun Route.resetBroker() = delete<Broker> {
-    getKoin().get<GroupService>().resetAllGroups()
+    getKoin().get<TeamService>().resetAllTeams()
     getKoin().get<BrokerService>().resetBroker()
     call.respond(
         status = HttpStatusCode.NoContent,

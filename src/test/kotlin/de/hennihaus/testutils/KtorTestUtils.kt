@@ -1,12 +1,17 @@
 package de.hennihaus.testutils
 
+import de.hennihaus.models.serializer.ContentTypeSerializer
+import de.hennihaus.models.serializer.HttpStatusCodeSerializer
+import de.hennihaus.models.serializer.URISerializer
+import de.hennihaus.models.serializer.UUIDSerializer
 import de.hennihaus.module
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import org.koin.core.module.Module
-import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 import io.ktor.server.testing.testApplication as ktorTestApplication
 
 object KtorTestUtils {
@@ -25,7 +30,12 @@ val ApplicationTestBuilder.testClient
         install(ContentNegotiation) {
             json(
                 Json {
-                    serializersModule = IdKotlinXSerializationModule
+                    serializersModule = SerializersModule {
+                        contextual(serializer = ContentTypeSerializer)
+                        contextual(serializer = HttpStatusCodeSerializer)
+                        contextual(serializer = URISerializer)
+                        contextual(serializer = UUIDSerializer)
+                    }
                 }
             )
         }

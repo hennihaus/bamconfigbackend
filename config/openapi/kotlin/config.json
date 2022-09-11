@@ -4,6 +4,7 @@
   "enumPropertyNaming": "UPPERCASE",
   "library": "jvm-ktor",
   "serializationLibrary": "kotlinx_serialization",
+  "sortModelPropertiesByRequiredFlag": false,
   "modelMutable": false,
   "requestDateConverter": "toString",
   "serializableModel": false,

@@ -12,8 +12,7 @@ import org.koin.java.KoinJavaComponent.getKoin
 
 fun Route.registerBankRoutes() {
     getAllBanks()
-    getBankByJmsQueue()
-    saveAllBanks()
+    getBankById()
     saveBank()
 }
 
@@ -24,25 +23,16 @@ private fun Route.getAllBanks() = get<Banks> {
     )
 }
 
-private fun Route.getBankByJmsQueue() = get<Banks.JmsQueue> { request ->
+private fun Route.getBankById() = get<Banks.Id> { request ->
     val bankService = getKoin().get<BankService>()
     call.respond(
-        message = bankService.getBankByJmsQueue(
-            jmsQueue = request.jmsQueue,
+        message = bankService.getBankById(
+            id = request.id,
         ),
     )
 }
 
-private fun Route.saveAllBanks() = put<Banks> {
-    val bankService = getKoin().get<BankService>()
-    call.respond(
-        message = bankService.saveAllBanks(
-            banks = call.receive(),
-        ),
-    )
-}
-
-private fun Route.saveBank() = put<Banks.JmsQueue> {
+private fun Route.saveBank() = put<Banks.Id> {
     val bankService = getKoin().get<BankService>()
     call.respond(
         message = bankService.saveBank(
