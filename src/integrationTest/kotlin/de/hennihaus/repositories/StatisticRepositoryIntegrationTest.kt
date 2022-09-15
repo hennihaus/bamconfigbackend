@@ -2,15 +2,20 @@ package de.hennihaus.repositories
 
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
+import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
 import de.hennihaus.models.generated.Statistic
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
 import de.hennihaus.objectmothers.StatisticObjectMother.getFirstTeamAsyncBankStatistic
 import de.hennihaus.objectmothers.TeamObjectMother.getFirstTeam
 import de.hennihaus.objectmothers.TeamObjectMother.getZeroStatistics
 import de.hennihaus.plugins.initKoin
+import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
 import de.hennihaus.testutils.containers.ExposedContainer
 import io.kotest.inspectors.forAll
 import io.kotest.inspectors.forAllValues
+import io.kotest.inspectors.shouldForAll
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldBeUnique
 import io.kotest.matchers.longs.shouldBeZero
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
@@ -97,6 +102,37 @@ class StatisticRepositoryIntegrationTest : KoinTest {
                 }
             }
             result.shouldBeNull()
+        }
+    }
+
+    @Nested
+    inner class ResetRequests {
+        @Test
+        fun `should reset all requests to zero for a given team id`() = runBlocking<Unit> {
+            val teamId = ExposedContainerObjectMother.TEAM_UUID
+
+            val result: List<Statistic> = classUnderTest.resetRequests(
+                teamId = teamId,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
+
+            result.shouldForAll {
+                it.requestsCount shouldBe ZERO_REQUESTS
+                it.teamId shouldBe teamId
+            }
+            result.shouldBeUnique()
+        }
+
+        @Test
+        fun `should return an empty list when team id is unknown`() = runBlocking<Unit> {
+            val teamId = ExposedContainerObjectMother.UNKNOWN_UUID
+
+            val result: List<Statistic> = classUnderTest.resetRequests(
+                teamId = teamId,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
+
+            result.shouldBeEmpty()
         }
     }
 }

@@ -3,6 +3,7 @@ package de.hennihaus.services
 import de.hennihaus.configurations.Configuration.PASSWORD_LENGTH
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
 import de.hennihaus.models.generated.Team
+import de.hennihaus.repositories.StatisticRepository
 import de.hennihaus.repositories.TeamRepository
 import de.hennihaus.utils.toUUID
 import io.ktor.server.plugins.NotFoundException
@@ -14,59 +15,52 @@ import org.passay.PasswordGenerator
 
 @Single
 class TeamService(
-    private val repository: TeamRepository,
-    private val statistic: StatisticService,
+    private val teamRepository: TeamRepository,
+    private val statisticRepository: StatisticRepository,
     @Property(PASSWORD_LENGTH) private val passwordLength: String,
 ) {
 
-    suspend fun getAllTeams(): List<Team> {
-        return repository.getAll()
-            .sortedBy { it.username }
-            .map { statistic.setHasPassed(team = it) }
-    }
+    suspend fun getAllTeams(): List<Team> = teamRepository.getAll().sortedBy { it.username }
 
     suspend fun getTeamById(id: String): Team = id.toUUID { uuid ->
-        repository.getById(id = uuid)
-            ?.let { statistic.setHasPassed(team = it) }
+        teamRepository.getById(id = uuid)
             ?: throw NotFoundException(message = TEAM_NOT_FOUND_MESSAGE)
     }
 
     suspend fun checkUsername(id: String, username: String): Boolean = id.toUUID { uuid ->
-        repository.getTeamByUsername(username = username)
+        teamRepository.getTeamByUsername(username = username)
             ?.let { it.uuid != uuid }
             ?: false
     }
 
     suspend fun checkPassword(id: String, password: String): Boolean = id.toUUID { uuid ->
-        return repository.getTeamByPassword(password = password)
+        teamRepository.getTeamByPassword(password = password)
             ?.let { it.uuid != uuid }
             ?: false
     }
 
     suspend fun checkJmsQueue(id: String, jmsQueue: String): Boolean = id.toUUID { uuid ->
-        return repository.getTeamByJmsQueue(jmsQueue = jmsQueue)
+        teamRepository.getTeamByJmsQueue(jmsQueue = jmsQueue)
             ?.let { it.uuid != uuid }
             ?: false
     }
 
-    suspend fun saveTeam(team: Team): Team = statistic.setHasPassed(team = team).let {
-        repository.save(
-            entry = it,
-            repetitionAttempts = ONE_REPETITION_ATTEMPT,
-        )
-    }
+    suspend fun saveTeam(team: Team): Team = teamRepository.save(
+        entry = team,
+        repetitionAttempts = ONE_REPETITION_ATTEMPT,
+    )
 
     suspend fun deleteTeamById(id: String): Boolean = id.toUUID { uuid ->
-        repository.deleteById(id = uuid)
+        teamRepository.deleteById(id = uuid)
     }
 
     suspend fun resetAllTeams(): List<Team> {
-        return repository.getAll()
+        return teamRepository.getAll()
             .map {
                 resetTeam(team = it)
             }
             .map {
-                repository.save(
+                teamRepository.save(
                     entry = it,
                     repetitionAttempts = ONE_REPETITION_ATTEMPT,
                 )
@@ -74,19 +68,11 @@ class TeamService(
     }
 
     suspend fun resetStatistics(id: String): Team = id.toUUID { uuid ->
-        repository.getById(id = uuid)
-            ?.let {
-                it.copy(statistics = it.statistics.mapValues { ZERO_REQUESTS })
-            }
-            ?.let {
-                repository.save(
-                    entry = it,
-                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
-                )
-            }
-            ?.let {
-                statistic.setHasPassed(team = it)
-            }
+        statisticRepository.resetRequests(
+            teamId = uuid,
+            repetitionAttempts = ONE_REPETITION_ATTEMPT,
+        )
+        teamRepository.getById(id = uuid)
             ?: throw NotFoundException(message = TEAM_NOT_FOUND_MESSAGE)
     }
 
@@ -102,7 +88,7 @@ class TeamService(
     }
 
     companion object {
-        internal const val TEAM_NOT_FOUND_MESSAGE = "[team not found by uuid]"
-        private const val ZERO_REQUESTS = 0L
+        const val TEAM_NOT_FOUND_MESSAGE = "[team not found by uuid]"
+        const val ZERO_REQUESTS = 0L
     }
 }

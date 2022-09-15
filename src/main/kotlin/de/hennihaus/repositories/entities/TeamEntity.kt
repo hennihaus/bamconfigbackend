@@ -30,7 +30,8 @@ class StudentEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
 
 class StatisticEntity(id: EntityID<Long>) : LongEntity(id = id) {
     val bank: BankEntity by BankEntity referencedOn StatisticTable.bankId
-    val team: TeamEntity by TeamEntity referencedOn StatisticTable.teamId
+    val bankId: EntityID<UUID> by StatisticTable.bankId
+    val teamId: EntityID<UUID> by StatisticTable.teamId
     val requestsCount: Long by StatisticTable.requestsCount
 
     companion object : LongEntityClass<StatisticEntity>(StatisticTable)

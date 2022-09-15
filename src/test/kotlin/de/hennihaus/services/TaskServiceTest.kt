@@ -6,9 +6,6 @@ import de.hennihaus.models.generated.Task
 import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask
-import de.hennihaus.objectmothers.TeamObjectMother.getFirstTeam
-import de.hennihaus.objectmothers.TeamObjectMother.getSecondTeam
-import de.hennihaus.objectmothers.TeamObjectMother.getThirdTeam
 import de.hennihaus.repositories.TaskRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowExactly
@@ -34,29 +31,15 @@ import java.util.UUID
 class TaskServiceTest {
 
     private val repository = mockk<TaskRepository>()
-    private val statistic = mockk<StatisticService>()
     private val github = mockk<GithubService>()
 
     private val classUnderTest = TaskService(
         repository = repository,
-        statistic = statistic,
         github = github,
     )
 
     @BeforeEach
-    fun init() {
-        clearAllMocks()
-        coEvery { statistic.setHasPassed(team = any()) }
-            .returns(returnValue = getFirstTeam())
-            .andThen(returnValue = getSecondTeam())
-            .andThen(returnValue = getThirdTeam())
-            .andThen(returnValue = getFirstTeam())
-            .andThen(returnValue = getSecondTeam())
-            .andThen(returnValue = getThirdTeam())
-            .andThen(returnValue = getFirstTeam())
-            .andThen(returnValue = getSecondTeam())
-            .andThen(returnValue = getThirdTeam())
-    }
+    fun init() = clearAllMocks()
 
     @Nested
     inner class GetAllTasks {
@@ -77,15 +60,6 @@ class TaskServiceTest {
             )
             coVerifySequence {
                 repository.getAll()
-                statistic.setHasPassed(team = getFirstTeam())
-                statistic.setHasPassed(team = getSecondTeam())
-                statistic.setHasPassed(team = getThirdTeam())
-                statistic.setHasPassed(team = getFirstTeam())
-                statistic.setHasPassed(team = getSecondTeam())
-                statistic.setHasPassed(team = getThirdTeam())
-                statistic.setHasPassed(team = getFirstTeam())
-                statistic.setHasPassed(team = getSecondTeam())
-                statistic.setHasPassed(team = getThirdTeam())
             }
         }
 
@@ -97,7 +71,6 @@ class TaskServiceTest {
 
             result should beInstanceOf<Exception>()
             coVerify(exactly = 1) { repository.getAll() }
-            coVerify(exactly = 0) { statistic.setHasPassed(team = any()) }
         }
     }
 
@@ -113,9 +86,6 @@ class TaskServiceTest {
             result shouldBe getAsynchronousBankTask()
             coVerifySequence {
                 repository.getById(id = UUID.fromString(id))
-                statistic.setHasPassed(team = getFirstTeam())
-                statistic.setHasPassed(team = getSecondTeam())
-                statistic.setHasPassed(team = getThirdTeam())
             }
         }
 
@@ -130,7 +100,6 @@ class TaskServiceTest {
 
             result shouldHaveMessage TaskService.TASK_NOT_FOUND_MESSAGE
             coVerify(exactly = 1) { repository.getById(id = UUID.fromString(id)) }
-            coVerify(exactly = 0) { statistic.setHasPassed(team = any()) }
         }
     }
 
@@ -158,9 +127,6 @@ class TaskServiceTest {
                 repository.getById(id = UUID.fromString(id))
                 github.updateOpenApi(task = getAsynchronousBankTask())
                 repository.save(entry = getAsynchronousBankTask(), repetitionAttempts = ONE_REPETITION_ATTEMPT)
-                statistic.setHasPassed(team = getFirstTeam())
-                statistic.setHasPassed(team = getSecondTeam())
-                statistic.setHasPassed(team = getThirdTeam())
             }
         }
 

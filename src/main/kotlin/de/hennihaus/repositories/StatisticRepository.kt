@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
+import java.util.UUID
 
 @Single
 class StatisticRepository {
@@ -29,7 +30,26 @@ class StatisticRepository {
             ?.toStatistic()
     }
 
+    suspend fun resetRequests(teamId: UUID, repetitionAttempts: Int): List<Statistic> = inTransaction(
+        repetitionAttempts = repetitionAttempts,
+    ) {
+        StatisticTable.update(
+            where = {
+                StatisticTable.teamId eq teamId
+            },
+        ) { statisticTable ->
+            with(SqlExpressionBuilder) {
+                statisticTable[requestsCount] = ZERO_REQUESTS
+            }
+        }
+
+        StatisticEntity.find { StatisticTable.teamId eq teamId }.map {
+            it.toStatistic()
+        }
+    }
+
     companion object {
-        private const val ONE_REQUEST = 1L
+        const val ZERO_REQUESTS = 0L
+        const val ONE_REQUEST = 1L
     }
 }

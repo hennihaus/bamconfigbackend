@@ -5,9 +5,6 @@ import de.hennihaus.models.generated.Bank
 import de.hennihaus.objectmothers.BankObjectMother.getAsyncBank
 import de.hennihaus.objectmothers.BankObjectMother.getSchufaBank
 import de.hennihaus.objectmothers.BankObjectMother.getSyncBank
-import de.hennihaus.objectmothers.TeamObjectMother.getFirstTeam
-import de.hennihaus.objectmothers.TeamObjectMother.getSecondTeam
-import de.hennihaus.objectmothers.TeamObjectMother.getThirdTeam
 import de.hennihaus.repositories.BankRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowExactly
@@ -31,27 +28,13 @@ import java.util.UUID
 class BankServiceTest {
 
     private val repository = mockk<BankRepository>()
-    private val statistic = mockk<StatisticService>()
 
     private val classUnderTest = BankService(
         repository = repository,
-        statistic = statistic,
     )
 
     @BeforeEach
-    fun init() {
-        clearAllMocks()
-        coEvery { statistic.setHasPassed(team = any()) }
-            .returns(returnValue = getFirstTeam())
-            .andThen(returnValue = getSecondTeam())
-            .andThen(returnValue = getThirdTeam())
-            .andThen(returnValue = getFirstTeam())
-            .andThen(returnValue = getSecondTeam())
-            .andThen(returnValue = getThirdTeam())
-            .andThen(returnValue = getFirstTeam())
-            .andThen(returnValue = getSecondTeam())
-            .andThen(returnValue = getThirdTeam())
-    }
+    fun init() = clearAllMocks()
 
     @Nested
     inner class GetAllBanks {
@@ -72,15 +55,6 @@ class BankServiceTest {
             )
             coVerifySequence {
                 repository.getAll()
-                statistic.setHasPassed(team = getFirstTeam())
-                statistic.setHasPassed(team = getSecondTeam())
-                statistic.setHasPassed(team = getThirdTeam())
-                statistic.setHasPassed(team = getFirstTeam())
-                statistic.setHasPassed(team = getSecondTeam())
-                statistic.setHasPassed(team = getThirdTeam())
-                statistic.setHasPassed(team = getFirstTeam())
-                statistic.setHasPassed(team = getSecondTeam())
-                statistic.setHasPassed(team = getThirdTeam())
             }
         }
 
@@ -92,7 +66,6 @@ class BankServiceTest {
 
             result should beInstanceOf<Exception>()
             coVerify(exactly = 1) { repository.getAll() }
-            coVerify(exactly = 0) { statistic.setHasPassed(team = any()) }
         }
     }
 
@@ -108,9 +81,6 @@ class BankServiceTest {
             result shouldBe getAsyncBank()
             coVerifySequence {
                 repository.getById(id = UUID.fromString(id))
-                statistic.setHasPassed(team = getFirstTeam())
-                statistic.setHasPassed(team = getSecondTeam())
-                statistic.setHasPassed(team = getThirdTeam())
             }
         }
 
@@ -125,7 +95,6 @@ class BankServiceTest {
 
             result shouldHaveMessage BankService.BANK_NOT_FOUND_MESSAGE
             coVerify(exactly = 1) { repository.getById(id = UUID.fromString(id)) }
-            coVerify(exactly = 0) { statistic.setHasPassed(team = any()) }
         }
     }
 

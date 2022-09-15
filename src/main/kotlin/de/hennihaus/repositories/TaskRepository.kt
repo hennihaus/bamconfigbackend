@@ -1,7 +1,10 @@
 package de.hennihaus.repositories
 
 import de.hennihaus.models.generated.Task
+import de.hennihaus.repositories.entities.BankEntity
+import de.hennihaus.repositories.entities.StatisticEntity
 import de.hennihaus.repositories.entities.TaskEntity
+import de.hennihaus.repositories.entities.TeamEntity
 import de.hennihaus.repositories.mappers.toTask
 import de.hennihaus.repositories.tables.ContactTable
 import de.hennihaus.repositories.tables.EndpointTable
@@ -16,6 +19,8 @@ import de.hennihaus.utils.upsert
 import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.jetbrains.exposed.dao.load
+import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.selectAll
@@ -28,13 +33,16 @@ class TaskRepository : Repository<Task, UUID> {
 
     override suspend fun getById(id: UUID): Task? = inTransaction {
         TaskEntity.findById(id = id)
+            ?.load(relations = getTaskRelations())
             ?.toTask()
     }
 
     override suspend fun getAll(): List<Task> = inTransaction {
-        TaskEntity.all().map {
-            it.toTask()
-        }
+        TaskEntity.all()
+            .with(relations = getTaskRelations())
+            .map {
+                it.toTask()
+            }
     }
 
     override suspend fun deleteById(id: UUID): Boolean = inTransaction {
@@ -56,6 +64,7 @@ class TaskRepository : Repository<Task, UUID> {
         entry.saveResponses(now = now)
 
         TaskEntity.findById(id = entry.uuid)
+            ?.load(relations = getTaskRelations())
             ?.toTask()
             ?: throw IllegalStateException(TASK_NOT_FOUND_MESSAGE)
     }
@@ -63,6 +72,7 @@ class TaskRepository : Repository<Task, UUID> {
     suspend fun getTaskByTitle(title: String): Task? = newSuspendedTransaction(context = Dispatchers.IO) {
         TaskEntity.find { TaskTable.title eq title }
             .singleOrNull()
+            ?.load(relations = getTaskRelations())
             ?.toTask()
     }
 
@@ -171,6 +181,19 @@ class TaskRepository : Repository<Task, UUID> {
                 .withDistinct()
         }
     }
+
+    private fun getTaskRelations() = arrayOf(
+        TaskEntity::contact,
+        TaskEntity::endpoints,
+        TaskEntity::parameters,
+        TaskEntity::responses,
+        TaskEntity::banks,
+        BankEntity::creditConfiguration,
+        BankEntity::teams,
+        TeamEntity::students,
+        TeamEntity::statistics,
+        StatisticEntity::bank,
+    )
 
     companion object {
         private const val TASK_NOT_FOUND_MESSAGE = "Task not found in database"
