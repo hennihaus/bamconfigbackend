@@ -14,11 +14,7 @@ fun TeamEntity.toTeam() = Team(
     jmsQueue = jmsQueue,
     students = students.map { it.toStudent() },
     statistics = statistics.associate { it.toPair() },
-    /**
-     * This is just a placeholder calculation.
-     * HasPassed is calculated in control layer with [StatisticService]
-     */
-    hasPassed = statistics.all { it.requestsCount > ZERO_REQUESTS },
+    hasPassed = statistics.filter { it.bank.isActive }.all { it.requestsCount > ZERO_REQUESTS },
 )
 
 private fun StudentEntity.toStudent() = Student(

@@ -10,7 +10,6 @@ import org.jetbrains.exposed.sql.SizedIterable
 import java.util.UUID
 
 class BankEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
-    val task: TaskEntity by TaskEntity referencedOn BankTable.taskId
     val name: String by BankTable.name
     val jmsQueue: String by BankTable.jmsQueue
     val thumbnailUrl: String by BankTable.thumbnailUrl

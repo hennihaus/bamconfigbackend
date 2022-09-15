@@ -51,13 +51,14 @@ fun Application.configureErrorHandling() {
                         dateTime = dateTime,
                     )
                 )
-                else -> call.respond(
-                    status = HttpStatusCode.InternalServerError,
-                    message = ErrorResponse(
-                        message = "$throwable",
-                        dateTime = dateTime,
-                    ),
-                )
+                else -> call.also { it.application.environment.log.error("Internal Server Error: ", throwable) }
+                    .respond(
+                        status = HttpStatusCode.InternalServerError,
+                        message = ErrorResponse(
+                            message = "$throwable",
+                            dateTime = dateTime,
+                        ),
+                    )
             }
         }
     }

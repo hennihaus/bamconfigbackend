@@ -2,6 +2,8 @@ package de.hennihaus.repositories
 
 import de.hennihaus.models.generated.Bank
 import de.hennihaus.repositories.entities.BankEntity
+import de.hennihaus.repositories.entities.StatisticEntity
+import de.hennihaus.repositories.entities.TeamEntity
 import de.hennihaus.repositories.mappers.toBank
 import de.hennihaus.repositories.tables.BankTable
 import de.hennihaus.repositories.tables.CreditConfigurationTable
@@ -11,6 +13,8 @@ import de.hennihaus.utils.inTransaction
 import de.hennihaus.utils.upsert
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import org.jetbrains.exposed.dao.load
+import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.update
@@ -22,13 +26,16 @@ class BankRepository : Repository<Bank, UUID> {
 
     override suspend fun getById(id: UUID): Bank? = inTransaction {
         BankEntity.findById(id = id)
+            ?.load(relations = getBankRelations())
             ?.toBank()
     }
 
     override suspend fun getAll(): List<Bank> = inTransaction {
-        BankEntity.all().map {
-            it.toBank()
-        }
+        BankEntity.all()
+            .with(relations = getBankRelations())
+            .map {
+                it.toBank()
+            }
     }
 
     override suspend fun deleteById(id: UUID): Boolean = inTransaction {
@@ -51,6 +58,7 @@ class BankRepository : Repository<Bank, UUID> {
         entry.saveStatistics(now = now)
 
         BankEntity.findById(id = entry.uuid)
+            ?.load(relations = getBankRelations())
             ?.toBank()
             ?: throw IllegalStateException(BANK_NOT_FOUND_MESSAGE)
     }
@@ -103,6 +111,14 @@ class BankRepository : Repository<Bank, UUID> {
             StatisticTable.bankId eq uuid and (StatisticTable.teamId notInList teams.map { it.uuid })
         }
     }
+
+    private fun getBankRelations() = arrayOf(
+        BankEntity::creditConfiguration,
+        BankEntity::teams,
+        TeamEntity::students,
+        TeamEntity::statistics,
+        StatisticEntity::bank,
+    )
 
     companion object {
         private const val BANK_NOT_FOUND_MESSAGE = "Bank not found in database"
