@@ -19,6 +19,7 @@ import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -34,6 +35,7 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -95,10 +97,16 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
-                other = getInternalServerErrorResponse(),
-                property = ErrorResponse::dateTime,
-            )
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInternalServerErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInternalServerErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { teamService.getAllTeams() }
         }
     }
@@ -127,10 +135,16 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams/$uuid")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
-                other = getTeamNotFoundErrorResponse(),
-                property = ErrorResponse::dateTime,
-            )
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getTeamNotFoundErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getTeamNotFoundErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { teamService.getTeamById(id = uuid) }
         }
     }
@@ -158,10 +172,16 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams/$uuid/check/username/$username")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
-                other = getInvalidIdErrorResponse(),
-                property = ErrorResponse::dateTime,
-            )
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { teamService.checkUsername(id = uuid, username = username) }
         }
     }
@@ -189,10 +209,16 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams/$uuid/check/password/$password")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
-                other = getInvalidIdErrorResponse(),
-                property = ErrorResponse::dateTime,
-            )
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { teamService.checkPassword(id = uuid, password = password) }
         }
     }
@@ -220,10 +246,16 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams/$uuid/check/jmsQueue/$jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
-                other = getInvalidIdErrorResponse(),
-                property = ErrorResponse::dateTime,
-            )
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInvalidIdErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { teamService.checkJmsQueue(id = uuid, jmsQueue = jmsQueue) }
         }
     }
@@ -256,10 +288,16 @@ class TeamRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
-                other = getConflictErrorResponse(),
-                property = ErrorResponse::dateTime,
-            )
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getConflictErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getConflictErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { teamService.saveTeam(team = testTeam) }
         }
 
@@ -299,10 +337,16 @@ class TeamRoutesTest {
             val response = testClient.delete(urlString = "/v1/teams/$uuid")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
-                other = getInternalServerErrorResponse(),
-                property = ErrorResponse::dateTime,
-            )
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInternalServerErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInternalServerErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { teamService.deleteTeamById(id = uuid) }
         }
     }
@@ -331,10 +375,16 @@ class TeamRoutesTest {
             val response = testClient.delete(urlString = "/v1/teams/$uuid/statistics")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
-                other = getTeamNotFoundErrorResponse(),
-                property = ErrorResponse::dateTime,
-            )
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getTeamNotFoundErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getTeamNotFoundErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { teamService.resetStatistics(id = uuid) }
         }
 
@@ -346,10 +396,16 @@ class TeamRoutesTest {
             val response = testClient.delete(urlString = "/v1/teams/$uuid/statistics")
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
-                other = getConflictErrorResponse(),
-                property = ErrorResponse::dateTime,
-            )
+            response.body<ErrorResponse>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getConflictErrorResponse(),
+                    property = ErrorResponse::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getConflictErrorResponse().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
             coVerify(exactly = 1) { teamService.resetStatistics(id = uuid) }
         }
     }
