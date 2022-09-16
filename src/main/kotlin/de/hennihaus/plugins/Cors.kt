@@ -1,5 +1,9 @@
 package de.hennihaus.plugins
 
+import de.hennihaus.configurations.Configuration.ALLOWED_FRONTEND_HOST
+import de.hennihaus.configurations.Configuration.ALLOWED_FRONTEND_PROTOCOL
+import de.hennihaus.configurations.Configuration.ALLOWED_SWAGGER_HOST
+import de.hennihaus.configurations.Configuration.ALLOWED_SWAGGER_PROTOCOL
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.server.application.Application
@@ -7,16 +11,16 @@ import io.ktor.server.application.install
 import io.ktor.server.plugins.cors.routing.CORS
 
 fun Application.configureCors() {
-    val frontendAllowedHost = getProperty<String>(key = "ktor.deployment.cors.frontend.allowedHost")
-    val frontendAllowedProtocol = getProperty<String>(key = "ktor.deployment.cors.frontend.allowedProtocol")
-    val swaggerAllowedHost = getProperty<String>(key = "ktor.deployment.cors.swagger.allowedHost")
-    val swaggerAllowedProtocol = getProperty<String>(key = "ktor.deployment.cors.swagger.allowedProtocol")
+    val allowedFrontendProtocol = environment.config.property(path = ALLOWED_FRONTEND_PROTOCOL).getString()
+    val allowedFrontendHost = environment.config.property(path = ALLOWED_FRONTEND_HOST).getString()
+    val allowedSwaggerProtocol = environment.config.property(path = ALLOWED_SWAGGER_PROTOCOL).getString()
+    val allowedSwaggerHost = environment.config.property(path = ALLOWED_SWAGGER_HOST).getString()
 
     install(CORS) {
         allowCredentials = true
 
-        allowHost(host = frontendAllowedHost, schemes = listOf(frontendAllowedProtocol))
-        allowHost(host = swaggerAllowedHost, schemes = listOf(swaggerAllowedProtocol))
+        allowHost(host = allowedFrontendHost, schemes = listOf(allowedFrontendProtocol))
+        allowHost(host = allowedSwaggerHost, schemes = listOf(allowedSwaggerProtocol))
 
         allowHeader(header = HttpHeaders.ContentType)
         allowHeader(header = HttpHeaders.Authorization)

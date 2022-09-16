@@ -19,7 +19,6 @@ import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -34,7 +33,6 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -96,16 +94,10 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponse>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse(),
-                    property = ErrorResponse::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
+                other = getInternalServerErrorResponse(),
+                property = ErrorResponse::dateTime,
+            )
             coVerify(exactly = 1) { taskService.getAllTasks() }
         }
     }
@@ -132,16 +124,10 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks/$uuid")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponse>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getTaskNotFoundErrorResponse(),
-                    property = ErrorResponse::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getTaskNotFoundErrorResponse().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
+                other = getTaskNotFoundErrorResponse(),
+                property = ErrorResponse::dateTime,
+            )
             coVerify(exactly = 1) { taskService.getTaskById(id = uuid) }
         }
     }
@@ -169,16 +155,10 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks/$uuid/check/title/$title")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponse>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse(),
-                    property = ErrorResponse::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
+                other = getInvalidIdErrorResponse(),
+                property = ErrorResponse::dateTime,
+            )
             coVerify(exactly = 1) { taskService.checkTitle(id = uuid, title = title) }
         }
     }
@@ -212,16 +192,10 @@ class TaskRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponse>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse(),
-                    property = ErrorResponse::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
+                other = getInvalidIdErrorResponse(),
+                property = ErrorResponse::dateTime,
+            )
             coVerify(exactly = 1) { taskService.patchTask(id = uuid, task = testTask) }
         }
 
@@ -236,16 +210,10 @@ class TaskRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponse>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse(),
-                    property = ErrorResponse::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
+                other = getConflictErrorResponse(),
+                property = ErrorResponse::dateTime,
+            )
             coVerify(exactly = 1) { taskService.patchTask(id = "${testTask.uuid}", task = testTask) }
         }
     }

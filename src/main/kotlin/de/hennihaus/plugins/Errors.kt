@@ -1,5 +1,6 @@
 package de.hennihaus.plugins
 
+import de.hennihaus.configurations.Configuration.TIMEZONE
 import de.hennihaus.models.generated.ErrorResponse
 import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.EXPOSED_TRANSACTION_EXCEPTION
@@ -17,7 +18,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 fun Application.configureErrorHandling() {
-    val zoneId = getProperty<String>(key = "ktor.application.timezoneId")
+    val zoneId = environment.config.property(path = TIMEZONE).getString()
 
     install(StatusPages) {
         exception<Throwable> { call, throwable ->

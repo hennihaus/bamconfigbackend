@@ -23,7 +23,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 
 fun Application.configureRouting() {
-    val apiVersion = getProperty<String>(key = API_VERSION)
+    val apiVersion = environment.config.property(path = API_VERSION).getString()
 
     install(Resources)
     install(ContentNegotiation) {
@@ -43,7 +43,7 @@ fun Application.configureRouting() {
     }
     install(IgnoreTrailingSlash)
     install(Routing) {
-        route(path = apiVersion) {
+        route(path = "/$apiVersion") {
             registerTeamRoutes()
             registerBankRoutes()
             registerTaskRoutes()

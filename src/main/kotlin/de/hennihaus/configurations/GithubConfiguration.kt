@@ -77,13 +77,13 @@ data class GithubConfiguration(
     val authorizationHeader: String,
 ) {
     companion object {
-        const val PROTOCOL = "ktor.github.protocol"
-        const val HOST = "ktor.github.host"
-        const val RETRIES = "ktor.github.retries"
-        const val API_VERSION_HEADER = "ktor.github.headers.apiVersion"
-        const val AUTHORIZATION_HEADER = "GITHUB_AUTHORIZATION_TOKEN"
+        const val PROTOCOL = "github.protocol"
+        const val HOST = "github.host"
+        const val RETRIES = "github.retries"
+        const val API_VERSION_HEADER = "github.headers.apiVersion"
+        const val AUTHORIZATION_HEADER = "github.authorizationToken"
 
-        const val DEFAULT_TITLE = "ktor.github.openapi.title"
+        const val DEFAULT_TITLE = "github.openapi.title"
     }
 }
 
@@ -94,10 +94,10 @@ data class GithubCommitConfiguration(
     val committerEmail: String,
 ) {
     companion object {
-        const val BRANCH = "ktor.github.openapi.branch"
-        const val COMMIT_MESSAGE = "ktor.github.openapi.commitMessage"
-        const val COMMITTER_NAME = "ktor.github.openapi.committer.name"
-        const val COMMITTER_EMAIL = "ktor.github.openapi.committer.email"
+        const val BRANCH = "github.openapi.branch"
+        const val COMMIT_MESSAGE = "github.openapi.commitMessage"
+        const val COMMITTER_NAME = "github.openapi.committer.name"
+        const val COMMITTER_EMAIL = "github.openapi.committer.email"
     }
 }
 
@@ -111,13 +111,13 @@ data class GithubFileConfiguration(
         const val SCHUFA_FILE_CONFIG = "schufa"
         const val BANK_FILE_CONFIG = "bank"
 
-        const val OWNER = "ktor.github.openapi.owner"
-        const val BRANCH = "ktor.github.openapi.branch"
+        const val OWNER = "github.openapi.owner"
+        const val BRANCH = "github.openapi.branch"
 
-        const val SCHUFA_REPO = "ktor.github.openapi.files[0].repo"
-        const val SCHUFA_PATH = "ktor.github.openapi.files[0].path"
+        const val SCHUFA_REPO = "github.openapi.repos[0]"
+        const val SCHUFA_PATH = "github.openapi.paths[0]"
 
-        const val BANK_REPO = "ktor.github.openapi.files[1].repo"
-        const val BANK_PATH = "ktor.github.openapi.files[1].path"
+        const val BANK_REPO = "github.openapi.repos[1]"
+        const val BANK_PATH = "github.openapi.paths[1]"
     }
 }
