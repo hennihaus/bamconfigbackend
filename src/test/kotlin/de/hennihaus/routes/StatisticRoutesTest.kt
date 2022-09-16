@@ -10,7 +10,6 @@ import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.patch
@@ -23,7 +22,6 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -74,16 +72,10 @@ class StatisticRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponse>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getStatisticNotFoundErrorResponse(),
-                    property = ErrorResponse::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getStatisticNotFoundErrorResponse().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
+                other = getStatisticNotFoundErrorResponse(),
+                property = ErrorResponse::dateTime,
+            )
             coVerify(exactly = 1) { statisticService.incrementRequest(statistic = testStatistic) }
         }
     }

@@ -68,7 +68,6 @@ object ExposedContainer {
     /**
      * Necessary to execute @BeforeEach methods without return type in a single method expression
      */
-    @Suppress("OptionalUnit")
     fun resetState(): Unit = state.forEach { (table, columns, arguments) ->
         resetEntity(
             table = table,

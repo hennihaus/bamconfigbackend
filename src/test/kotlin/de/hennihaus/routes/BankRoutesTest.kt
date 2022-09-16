@@ -16,7 +16,6 @@ import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -31,7 +30,6 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -89,16 +87,10 @@ class BankRoutesTest {
             val response = testClient.get(urlString = "/v1/banks")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponse>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse(),
-                    property = ErrorResponse::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
+                other = getInternalServerErrorResponse(),
+                property = ErrorResponse::dateTime,
+            )
             coVerify(exactly = 1) { bankService.getAllBanks() }
         }
     }
@@ -127,16 +119,10 @@ class BankRoutesTest {
             val response = testClient.get(urlString = "/v1/banks/$uuid")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponse>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getBankNotFoundErrorResponse(),
-                    property = ErrorResponse::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getBankNotFoundErrorResponse().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
+                other = getBankNotFoundErrorResponse(),
+                property = ErrorResponse::dateTime,
+            )
             coVerify(exactly = 1) { bankService.getBankById(id = uuid) }
         }
     }
@@ -169,16 +155,10 @@ class BankRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponse>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse(),
-                    property = ErrorResponse::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorResponse>().shouldBeEqualToIgnoringFields(
+                other = getConflictErrorResponse(),
+                property = ErrorResponse::dateTime,
+            )
             coVerify(exactly = 1) { bankService.saveBank(bank = testBank) }
         }
 

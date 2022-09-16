@@ -25,7 +25,6 @@ import org.koin.core.annotation.Single
 import kotlin.math.roundToInt
 
 @Single
-@Suppress("TooManyFunctions")
 class GithubMapperService(@Property(DEFAULT_TITLE) private val defaultTitle: String) {
 
     fun updateSchufaApi(api: SchufaApi, task: Task): SchufaApi {
