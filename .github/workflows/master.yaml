@@ -40,7 +40,7 @@ jobs:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.API_GITHUB_AUTHORIZATION_TOKEN }}
 
       - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@1.36.0
+        uses: anothrNick/github-tag-action@1.40.0
         id: tag-version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,7 +63,7 @@ jobs:
           DATA_MODEL_VERSION: ${{ steps.tag-version.outputs.new_tag }}
 
       - name: Docker Login
-        uses: docker/login-action@v1.14.1
+        uses: docker/login-action@v2.0.0
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
