@@ -1,7 +1,7 @@
 package de.hennihaus.plugins
 
 import de.hennihaus.configurations.Configuration.TIMEZONE
-import de.hennihaus.models.generated.ErrorResponse
+import de.hennihaus.models.generated.rest.ErrorResponseDTO
 import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.EXPOSED_TRANSACTION_EXCEPTION
 import de.hennihaus.plugins.ErrorMessage.MISSING_PROPERTY_MESSAGE
@@ -33,31 +33,31 @@ fun Application.configureErrorHandling() {
             when (throwable) {
                 is UUIDException -> call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = ErrorResponse(
+                    message = ErrorResponseDTO(
                         message = throwable.message,
-                        dateTime = dateTime,
+                        dateTime = "$dateTime",
                     )
                 )
                 is NotFoundException -> call.respond(
                     status = HttpStatusCode.NotFound,
-                    message = ErrorResponse(
+                    message = ErrorResponseDTO(
                         message = "${throwable.message}",
-                        dateTime = dateTime,
+                        dateTime = "$dateTime",
                     ),
                 )
                 is TransactionException -> call.respond(
                     status = HttpStatusCode.Conflict,
-                    message = ErrorResponse(
+                    message = ErrorResponseDTO(
                         message = "[${throwable.message}]",
-                        dateTime = dateTime,
+                        dateTime = "$dateTime",
                     )
                 )
                 else -> call.also { it.application.environment.log.error("Internal Server Error: ", throwable) }
                     .respond(
                         status = HttpStatusCode.InternalServerError,
-                        message = ErrorResponse(
+                        message = ErrorResponseDTO(
                             message = "$throwable",
-                            dateTime = dateTime,
+                            dateTime = "$dateTime",
                         ),
                     )
             }
@@ -72,6 +72,7 @@ object ErrorMessage {
     const val BROKER_EXCEPTION_MESSAGE = "Error while calling ActiveMQ"
     const val EXPOSED_TRANSACTION_EXCEPTION = "Exposed transaction failed"
     const val MISSING_PROPERTY_MESSAGE = "Missing property"
+    const val INTEGRATION_STEP_NOT_FOUND_MESSAGE = "Integration step is not found"
 }
 
 class UUIDException(override val message: String = UUID_EXCEPTION_MESSAGE) : RuntimeException()

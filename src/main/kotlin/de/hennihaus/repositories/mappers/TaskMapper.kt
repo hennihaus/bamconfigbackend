@@ -1,13 +1,13 @@
 package de.hennihaus.repositories.mappers
 
-import de.hennihaus.models.generated.Contact
-import de.hennihaus.models.generated.Endpoint
-import de.hennihaus.models.generated.EndpointType
-import de.hennihaus.models.generated.IntegrationStep
-import de.hennihaus.models.generated.Parameter
-import de.hennihaus.models.generated.ParameterType
-import de.hennihaus.models.generated.Response
-import de.hennihaus.models.generated.Task
+import de.hennihaus.models.Contact
+import de.hennihaus.models.Endpoint
+import de.hennihaus.models.EndpointType
+import de.hennihaus.models.IntegrationStep
+import de.hennihaus.models.Parameter
+import de.hennihaus.models.ParameterType
+import de.hennihaus.models.Response
+import de.hennihaus.models.Task
 import de.hennihaus.repositories.entities.ContactEntity
 import de.hennihaus.repositories.entities.EndpointEntity
 import de.hennihaus.repositories.entities.ParameterEntity

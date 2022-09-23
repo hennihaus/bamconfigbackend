@@ -1,9 +1,9 @@
 package de.hennihaus.routes
 
-import de.hennihaus.models.generated.ErrorResponse
-import de.hennihaus.models.generated.Statistic
+import de.hennihaus.bamdatamodel.Statistic
+import de.hennihaus.bamdatamodel.objectmothers.StatisticObjectMother.getFirstTeamAsyncBankStatistic
+import de.hennihaus.models.generated.rest.ErrorResponseDTO
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getStatisticNotFoundErrorResponse
-import de.hennihaus.objectmothers.StatisticObjectMother.getFirstTeamAsyncBankStatistic
 import de.hennihaus.services.StatisticService
 import de.hennihaus.services.StatisticService.Companion.STATISTIC_NOT_FOUND_MESSAGE
 import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
@@ -24,9 +24,11 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.datetime.LocalDateTime
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 
 class StatisticRoutesTest {
@@ -41,6 +43,9 @@ class StatisticRoutesTest {
 
     @BeforeEach
     fun init() = clearAllMocks()
+
+    @AfterEach
+    fun tearDown() = stopKoin()
 
     @Nested
     inner class IncrementStatistics {
@@ -74,10 +79,10 @@ class StatisticRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponse>() should {
+            response.body<ErrorResponseDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
                     other = getStatisticNotFoundErrorResponse(),
-                    property = ErrorResponse::dateTime,
+                    property = ErrorResponseDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
                     other = getStatisticNotFoundErrorResponse().dateTime,

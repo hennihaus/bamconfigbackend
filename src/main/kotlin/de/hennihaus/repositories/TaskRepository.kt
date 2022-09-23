@@ -1,6 +1,6 @@
 package de.hennihaus.repositories
 
-import de.hennihaus.models.generated.Task
+import de.hennihaus.models.Task
 import de.hennihaus.repositories.entities.BankEntity
 import de.hennihaus.repositories.entities.StatisticEntity
 import de.hennihaus.repositories.entities.TaskEntity
@@ -113,7 +113,7 @@ class TaskRepository : Repository<Task, UUID> {
         ) { endpointTable, endpoint ->
             endpointTable[id] = endpoint.uuid
             endpointTable[taskId] = uuid
-            endpointTable[type] = endpoint.type.value
+            endpointTable[type] = endpoint.type.name
             endpointTable[url] = "${endpoint.url}"
             endpointTable[docsUrl] = "${endpoint.docsUrl}"
         }
@@ -129,7 +129,7 @@ class TaskRepository : Repository<Task, UUID> {
         ) { parameterTable, parameter ->
             parameterTable[id] = parameter.uuid
             parameterTable[name] = parameter.name
-            parameterTable[type] = parameter.type.value
+            parameterTable[type] = parameter.type.name
             parameterTable[description] = parameter.description
             parameterTable[example] = parameter.example
             parameterTable[lastUpdated] = now

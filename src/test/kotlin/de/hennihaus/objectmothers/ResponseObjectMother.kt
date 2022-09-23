@@ -1,6 +1,6 @@
 package de.hennihaus.objectmothers
 
-import de.hennihaus.models.generated.Response
+import de.hennihaus.models.Response
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import java.util.UUID

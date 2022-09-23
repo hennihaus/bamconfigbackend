@@ -1,14 +1,14 @@
 package de.hennihaus.repositories
 
+import de.hennihaus.bamdatamodel.Bank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
+import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.getCreditConfigurationWithNoEmptyFields
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getSecondTeam
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getThirdTeam
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
-import de.hennihaus.models.generated.Bank
-import de.hennihaus.objectmothers.BankObjectMother.getAsyncBank
-import de.hennihaus.objectmothers.CreditConfigurationObjectMother.getCreditConfigurationWithNoEmptyFields
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
-import de.hennihaus.objectmothers.TeamObjectMother.getFirstTeam
-import de.hennihaus.objectmothers.TeamObjectMother.getSecondTeam
-import de.hennihaus.objectmothers.TeamObjectMother.getThirdTeam
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.testutils.containers.ExposedContainer
 import io.kotest.matchers.booleans.shouldBeFalse

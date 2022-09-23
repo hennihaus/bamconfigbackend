@@ -1,5 +1,9 @@
 package de.hennihaus.objectmothers
 
+import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.DEFAULT_MAX_AMOUNT_IN_EUROS
+import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.DEFAULT_MAX_TERM_IN_MONTHS
+import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.DEFAULT_MIN_AMOUNT_IN_EUROS
+import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.DEFAULT_MIN_TERM_IN_MONTHS
 import de.hennihaus.models.generated.openapi.BankApi
 import de.hennihaus.models.generated.openapi.BankComponents
 import de.hennihaus.models.generated.openapi.BankContact
@@ -14,6 +18,8 @@ import de.hennihaus.models.generated.openapi.SchufaInfo
 import de.hennihaus.models.generated.openapi.SchufaParameter
 import de.hennihaus.models.generated.openapi.SchufaResponse
 import de.hennihaus.objectmothers.GithubObjectMother.DEFAULT_TITLE
+import de.hennihaus.objectmothers.ParameterObjectMother.AMOUNT_IN_EUROS_DESCRIPTION
+import de.hennihaus.objectmothers.ParameterObjectMother.AMOUNT_IN_EUROS_EXAMPLE
 import de.hennihaus.objectmothers.ParameterObjectMother.AMOUNT_IN_EUROS_PARAMETER
 import de.hennihaus.objectmothers.ParameterObjectMother.DELAY_IN_MILLISECONDS_DESCRIPTION
 import de.hennihaus.objectmothers.ParameterObjectMother.DELAY_IN_MILLISECONDS_EXAMPLE
@@ -27,12 +33,15 @@ import de.hennihaus.objectmothers.ParameterObjectMother.RATING_LEVEL_PARAMETER
 import de.hennihaus.objectmothers.ParameterObjectMother.SOCIAL_SECURITY_NUMBER_DESCRIPTION
 import de.hennihaus.objectmothers.ParameterObjectMother.SOCIAL_SECURITY_NUMBER_EXAMPLE
 import de.hennihaus.objectmothers.ParameterObjectMother.SOCIAL_SECURITY_NUMBER_PARAMETER
+import de.hennihaus.objectmothers.ParameterObjectMother.TERM_IN_MONTHS_DESCRIPTION
+import de.hennihaus.objectmothers.ParameterObjectMother.TERM_IN_MONTHS_EXAMPLE
 import de.hennihaus.objectmothers.ParameterObjectMother.TERM_IN_MONTHS_PARAMETER
 import de.hennihaus.objectmothers.ParameterObjectMother.USERNAME_DESCRIPTION
 import de.hennihaus.objectmothers.ParameterObjectMother.USERNAME_EXAMPLE
 import de.hennihaus.objectmothers.ParameterObjectMother.USERNAME_PARAMETER
 import de.hennihaus.objectmothers.ResponseObjectMother.BAD_REQUEST_CODE
 import de.hennihaus.objectmothers.ResponseObjectMother.BAD_REQUEST_DESCRIPTION
+import de.hennihaus.objectmothers.ResponseObjectMother.BANK_OK_DESCRIPTION
 import de.hennihaus.objectmothers.ResponseObjectMother.INTERNAL_SERVER_ERROR_CODE
 import de.hennihaus.objectmothers.ResponseObjectMother.INTERNAL_SERVER_ERROR_DESCRIPTION
 import de.hennihaus.objectmothers.ResponseObjectMother.NOT_FOUND_CODE
@@ -44,6 +53,7 @@ import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_CONTACT_FIRSTNAME
 import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_CONTACT_LASTNAME
 import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_SCHUFA_DESCRIPTION
 import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_SCHUFA_TITLE
+import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_SYNC_BANK_DESCRIPTION
 import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_SYNC_BANK_TITLE
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
@@ -102,7 +112,7 @@ object OpenApiObjectMother {
     fun getUpdatedBankInfo(
         title: String = "$DEFAULT_TITLE - $DEFAULT_SYNC_BANK_TITLE",
         contact: BankContact = getUpdatedBankContact(),
-        description: String = TaskObjectMother.DEFAULT_SYNC_BANK_DESCRIPTION,
+        description: String = DEFAULT_SYNC_BANK_DESCRIPTION,
     ): BankInfo = bankApi.info.copy(
         title = title,
         contact = contact,
@@ -182,8 +192,8 @@ object OpenApiObjectMother {
     )
 
     fun getUpdatedAmountInEurosBankParameter(
-        description: String = ParameterObjectMother.AMOUNT_IN_EUROS_DESCRIPTION,
-        example: String = ParameterObjectMother.AMOUNT_IN_EUROS_EXAMPLE,
+        description: String = AMOUNT_IN_EUROS_DESCRIPTION,
+        example: String = AMOUNT_IN_EUROS_EXAMPLE,
         schema: BankSchema = getUpdatedAmountInEurosBankSchema(),
     ): BankParameter = bankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!.copy(
         description = description,
@@ -192,8 +202,8 @@ object OpenApiObjectMother {
     )
 
     fun getUpdatedTermInMonthsBankParameter(
-        description: String = ParameterObjectMother.TERM_IN_MONTHS_DESCRIPTION,
-        example: String = ParameterObjectMother.TERM_IN_MONTHS_EXAMPLE,
+        description: String = TERM_IN_MONTHS_DESCRIPTION,
+        example: String = TERM_IN_MONTHS_EXAMPLE,
         schema: BankSchema = getUpdatedTermInMonthsBankSchema(),
     ): BankParameter = bankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!.copy(
         description = description,
@@ -234,16 +244,16 @@ object OpenApiObjectMother {
     )
 
     fun getUpdatedAmountInEurosBankSchema(
-        minAmountInEuros: Int = CreditConfigurationObjectMother.DEFAULT_MIN_AMOUNT_IN_EUROS,
-        maxAmountInEuros: Int = CreditConfigurationObjectMother.DEFAULT_MAX_AMOUNT_IN_EUROS,
+        minAmountInEuros: Int = DEFAULT_MIN_AMOUNT_IN_EUROS,
+        maxAmountInEuros: Int = DEFAULT_MAX_AMOUNT_IN_EUROS,
     ): BankSchema = bankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!.schema.copy(
         minimum = minAmountInEuros,
         maximum = maxAmountInEuros,
     )
 
     fun getUpdatedTermInMonthsBankSchema(
-        minTermInMonths: Int = CreditConfigurationObjectMother.DEFAULT_MIN_TERM_IN_MONTHS,
-        maxTermInMonths: Int = CreditConfigurationObjectMother.DEFAULT_MAX_TERM_IN_MONTHS,
+        minTermInMonths: Int = DEFAULT_MIN_TERM_IN_MONTHS,
+        maxTermInMonths: Int = DEFAULT_MAX_TERM_IN_MONTHS,
     ): BankSchema = bankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!.schema.copy(
         minimum = minTermInMonths,
         maximum = maxTermInMonths,
@@ -274,7 +284,7 @@ object OpenApiObjectMother {
     )
 
     fun getUpdatedOkBankResponse(
-        description: String = ResponseObjectMother.BANK_OK_DESCRIPTION,
+        description: String = BANK_OK_DESCRIPTION,
     ): BankResponse = bankApi.components.responses[OK_CODE]!!.copy(
         description = description,
     )

@@ -1,8 +1,8 @@
 package de.hennihaus.services
 
+import de.hennihaus.bamdatamodel.Team
 import de.hennihaus.configurations.Configuration.PASSWORD_LENGTH
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
-import de.hennihaus.models.generated.Team
 import de.hennihaus.repositories.StatisticRepository
 import de.hennihaus.repositories.TeamRepository
 import de.hennihaus.utils.toUUID

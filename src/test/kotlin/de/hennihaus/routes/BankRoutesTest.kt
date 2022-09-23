@@ -1,10 +1,10 @@
 package de.hennihaus.routes
 
-import de.hennihaus.models.generated.Bank
-import de.hennihaus.models.generated.ErrorResponse
-import de.hennihaus.objectmothers.BankObjectMother.getAsyncBank
-import de.hennihaus.objectmothers.BankObjectMother.getSchufaBank
-import de.hennihaus.objectmothers.BankObjectMother.getSyncBank
+import de.hennihaus.bamdatamodel.Bank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSchufaBank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSyncBank
+import de.hennihaus.models.generated.rest.ErrorResponseDTO
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getBankNotFoundErrorResponse
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getConflictErrorResponse
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInternalServerErrorResponse
@@ -32,9 +32,11 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.datetime.LocalDateTime
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import java.util.UUID
 
@@ -46,6 +48,9 @@ class BankRoutesTest {
 
     @BeforeEach
     fun init() = clearAllMocks()
+
+    @AfterEach
+    fun tearDown() = stopKoin()
 
     @Nested
     inner class GetAllBanks {
@@ -89,10 +94,10 @@ class BankRoutesTest {
             val response = testClient.get(urlString = "/v1/banks")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponse>() should {
+            response.body<ErrorResponseDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
                     other = getInternalServerErrorResponse(),
-                    property = ErrorResponse::dateTime,
+                    property = ErrorResponseDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
                     other = getInternalServerErrorResponse().dateTime,
@@ -127,10 +132,10 @@ class BankRoutesTest {
             val response = testClient.get(urlString = "/v1/banks/$uuid")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponse>() should {
+            response.body<ErrorResponseDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
                     other = getBankNotFoundErrorResponse(),
-                    property = ErrorResponse::dateTime,
+                    property = ErrorResponseDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
                     other = getBankNotFoundErrorResponse().dateTime,
@@ -169,10 +174,10 @@ class BankRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponse>() should {
+            response.body<ErrorResponseDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
                     other = getConflictErrorResponse(),
-                    property = ErrorResponse::dateTime,
+                    property = ErrorResponseDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
                     other = getConflictErrorResponse().dateTime,

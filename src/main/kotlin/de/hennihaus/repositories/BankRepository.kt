@@ -1,6 +1,6 @@
 package de.hennihaus.repositories
 
-import de.hennihaus.models.generated.Bank
+import de.hennihaus.bamdatamodel.Bank
 import de.hennihaus.repositories.entities.BankEntity
 import de.hennihaus.repositories.entities.StatisticEntity
 import de.hennihaus.repositories.entities.TeamEntity
@@ -86,12 +86,12 @@ class BankRepository : Repository<Bank, UUID> {
                 conflictColumns = listOf(CreditConfigurationTable.bankId),
             ) { creditConfigurationTable ->
                 creditConfigurationTable[bankId] = uuid
-                creditConfigurationTable[minAmountInEuros] = creditConfiguration.minAmountInEuros
-                creditConfigurationTable[maxAmountInEuros] = creditConfiguration.maxAmountInEuros
-                creditConfigurationTable[minTermInMonths] = creditConfiguration.minTermInMonths
-                creditConfigurationTable[maxTermInMonths] = creditConfiguration.maxTermInMonths
-                creditConfigurationTable[minSchufaRating] = creditConfiguration.minSchufaRating.value
-                creditConfigurationTable[maxSchufaRating] = creditConfiguration.maxSchufaRating.value
+                creditConfigurationTable[minAmountInEuros] = it.minAmountInEuros
+                creditConfigurationTable[maxAmountInEuros] = it.maxAmountInEuros
+                creditConfigurationTable[minTermInMonths] = it.minTermInMonths
+                creditConfigurationTable[maxTermInMonths] = it.maxTermInMonths
+                creditConfigurationTable[minSchufaRating] = it.minSchufaRating.name
+                creditConfigurationTable[maxSchufaRating] = it.maxSchufaRating.name
             }
         }
     }

@@ -1,12 +1,12 @@
 package de.hennihaus.services
 
+import de.hennihaus.bamdatamodel.Team
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getNonZeroStatistics
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getSecondTeam
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getThirdTeam
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getZeroStatistics
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
-import de.hennihaus.models.generated.Team
-import de.hennihaus.objectmothers.TeamObjectMother.getFirstTeam
-import de.hennihaus.objectmothers.TeamObjectMother.getNonZeroStatistics
-import de.hennihaus.objectmothers.TeamObjectMother.getSecondTeam
-import de.hennihaus.objectmothers.TeamObjectMother.getThirdTeam
-import de.hennihaus.objectmothers.TeamObjectMother.getZeroStatistics
 import de.hennihaus.repositories.StatisticRepository
 import de.hennihaus.repositories.TeamRepository
 import de.hennihaus.services.TeamService.Companion.TEAM_NOT_FOUND_MESSAGE

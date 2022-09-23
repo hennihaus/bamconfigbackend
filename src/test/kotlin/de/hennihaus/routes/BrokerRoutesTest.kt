@@ -1,11 +1,11 @@
 package de.hennihaus.routes
 
-import de.hennihaus.models.generated.ErrorResponse
-import de.hennihaus.objectmothers.BankObjectMother.getAsyncBank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getSecondTeam
+import de.hennihaus.models.generated.rest.ErrorResponseDTO
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getConflictErrorResponse
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInternalServerErrorResponse
-import de.hennihaus.objectmothers.TeamObjectMother.getFirstTeam
-import de.hennihaus.objectmothers.TeamObjectMother.getSecondTeam
 import de.hennihaus.plugins.TransactionException
 import de.hennihaus.services.BrokerService
 import de.hennihaus.services.TeamService
@@ -27,9 +27,11 @@ import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.datetime.LocalDateTime
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 
 class BrokerRoutesTest {
@@ -44,6 +46,9 @@ class BrokerRoutesTest {
 
     @BeforeEach
     fun init() = clearAllMocks()
+
+    @AfterEach
+    fun tearDown() = stopKoin()
 
     @Nested
     inner class ResetBroker {
@@ -72,10 +77,10 @@ class BrokerRoutesTest {
             val response = testClient.delete(urlString = "/v1/activemq")
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponse>() should {
+            response.body<ErrorResponseDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
                     other = getConflictErrorResponse(),
-                    property = ErrorResponse::dateTime,
+                    property = ErrorResponseDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
                     other = getConflictErrorResponse().dateTime,
@@ -94,7 +99,7 @@ class BrokerRoutesTest {
             val response = testClient.delete(urlString = "/v1/activemq")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponse>() shouldBe getInternalServerErrorResponse()
+            response.body<ErrorResponseDTO>() shouldBe getInternalServerErrorResponse()
             coVerifySequence {
                 teamService.resetAllTeams()
                 brokerService.resetBroker()
@@ -124,7 +129,7 @@ class BrokerRoutesTest {
             val response = testClient.delete(urlString = "/v1/activemq/$name")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponse>() shouldBe getInternalServerErrorResponse()
+            response.body<ErrorResponseDTO>() shouldBe getInternalServerErrorResponse()
             coVerify(exactly = 1) { brokerService.deleteQueueByName(name = name) }
         }
     }

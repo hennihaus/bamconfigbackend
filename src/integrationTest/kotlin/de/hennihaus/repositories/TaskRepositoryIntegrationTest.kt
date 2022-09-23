@@ -2,7 +2,7 @@ package de.hennihaus.repositories
 
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
-import de.hennihaus.models.generated.Task
+import de.hennihaus.models.Task
 import de.hennihaus.objectmothers.EndpointObjectMother
 import de.hennihaus.objectmothers.EndpointObjectMother.getSchufaRestEndpoint
 import de.hennihaus.objectmothers.EndpointObjectMother.getVBankRestEndpoint

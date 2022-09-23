@@ -17,6 +17,8 @@ import io.ktor.serialization.kotlinx.json.json
 
 object GithubTestUtils {
 
+    const val GITHUB_INTEGRATION_TEST_BRANCH = "integrationtest"
+
     suspend fun getCurrentSha(fileConfig: GithubFileConfiguration, githubConfig: GithubConfiguration): String {
         val (owner, repo, path, branch) = fileConfig
         val (protocol, host, _, apiVersionHeader, authorizationHeader) = githubConfig

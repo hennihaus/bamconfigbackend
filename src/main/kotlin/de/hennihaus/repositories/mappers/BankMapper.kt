@@ -1,8 +1,8 @@
 package de.hennihaus.repositories.mappers
 
-import de.hennihaus.models.generated.Bank
-import de.hennihaus.models.generated.CreditConfiguration
-import de.hennihaus.models.generated.RatingLevel
+import de.hennihaus.bamdatamodel.Bank
+import de.hennihaus.bamdatamodel.CreditConfiguration
+import de.hennihaus.bamdatamodel.RatingLevel
 import de.hennihaus.repositories.entities.BankEntity
 import de.hennihaus.repositories.entities.CreditConfigurationEntity
 import java.net.URI

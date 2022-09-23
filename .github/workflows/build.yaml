@@ -40,7 +40,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
         env:
-          GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.API_GITHUB_AUTHORIZATION_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update Docs
         uses: EndBug/add-and-commit@v9
@@ -64,11 +64,5 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish Kotlin beta library
-        run: ./gradlew -p build/${GITHUB_REPOSITORY#*/}/kotlin publish --no-daemon
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DATA_MODEL_VERSION: ${{ steps.tag-version.outputs.new_tag }}
-
       - name: Build Docker Image
-        run: docker build . --file Dockerfile --tag ${{ github.repository }}:latest
+        run: docker build . --file Dockerfile --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} --tag ${{ github.repository }}:latest

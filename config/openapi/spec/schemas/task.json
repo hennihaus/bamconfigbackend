@@ -38,7 +38,10 @@
             "maxLength": 2000
           },
           "integrationStep": {
-            "$ref": "#/components/schemas/IntegrationStep"
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "maximum": 3
           },
           "isOpenApiVerbose": {
             "type": "boolean"
@@ -176,21 +179,6 @@
           ]
         }
       },
-      "IntegrationStep": {
-        "type": "integer",
-        "format": "int32",
-        "enum": [
-          1,
-          2,
-          3
-        ],
-        "x-enum-varnames": [
-          "SCHUFA_STEP",
-          "SYNC_BANK_STEP",
-          "ASYNC_BANK_STEP"
-        ],
-        "minimum": 1
-      },
       "Contact": {
         "type": "object",
         "required": [
@@ -237,7 +225,8 @@
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
           },
           "type": {
-            "$ref": "#/components/schemas/EndpointType"
+            "type": "string",
+            "format": "enum"
           },
           "url": {
             "type": "string",
@@ -248,13 +237,6 @@
             "format": "url"
           }
         }
-      },
-      "EndpointType": {
-        "type": "string",
-        "enum": [
-          "REST",
-          "JMS"
-        ]
       },
       "Parameter": {
         "type": "object",
@@ -277,7 +259,8 @@
             "maxLength": 50
           },
           "type": {
-            "$ref": "#/components/schemas/ParameterType"
+            "type": "string",
+            "format": "enum"
           },
           "description": {
             "type": "string",
@@ -290,15 +273,6 @@
             "maxLength": 50
           }
         }
-      },
-      "ParameterType": {
-        "type": "string",
-        "enum": [
-          "STRING",
-          "INTEGER",
-          "LONG",
-          "CHARACTER"
-        ]
       },
       "Response": {
         "type": "object",

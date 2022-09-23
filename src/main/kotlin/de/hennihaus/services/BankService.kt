@@ -1,7 +1,7 @@
 package de.hennihaus.services
 
+import de.hennihaus.bamdatamodel.Bank
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
-import de.hennihaus.models.generated.Bank
 import de.hennihaus.repositories.BankRepository
 import de.hennihaus.utils.toUUID
 import io.ktor.server.plugins.NotFoundException

@@ -1,6 +1,6 @@
 package de.hennihaus.repositories
 
-import de.hennihaus.models.generated.Statistic
+import de.hennihaus.bamdatamodel.Statistic
 import de.hennihaus.repositories.entities.StatisticEntity
 import de.hennihaus.repositories.mappers.toStatistic
 import de.hennihaus.repositories.tables.StatisticTable

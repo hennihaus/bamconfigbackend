@@ -9,9 +9,8 @@ import de.hennihaus.models.generated.github.UpdateFileResponse
 import de.hennihaus.objectmothers.GithubObjectMother.getInvalidGithubFileConfiguration
 import de.hennihaus.objectmothers.GithubObjectMother.getRatingUpdateFileRequest
 import de.hennihaus.plugins.initKoin
+import de.hennihaus.testutils.GithubTestUtils.GITHUB_INTEGRATION_TEST_BRANCH
 import de.hennihaus.testutils.GithubTestUtils.getCurrentSha
-import de.hennihaus.testutils.KoinTestUtils.KOIN_TEST_PROPERTIES
-import de.hennihaus.testutils.propertiesAsMap
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -43,9 +42,9 @@ class GithubCallServiceIntegrationTest : KoinTest {
     @Suppress("unused")
     val koinTestInstance = KoinTestExtension.create {
         initKoin(
-            properties = propertiesAsMap(
-                fileName = KOIN_TEST_PROPERTIES,
-            ),
+            properties = mapOf(
+                GithubFileConfiguration.BRANCH to GITHUB_INTEGRATION_TEST_BRANCH,
+            )
         )
     }
 

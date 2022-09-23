@@ -46,6 +46,13 @@ sourceSets {
 }
 
 repositories {
+    maven {
+        url = uri("https://maven.pkg.github.com/hennihaus/bamdatamodel")
+        credentials {
+            username = "hennihaus"
+            password = System.getenv("GITHUB_TOKEN")
+        }
+    }
     mavenCentral()
 }
 
@@ -71,6 +78,7 @@ dependencies {
     val koinAnnotationsVersion: String by project
     val kotlinDateTimeVersion: String by project
     val julToSlf4jVersion: String by project
+    val bamdatamodelVersion: String by project
 
     // ktor common plugins
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
@@ -110,6 +118,10 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
+
+    // model plugins
+    implementation("de.hennihaus:bamdatamodel:$bamdatamodelVersion")
+    testImplementation("de.hennihaus:bamdatamodel:$bamdatamodelVersion:tests")
 
     // utility plugins
     implementation("org.passay:passay:$passayVersion")
@@ -219,19 +231,12 @@ tasks {
     }
 
     val kotlinTypeMappings = mapOf(
-        "string+date-time" to "KotlinxDateTime",
-        "string+uuid" to "JavaUUID",
-        "string+content-type" to "ContentType",
-        "integer+http-status" to "HttpStatusCode",
-        "string+url" to "JavaURI",
+        "string+date-time" to "String",
+        "string+uuid" to "String",
     )
 
     val kotlinImportMappings = mapOf(
-        "KotlinxDateTime" to "kotlinx.datetime.LocalDateTime",
-        "JavaUUID" to "java.util.UUID",
-        "ContentType" to "io.ktor.http.ContentType",
-        "HttpStatusCode" to "io.ktor.http.HttpStatusCode",
-        "JavaURI" to "java.net.URI",
+        "String" to "kotlin.String",
     )
 
     val generateCompleteOpenApi by registering(GenerateTask::class) {
@@ -243,29 +248,12 @@ tasks {
     val generateKotlinModel by registering(GenerateTask::class) {
         generatorName.set("kotlin")
         outputDir.set("$buildDir/generated/openapi")
-        configFile.set("$projectDir/config/openapi/kotlin/config.json")
-        modelPackage.set("de.hennihaus.models.generated")
-        typeMappings.set(kotlinTypeMappings)
-        importMappings.set(kotlinImportMappings)
-    }
-
-    val generateKotlinDataModel by registering(GenerateTask::class) {
-        generatorName.set("kotlin")
-        outputDir.set("$buildDir/bamconfigbackend/kotlin")
         templateDir.set("$projectDir/config/openapi/kotlin")
         configFile.set("$projectDir/config/openapi/kotlin/config.json")
+        modelPackage.set("de.hennihaus.models.generated.rest")
+        modelNameSuffix.set("DTO")
         typeMappings.set(kotlinTypeMappings)
         importMappings.set(kotlinImportMappings)
-        supportingFilesConstrainedTo.set(
-            listOf(
-                "settings.gradle",
-                "gradlew.bat",
-                "gradlew",
-                "build.gradle",
-                "gradle-wrapper.jar",
-                "gradle-wrapper.properties",
-            )
-        )
     }
 
     val generateTypescriptDataModel by registering(GenerateTask::class) {
@@ -290,7 +278,6 @@ tasks {
 
     compileKotlin {
         dependsOn(generateKotlinModel)
-        dependsOn(generateKotlinDataModel)
         dependsOn(generateTypescriptDataModel)
         dependsOn(generateCompleteOpenApi)
     }

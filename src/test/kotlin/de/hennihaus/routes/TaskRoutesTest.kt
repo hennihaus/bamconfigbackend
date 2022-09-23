@@ -1,8 +1,8 @@
 package de.hennihaus.routes
 
-import de.hennihaus.models.generated.ErrorResponse
-import de.hennihaus.models.generated.ExistsResponse
-import de.hennihaus.models.generated.Task
+import de.hennihaus.models.Task
+import de.hennihaus.models.generated.rest.ErrorResponseDTO
+import de.hennihaus.models.generated.rest.ExistsResponseDTO
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getConflictErrorResponse
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInternalServerErrorResponse
 import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInvalidIdErrorResponse
@@ -35,9 +35,11 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.datetime.LocalDateTime
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import java.util.UUID
 
@@ -53,6 +55,9 @@ class TaskRoutesTest {
 
     @BeforeEach
     fun init() = clearAllMocks()
+
+    @AfterEach
+    fun tearDown() = stopKoin()
 
     @Nested
     inner class GetAllTasks {
@@ -96,10 +101,10 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponse>() should {
+            response.body<ErrorResponseDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
                     other = getInternalServerErrorResponse(),
-                    property = ErrorResponse::dateTime,
+                    property = ErrorResponseDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
                     other = getInternalServerErrorResponse().dateTime,
@@ -132,10 +137,10 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks/$uuid")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponse>() should {
+            response.body<ErrorResponseDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
                     other = getTaskNotFoundErrorResponse(),
-                    property = ErrorResponse::dateTime,
+                    property = ErrorResponseDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
                     other = getTaskNotFoundErrorResponse().dateTime,
@@ -156,7 +161,7 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks/$uuid/check/title/$title")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.body<ExistsResponse>() shouldBe ExistsResponse(exists = true)
+            response.body<ExistsResponseDTO>() shouldBe ExistsResponseDTO(exists = true)
             coVerify(exactly = 1) { taskService.checkTitle(id = "$uuid", title = title) }
         }
 
@@ -169,10 +174,10 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks/$uuid/check/title/$title")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponse>() should {
+            response.body<ErrorResponseDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
                     other = getInvalidIdErrorResponse(),
-                    property = ErrorResponse::dateTime,
+                    property = ErrorResponseDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
                     other = getInvalidIdErrorResponse().dateTime,
@@ -212,10 +217,10 @@ class TaskRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponse>() should {
+            response.body<ErrorResponseDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
                     other = getInvalidIdErrorResponse(),
-                    property = ErrorResponse::dateTime,
+                    property = ErrorResponseDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
                     other = getInvalidIdErrorResponse().dateTime,
@@ -236,10 +241,10 @@ class TaskRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponse>() should {
+            response.body<ErrorResponseDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
                     other = getConflictErrorResponse(),
-                    property = ErrorResponse::dateTime,
+                    property = ErrorResponseDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
                     other = getConflictErrorResponse().dateTime,
