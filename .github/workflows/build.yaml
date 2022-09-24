@@ -38,7 +38,7 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
 
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build --no-daemon --stacktrace
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
