@@ -1,7 +1,7 @@
 package de.hennihaus.objectmothers
 
-import de.hennihaus.models.generated.Parameter
-import de.hennihaus.models.generated.ParameterType
+import de.hennihaus.models.Parameter
+import de.hennihaus.models.ParameterType
 import java.util.UUID
 
 object ParameterObjectMother {

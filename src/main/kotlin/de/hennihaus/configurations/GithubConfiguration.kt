@@ -1,5 +1,6 @@
 package de.hennihaus.configurations
 
+import de.hennihaus.configurations.GithubConfiguration.Companion.TOKEN_PREFIX
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -17,7 +18,7 @@ val githubModule = module {
             host = host,
             maxRetries = maxRetries.toInt(),
             apiVersionHeader = apiVersionHeader,
-            authorizationHeader = authorizationHeader,
+            authorizationHeader = "$TOKEN_PREFIX $authorizationHeader",
         )
     }
 
@@ -77,12 +78,13 @@ data class GithubConfiguration(
     val authorizationHeader: String,
 ) {
     companion object {
+        const val TOKEN_PREFIX = "token"
+
         const val PROTOCOL = "github.protocol"
         const val HOST = "github.host"
         const val RETRIES = "github.retries"
         const val API_VERSION_HEADER = "github.headers.apiVersion"
-        const val AUTHORIZATION_HEADER = "github.authorizationToken"
-
+        const val AUTHORIZATION_HEADER = "github.token"
         const val DEFAULT_TITLE = "github.openapi.title"
     }
 }

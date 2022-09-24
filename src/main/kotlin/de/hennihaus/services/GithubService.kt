@@ -4,8 +4,8 @@ import de.hennihaus.configurations.GithubCommitConfiguration
 import de.hennihaus.configurations.GithubFileConfiguration
 import de.hennihaus.configurations.GithubFileConfiguration.Companion.BANK_FILE_CONFIG
 import de.hennihaus.configurations.GithubFileConfiguration.Companion.SCHUFA_FILE_CONFIG
-import de.hennihaus.models.generated.IntegrationStep
-import de.hennihaus.models.generated.Task
+import de.hennihaus.models.IntegrationStep
+import de.hennihaus.models.Task
 import de.hennihaus.models.generated.github.UpdateFileCommitter
 import de.hennihaus.models.generated.github.UpdateFileRequest
 import de.hennihaus.models.generated.openapi.BankApi

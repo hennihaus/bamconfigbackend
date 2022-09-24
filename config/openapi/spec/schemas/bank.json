@@ -91,32 +91,18 @@
             "minimum": 0
           },
           "minSchufaRating": {
-            "$ref": "#/components/schemas/RatingLevel"
+            "type": "string",
+            "format": "enum",
+            "minLength": 1,
+            "maxLength": 1
           },
           "maxSchufaRating": {
-            "$ref": "#/components/schemas/RatingLevel"
+            "type": "string",
+            "format": "enum",
+            "minLength": 1,
+            "maxLength": 1
           }
         }
-      },
-      "RatingLevel": {
-        "type": "string",
-        "enum": [
-          "A",
-          "B",
-          "C",
-          "D",
-          "E",
-          "F",
-          "G",
-          "H",
-          "I",
-          "J",
-          "K",
-          "L",
-          "N",
-          "O",
-          "P"
-        ]
       }
     },
     "examples": {

@@ -1,7 +1,7 @@
 package de.hennihaus.services
 
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
-import de.hennihaus.models.generated.Task
+import de.hennihaus.models.Task
 import de.hennihaus.repositories.TaskRepository
 import de.hennihaus.utils.toUUID
 import io.ktor.server.plugins.NotFoundException

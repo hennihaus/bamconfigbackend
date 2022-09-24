@@ -1,6 +1,6 @@
 package de.hennihaus.objectmothers
 
-import de.hennihaus.models.generated.ErrorResponse
+import de.hennihaus.models.generated.rest.ErrorResponseDTO
 import de.hennihaus.plugins.TransactionException
 import de.hennihaus.plugins.UUIDException
 import de.hennihaus.services.BankService.Companion.BANK_NOT_FOUND_MESSAGE
@@ -20,56 +20,56 @@ object ErrorResponseObjectMother {
     fun getInvalidIdErrorResponse(
         message: String = UUIDException().message,
         dateTime: Instant = Clock.System.now(),
-    ) = ErrorResponse(
+    ) = ErrorResponseDTO(
         message = message,
-        dateTime = dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos(),
+        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
     )
 
     fun getTeamNotFoundErrorResponse(
         message: String = TEAM_NOT_FOUND_MESSAGE,
         dateTime: Instant = Clock.System.now(),
-    ) = ErrorResponse(
+    ) = ErrorResponseDTO(
         message = message,
-        dateTime = dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos(),
+        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
     )
 
     fun getBankNotFoundErrorResponse(
         message: String = BANK_NOT_FOUND_MESSAGE,
         dateTime: Instant = Clock.System.now(),
-    ) = ErrorResponse(
+    ) = ErrorResponseDTO(
         message = message,
-        dateTime = dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos(),
+        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
     )
 
     fun getTaskNotFoundErrorResponse(
         message: String = TASK_NOT_FOUND_MESSAGE,
         dateTime: Instant = Clock.System.now(),
-    ) = ErrorResponse(
+    ) = ErrorResponseDTO(
         message = message,
-        dateTime = dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos(),
+        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
     )
 
     fun getStatisticNotFoundErrorResponse(
         message: String = STATISTIC_NOT_FOUND_MESSAGE,
         dateTime: Instant = Clock.System.now(),
-    ) = ErrorResponse(
+    ) = ErrorResponseDTO(
         message = message,
-        dateTime = dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos(),
+        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
     )
 
     fun getConflictErrorResponse(
         message: String = "[${TransactionException().message}]",
         dateTime: Instant = Clock.System.now(),
-    ) = ErrorResponse(
+    ) = ErrorResponseDTO(
         message = message,
-        dateTime = dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos(),
+        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
     )
 
     fun getInternalServerErrorResponse(
         message: String = "${IllegalStateException()}",
         dateTime: Instant = Clock.System.now(),
-    ) = ErrorResponse(
+    ) = ErrorResponseDTO(
         message = message,
-        dateTime = dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos(),
+        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
     )
 }

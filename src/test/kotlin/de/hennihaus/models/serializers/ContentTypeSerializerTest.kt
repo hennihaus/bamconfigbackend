@@ -1,4 +1,4 @@
-package de.hennihaus.models.serializer
+package de.hennihaus.models.serializers
 
 import io.kotest.matchers.shouldBe
 import io.ktor.http.ContentType

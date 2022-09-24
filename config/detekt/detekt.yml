@@ -189,7 +189,7 @@ complexity:
       '**/jsTest/**',
       '**/iosTest/**'
     ]
-    threshold: 3
+    threshold: 8
     ignoreAnnotation: true
     excludeStringsWithLessThan5Characters: true
     ignoreStringsRegex: '$^'

@@ -1,8 +1,8 @@
 package de.hennihaus.services
 
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
-import de.hennihaus.models.generated.IntegrationStep
-import de.hennihaus.models.generated.Task
+import de.hennihaus.models.IntegrationStep
+import de.hennihaus.models.Task
 import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask

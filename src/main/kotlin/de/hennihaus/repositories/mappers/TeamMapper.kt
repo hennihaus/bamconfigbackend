@@ -1,7 +1,7 @@
 package de.hennihaus.repositories.mappers
 
-import de.hennihaus.models.generated.Student
-import de.hennihaus.models.generated.Team
+import de.hennihaus.bamdatamodel.Student
+import de.hennihaus.bamdatamodel.Team
 import de.hennihaus.repositories.entities.StatisticEntity
 import de.hennihaus.repositories.entities.StudentEntity
 import de.hennihaus.repositories.entities.TeamEntity

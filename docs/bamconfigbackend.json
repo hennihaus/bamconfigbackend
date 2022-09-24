@@ -1799,18 +1799,20 @@
             "type" : "integer"
           },
           "minSchufaRating" : {
-            "$ref" : "#/components/schemas/RatingLevel"
+            "format" : "enum",
+            "maxLength" : 1,
+            "minLength" : 1,
+            "type" : "string"
           },
           "maxSchufaRating" : {
-            "$ref" : "#/components/schemas/RatingLevel"
+            "format" : "enum",
+            "maxLength" : 1,
+            "minLength" : 1,
+            "type" : "string"
           }
         },
         "required" : [ "maxAmountInEuros", "maxSchufaRating", "maxTermInMonths", "minAmountInEuros", "minSchufaRating", "minTermInMonths" ],
         "type" : "object"
-      },
-      "RatingLevel" : {
-        "enum" : [ "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "N", "O", "P" ],
-        "type" : "string"
       },
       "Task" : {
         "example" : {
@@ -1908,7 +1910,10 @@
             "type" : "string"
           },
           "integrationStep" : {
-            "$ref" : "#/components/schemas/IntegrationStep"
+            "format" : "int32",
+            "maximum" : 3,
+            "minimum" : 1,
+            "type" : "integer"
           },
           "isOpenApiVerbose" : {
             "type" : "boolean"
@@ -1956,13 +1961,6 @@
         "required" : [ "banks", "contact", "description", "endpoints", "integrationStep", "isOpenApiVerbose", "parameters", "responses", "title", "uuid" ],
         "type" : "object"
       },
-      "IntegrationStep" : {
-        "enum" : [ 1, 2, 3 ],
-        "format" : "int32",
-        "minimum" : 1,
-        "type" : "integer",
-        "x-enum-varnames" : [ "SCHUFA_STEP", "SYNC_BANK_STEP", "ASYNC_BANK_STEP" ]
-      },
       "Contact" : {
         "properties" : {
           "uuid" : {
@@ -1997,7 +1995,8 @@
             "type" : "string"
           },
           "type" : {
-            "$ref" : "#/components/schemas/EndpointType"
+            "format" : "enum",
+            "type" : "string"
           },
           "url" : {
             "format" : "url",
@@ -2010,10 +2009,6 @@
         },
         "required" : [ "docsUrl", "type", "url", "uuid" ],
         "type" : "object"
-      },
-      "EndpointType" : {
-        "enum" : [ "REST", "JMS" ],
-        "type" : "string"
       },
       "Parameter" : {
         "properties" : {
@@ -2028,7 +2023,8 @@
             "type" : "string"
           },
           "type" : {
-            "$ref" : "#/components/schemas/ParameterType"
+            "format" : "enum",
+            "type" : "string"
           },
           "description" : {
             "maxLength" : 100,
@@ -2043,10 +2039,6 @@
         },
         "required" : [ "description", "example", "name", "type", "uuid" ],
         "type" : "object"
-      },
-      "ParameterType" : {
-        "enum" : [ "STRING", "INTEGER", "LONG", "CHARACTER" ],
-        "type" : "string"
       },
       "Response" : {
         "properties" : {

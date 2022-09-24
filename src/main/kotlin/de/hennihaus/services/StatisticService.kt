@@ -1,6 +1,6 @@
 package de.hennihaus.services
 
-import de.hennihaus.models.generated.Statistic
+import de.hennihaus.bamdatamodel.Statistic
 import de.hennihaus.repositories.StatisticRepository
 import io.ktor.server.plugins.NotFoundException
 import org.koin.core.annotation.Single

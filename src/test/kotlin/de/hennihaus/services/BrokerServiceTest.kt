@@ -1,6 +1,6 @@
 package de.hennihaus.services
 
-import de.hennihaus.objectmothers.BankObjectMother.getAsyncBank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
 import de.hennihaus.objectmothers.BrokerObjectMother.CONNECTION_QUEUES_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.CONSUMED_QUEUES_INFO
 import de.hennihaus.objectmothers.BrokerObjectMother.DEAD_LETTER_QUEUE

@@ -1,13 +1,13 @@
 package de.hennihaus.repositories
 
+import de.hennihaus.bamdatamodel.Statistic
+import de.hennihaus.bamdatamodel.objectmothers.StatisticObjectMother.getFirstTeamAsyncBankStatistic
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getZeroStatistics
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
-import de.hennihaus.models.generated.Statistic
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
-import de.hennihaus.objectmothers.StatisticObjectMother.getFirstTeamAsyncBankStatistic
-import de.hennihaus.objectmothers.TeamObjectMother.getFirstTeam
-import de.hennihaus.objectmothers.TeamObjectMother.getZeroStatistics
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
 import de.hennihaus.testutils.containers.ExposedContainer

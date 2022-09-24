@@ -1,10 +1,10 @@
 package de.hennihaus.services
 
+import de.hennihaus.bamdatamodel.Bank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSchufaBank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSyncBank
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
-import de.hennihaus.models.generated.Bank
-import de.hennihaus.objectmothers.BankObjectMother.getAsyncBank
-import de.hennihaus.objectmothers.BankObjectMother.getSchufaBank
-import de.hennihaus.objectmothers.BankObjectMother.getSyncBank
 import de.hennihaus.repositories.BankRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowExactly

@@ -1,7 +1,7 @@
 package de.hennihaus.objectmothers
 
-import de.hennihaus.models.generated.Endpoint
-import de.hennihaus.models.generated.EndpointType
+import de.hennihaus.models.Endpoint
+import de.hennihaus.models.EndpointType
 import java.net.URI
 import java.util.UUID
 

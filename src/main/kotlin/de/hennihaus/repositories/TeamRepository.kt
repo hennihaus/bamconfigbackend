@@ -1,6 +1,6 @@
 package de.hennihaus.repositories
 
-import de.hennihaus.models.generated.Team
+import de.hennihaus.bamdatamodel.Team
 import de.hennihaus.repositories.entities.StatisticEntity
 import de.hennihaus.repositories.entities.TeamEntity
 import de.hennihaus.repositories.mappers.toTeam

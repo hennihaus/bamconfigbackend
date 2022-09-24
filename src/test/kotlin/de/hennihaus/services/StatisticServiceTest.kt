@@ -1,7 +1,7 @@
 package de.hennihaus.services
 
-import de.hennihaus.models.generated.Statistic
-import de.hennihaus.objectmothers.StatisticObjectMother.getFirstTeamAsyncBankStatistic
+import de.hennihaus.bamdatamodel.Statistic
+import de.hennihaus.bamdatamodel.objectmothers.StatisticObjectMother.getFirstTeamAsyncBankStatistic
 import de.hennihaus.repositories.StatisticRepository
 import de.hennihaus.services.StatisticService.Companion.STATISTIC_NOT_FOUND_MESSAGE
 import io.kotest.assertions.throwables.shouldThrowExactly

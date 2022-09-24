@@ -1,9 +1,9 @@
 package de.hennihaus.services.mapperservices
 
-import de.hennihaus.models.generated.IntegrationStep
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSyncBank
+import de.hennihaus.models.IntegrationStep
 import de.hennihaus.models.generated.openapi.BankApi
 import de.hennihaus.models.generated.openapi.SchufaApi
-import de.hennihaus.objectmothers.BankObjectMother.getSyncBank
 import de.hennihaus.objectmothers.GithubObjectMother
 import de.hennihaus.objectmothers.OpenApiObjectMother.getNonUpdatedBankApi
 import de.hennihaus.objectmothers.OpenApiObjectMother.getNonUpdatedSchufaApi

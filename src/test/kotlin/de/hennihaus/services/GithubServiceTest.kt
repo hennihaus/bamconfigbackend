@@ -1,6 +1,6 @@
 package de.hennihaus.services
 
-import de.hennihaus.models.generated.IntegrationStep
+import de.hennihaus.models.IntegrationStep
 import de.hennihaus.objectmothers.GithubObjectMother.getCreditFileResponse
 import de.hennihaus.objectmothers.GithubObjectMother.getCreditUpdateFileRequest
 import de.hennihaus.objectmothers.GithubObjectMother.getGithubCommitConfiguration

@@ -1,15 +1,15 @@
 package de.hennihaus.repositories
 
+import de.hennihaus.bamdatamodel.Team
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.SCHUFA_BANK_NAME
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.SYNC_BANK_NAME
+import de.hennihaus.bamdatamodel.objectmothers.StudentObjectMother.getFirstStudent
+import de.hennihaus.bamdatamodel.objectmothers.StudentObjectMother.getSecondStudent
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
-import de.hennihaus.models.generated.Team
-import de.hennihaus.objectmothers.BankObjectMother.SCHUFA_BANK_NAME
-import de.hennihaus.objectmothers.BankObjectMother.SYNC_BANK_NAME
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
 import de.hennihaus.objectmothers.ExposedContainerObjectMother.PSD_BANK_NAME
-import de.hennihaus.objectmothers.StudentObjectMother.getFirstStudent
-import de.hennihaus.objectmothers.StudentObjectMother.getSecondStudent
-import de.hennihaus.objectmothers.TeamObjectMother.getFirstTeam
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.testutils.containers.ExposedContainer
 import io.kotest.matchers.booleans.shouldBeFalse

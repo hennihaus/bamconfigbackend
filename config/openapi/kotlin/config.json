@@ -11,5 +11,5 @@
   "sourceFolder": "src/main/kotlin",
   "groupId": "de.hennihaus",
   "artifactId": "bamconfigbackend",
-  "packageName": "de.hennihaus.bamconfigbackend"
+  "packageName": "de.hennihaus.models"
 }

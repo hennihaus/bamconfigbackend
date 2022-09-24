@@ -1,15 +1,15 @@
 package de.hennihaus.objectmothers
 
-import de.hennihaus.models.generated.Bank
-import de.hennihaus.models.generated.Contact
-import de.hennihaus.models.generated.Endpoint
-import de.hennihaus.models.generated.IntegrationStep
-import de.hennihaus.models.generated.Parameter
-import de.hennihaus.models.generated.Response
-import de.hennihaus.models.generated.Task
-import de.hennihaus.objectmothers.BankObjectMother.getAsyncBank
-import de.hennihaus.objectmothers.BankObjectMother.getSchufaBank
-import de.hennihaus.objectmothers.BankObjectMother.getSyncBank
+import de.hennihaus.bamdatamodel.Bank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSchufaBank
+import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSyncBank
+import de.hennihaus.models.Contact
+import de.hennihaus.models.Endpoint
+import de.hennihaus.models.IntegrationStep
+import de.hennihaus.models.Parameter
+import de.hennihaus.models.Response
+import de.hennihaus.models.Task
 import de.hennihaus.objectmothers.EndpointObjectMother.getActiveMqEndpoint
 import de.hennihaus.objectmothers.EndpointObjectMother.getSchufaRestEndpoint
 import de.hennihaus.objectmothers.EndpointObjectMother.getVBankRestEndpoint
