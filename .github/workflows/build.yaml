@@ -11,7 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -38,7 +40,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BAM_AUTHORIZATION_TOKEN }}
 
       - name: Update Docs
         uses: EndBug/add-and-commit@v9
@@ -63,4 +65,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker Image
-        run: docker build . --file Dockerfile --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} --tag ${{ github.repository }}:latest
+        run: docker build . --file Dockerfile --build-arg GITHUB_TOKEN=${{ secrets.BAM_AUTHORIZATION_TOKEN }} --tag ${{ github.repository }}:latest
