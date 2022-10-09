@@ -1,6 +1,6 @@
 package de.hennihaus.routes
 
-import de.hennihaus.models.generated.rest.ExistsResponseDTO
+import de.hennihaus.models.generated.rest.ExistsDTO
 import de.hennihaus.models.generated.rest.TaskDTO
 import de.hennihaus.routes.mappers.toTask
 import de.hennihaus.routes.mappers.toTaskDTO
@@ -40,7 +40,7 @@ private fun Route.getTaskById() = get<Tasks.Id> { request ->
 private fun Route.checkTitle() = get<Tasks.Id.CheckTitle> { request ->
     val taskService = getKoin().get<TaskService>()
     call.respond(
-        message = ExistsResponseDTO(
+        message = ExistsDTO(
             exists = taskService.checkTitle(
                 id = request.parent.id,
                 title = request.title,
@@ -51,10 +51,11 @@ private fun Route.checkTitle() = get<Tasks.Id.CheckTitle> { request ->
 
 private fun Route.patchTask() = patch<Tasks.Id> { request ->
     val taskService = getKoin().get<TaskService>()
+    val task = taskService.patchTask(
+        id = request.id,
+        task = call.receive<TaskDTO>().toTask(),
+    )
     call.respond(
-        message = taskService.patchTask(
-            id = request.id,
-            task = call.receive<TaskDTO>().toTask(),
-        ),
+        message = task.toTaskDTO(),
     )
 }

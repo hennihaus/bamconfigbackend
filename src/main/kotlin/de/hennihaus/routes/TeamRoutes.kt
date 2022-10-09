@@ -1,6 +1,6 @@
 package de.hennihaus.routes
 
-import de.hennihaus.models.generated.rest.ExistsResponseDTO
+import de.hennihaus.models.generated.rest.ExistsDTO
 import de.hennihaus.models.generated.rest.TeamDTO
 import de.hennihaus.routes.mappers.toTeam
 import de.hennihaus.routes.mappers.toTeamDTO
@@ -46,7 +46,7 @@ private fun Route.getTeamById() = get<Teams.Id> { request ->
 private fun Route.checkUsername() = get<Teams.Id.CheckUsername> { request ->
     val teamService = getKoin().get<TeamService>()
     call.respond(
-        message = ExistsResponseDTO(
+        message = ExistsDTO(
             exists = teamService.checkUsername(
                 id = request.parent.id,
                 username = request.username,
@@ -58,7 +58,7 @@ private fun Route.checkUsername() = get<Teams.Id.CheckUsername> { request ->
 private fun Route.checkPassword() = get<Teams.Id.CheckPassword> { request ->
     val teamService = getKoin().get<TeamService>()
     call.respond(
-        message = ExistsResponseDTO(
+        message = ExistsDTO(
             exists = teamService.checkPassword(
                 id = request.parent.id,
                 password = request.password,
@@ -70,7 +70,7 @@ private fun Route.checkPassword() = get<Teams.Id.CheckPassword> { request ->
 private fun Route.checkJmsQueue() = get<Teams.Id.CheckJmsQueue> { request ->
     val teamService = getKoin().get<TeamService>()
     call.respond(
-        message = ExistsResponseDTO(
+        message = ExistsDTO(
             exists = teamService.checkJmsQueue(
                 id = request.parent.id,
                 jmsQueue = request.jmsQueue,
@@ -81,10 +81,11 @@ private fun Route.checkJmsQueue() = get<Teams.Id.CheckJmsQueue> { request ->
 
 private fun Route.saveTeam() = put<Teams.Id> {
     val teamService = getKoin().get<TeamService>()
+    val team = teamService.saveTeam(
+        team = call.receive<TeamDTO>().toTeam(),
+    )
     call.respond(
-        message = teamService.saveTeam(
-            team = call.receive<TeamDTO>().toTeam(),
-        ),
+        message = team.toTeamDTO(),
     )
 }
 

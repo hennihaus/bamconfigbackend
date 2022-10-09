@@ -96,7 +96,7 @@ class GithubMapperServiceTest {
             }
 
             result shouldHaveMessage """
-                Parameter $SOCIAL_SECURITY_NUMBER_PARAMETER not found in Task while updating SchufaApi!
+                parameter $SOCIAL_SECURITY_NUMBER_PARAMETER not found in Task while updating SchufaApi
             """.trimIndent()
         }
 
@@ -114,7 +114,7 @@ class GithubMapperServiceTest {
                 )
             }
 
-            result shouldHaveMessage "Response $OK_CODE not found in Task while updating SchufaApi!"
+            result shouldHaveMessage "response $OK_CODE not found in Task while updating SchufaApi"
         }
     }
 
@@ -179,7 +179,7 @@ class GithubMapperServiceTest {
                 )
             }
 
-            result shouldHaveMessage "Parameter $AMOUNT_IN_EUROS_PARAMETER not found in Task while updating BankApi!"
+            result shouldHaveMessage "parameter $AMOUNT_IN_EUROS_PARAMETER not found in Task while updating BankApi"
         }
 
         @Test
@@ -196,7 +196,7 @@ class GithubMapperServiceTest {
                 )
             }
 
-            result shouldHaveMessage "Response $OK_CODE not found in Task while updating BankApi!"
+            result shouldHaveMessage "response $OK_CODE not found in Task while updating BankApi"
         }
 
         @Test

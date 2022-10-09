@@ -65,12 +65,12 @@
           }
         }
       },
-      "put": {
+      "patch": {
         "tags": [
           "Bank"
         ],
-        "operationId": "saveBank",
-        "summary": "Updates a bank",
+        "operationId": "patchBank",
+        "summary": "Updates particular fields of a bank",
         "parameters": [
           {
             "$ref": "#/components/parameters/uuid"

@@ -29,6 +29,7 @@ import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
+import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BankRepositoryIntegrationTest : KoinTest {
@@ -149,6 +150,27 @@ class BankRepositoryIntegrationTest : KoinTest {
                 property = Bank::teams,
             )
             result.teams shouldHaveSize bank.teams.size
+        }
+    }
+
+    @Nested
+    inner class GetBankIdByName {
+        @Test
+        fun `should return a bank uuid when bank is found by name`() = runBlocking<Unit> {
+            val name = ExposedContainerObjectMother.PSD_BANK_NAME
+
+            val result: UUID? = classUnderTest.getBankIdByName(name = name)
+
+            result.shouldNotBeNull()
+        }
+
+        @Test
+        fun `should return null when bank is not found by name`() = runBlocking {
+            val name = "unknown"
+
+            val result: UUID? = classUnderTest.getBankIdByName(name = name)
+
+            result.shouldBeNull()
         }
     }
 }

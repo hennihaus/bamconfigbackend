@@ -19,18 +19,19 @@ import kotlinx.serialization.json.Json
 fun Application.configureRouting() {
     val apiVersion = environment.config.property(path = API_VERSION).getString()
 
-    install(Resources)
-    install(ContentNegotiation) {
+    install(plugin = Resources)
+    install(plugin = ContentNegotiation) {
         json(
             Json {
                 prettyPrint = true
                 ignoreUnknownKeys = true
                 encodeDefaults = true
+                coerceInputValues = true
             }
         )
     }
-    install(IgnoreTrailingSlash)
-    install(Routing) {
+    install(plugin = IgnoreTrailingSlash)
+    install(plugin = Routing) {
         route(path = "/$apiVersion") {
             registerTeamRoutes()
             registerBankRoutes()

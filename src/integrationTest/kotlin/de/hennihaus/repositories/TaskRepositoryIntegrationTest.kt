@@ -19,6 +19,7 @@ import de.hennihaus.plugins.initKoin
 import de.hennihaus.testutils.containers.ExposedContainer
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.kotest.matchers.nulls.shouldBeNull
@@ -158,7 +159,7 @@ class TaskRepositoryIntegrationTest : KoinTest {
         }
 
         @Test
-        fun `should save a task when no existing task is in db`() = runBlocking {
+        fun `should save a task when no existing task is in db`() = runBlocking<Unit> {
             val task = getAsynchronousBankTask(uuid = ExposedContainerObjectMother.UNKNOWN_UUID)
             classUnderTest.deleteById(id = getAsynchronousBankTask().uuid)
 
@@ -166,18 +167,20 @@ class TaskRepositoryIntegrationTest : KoinTest {
 
             result.shouldBeEqualToIgnoringFields(
                 other = task,
-                property = Task::banks,
+                Task::banks,
+                Task::parameters,
             )
+            result.parameters shouldContainExactlyInAnyOrder task.parameters
         }
     }
 
     @Nested
-    inner class GetTaskByTitle {
+    inner class GetTaskIdByTitle {
         @Test
-        fun `should return a task when task is found by title`() = runBlocking<Unit> {
+        fun `should return a task uuid when task is found by title`() = runBlocking<Unit> {
             val title = ExposedContainerObjectMother.TASK_TITLE
 
-            val result: Task? = classUnderTest.getTaskByTitle(title = title)
+            val result: UUID? = classUnderTest.getTaskIdByTitle(title = title)
 
             result.shouldNotBeNull()
         }
@@ -186,9 +189,33 @@ class TaskRepositoryIntegrationTest : KoinTest {
         fun `should return null when task is not found by title`() = runBlocking {
             val title = "unknownTitle"
 
-            val result: Task? = classUnderTest.getTaskByTitle(title = title)
+            val result: UUID? = classUnderTest.getTaskIdByTitle(title = title)
 
             result.shouldBeNull()
+        }
+    }
+
+    @Nested
+    inner class GetAllParametersById {
+        @Test
+        fun `should return at a minimum one parameterId`() = runBlocking<Unit> {
+            val id = ExposedContainerObjectMother.TASK_UUID
+
+            val result: List<UUID> = classUnderTest.getAllParametersById(id = id)
+
+            result.shouldNotBeEmpty()
+        }
+    }
+
+    @Nested
+    inner class GetAllResponsesById {
+        @Test
+        fun `should return at a minimum one responseId`() = runBlocking<Unit> {
+            val id = ExposedContainerObjectMother.TASK_UUID
+
+            val result: List<UUID> = classUnderTest.getAllResponsesById(id = id)
+
+            result.shouldNotBeEmpty()
         }
     }
 }
