@@ -19,6 +19,7 @@ import de.hennihaus.plugins.initKoin
 import de.hennihaus.testutils.containers.ExposedContainer
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.kotest.matchers.nulls.shouldBeNull
@@ -158,7 +159,7 @@ class TaskRepositoryIntegrationTest : KoinTest {
         }
 
         @Test
-        fun `should save a task when no existing task is in db`() = runBlocking {
+        fun `should save a task when no existing task is in db`() = runBlocking<Unit> {
             val task = getAsynchronousBankTask(uuid = ExposedContainerObjectMother.UNKNOWN_UUID)
             classUnderTest.deleteById(id = getAsynchronousBankTask().uuid)
 
@@ -166,8 +167,10 @@ class TaskRepositoryIntegrationTest : KoinTest {
 
             result.shouldBeEqualToIgnoringFields(
                 other = task,
-                property = Task::banks,
+                Task::banks,
+                Task::parameters,
             )
+            result.parameters shouldContainExactlyInAnyOrder task.parameters
         }
     }
 
