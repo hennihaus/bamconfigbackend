@@ -18,9 +18,7 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.maps.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.beInstanceOf
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -32,6 +30,7 @@ import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
+import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TeamRepositoryIntegrationTest : KoinTest {
@@ -126,7 +125,7 @@ class TeamRepositoryIntegrationTest : KoinTest {
                     SCHUFA_BANK_NAME to 0L,
                     SYNC_BANK_NAME to 0L,
                     PSD_BANK_NAME to 1L,
-                )
+                ),
             )
 
             val result: Team = classUnderTest.save(entry = team)
@@ -150,65 +149,96 @@ class TeamRepositoryIntegrationTest : KoinTest {
     }
 
     @Nested
-    inner class GetTeamByUsername {
+    inner class GetTeamIdByUsername {
         @Test
-        fun `should return a team when team is found by username`() = runBlocking {
+        fun `should return a team uuid when team is found by username`() = runBlocking<Unit> {
             val username = ExposedContainerObjectMother.TEAM_USERNAME
 
-            val result: Team? = classUnderTest.getTeamByUsername(username = username)
+            val result: UUID? = classUnderTest.getTeamIdByUsername(username = username)
 
-            result should beInstanceOf<Team>()
+            result.shouldNotBeNull()
         }
 
         @Test
         fun `should return null when team is not found by username`() = runBlocking {
             val username = "unknownUsername"
 
-            val result: Team? = classUnderTest.getTeamByUsername(username = username)
+            val result: UUID? = classUnderTest.getTeamIdByUsername(username = username)
 
             result.shouldBeNull()
         }
     }
 
     @Nested
-    inner class GetTeamByPassword {
+    inner class GetTeamIdByPassword {
         @Test
-        fun `should return a team when team is found by password`() = runBlocking {
+        fun `should return a team uuid when team is found by password`() = runBlocking<Unit> {
             val password = ExposedContainerObjectMother.TEAM_PASSWORD
 
-            val result: Team? = classUnderTest.getTeamByPassword(password = password)
+            val result: UUID? = classUnderTest.getTeamIdByPassword(password = password)
 
-            result should beInstanceOf<Team>()
+            result.shouldNotBeNull()
         }
 
         @Test
         fun `should return null when team is not found by password`() = runBlocking {
             val password = "unknownPassword"
 
-            val result: Team? = classUnderTest.getTeamByPassword(password = password)
+            val result: UUID? = classUnderTest.getTeamIdByPassword(password = password)
 
             result.shouldBeNull()
         }
     }
 
     @Nested
-    inner class GetTeamByJmsQueue {
+    inner class GetTeamIdByJmsQueue {
         @Test
-        fun `should return a team when team is found by jmsQueue`() = runBlocking {
+        fun `should return a team uuid when team is found by jmsQueue`() = runBlocking<Unit> {
             val jmsQueue = ExposedContainerObjectMother.TEAM_JMS_QUEUE
 
-            val result: Team? = classUnderTest.getTeamByJmsQueue(jmsQueue = jmsQueue)
+            val result: UUID? = classUnderTest.getTeamIdByJmsQueue(jmsQueue = jmsQueue)
 
-            result should beInstanceOf<Team>()
+            result.shouldNotBeNull()
         }
 
         @Test
         fun `should return null when team is not found by jmsQueue`() = runBlocking {
             val jmsQueue = "unknown"
 
-            val result: Team? = classUnderTest.getTeamByJmsQueue(jmsQueue = jmsQueue)
+            val result: UUID? = classUnderTest.getTeamIdByJmsQueue(jmsQueue = jmsQueue)
 
             result.shouldBeNull()
+        }
+    }
+
+    @Nested
+    inner class GetJmsQueueById {
+        @Test
+        fun `should return a team jmsQueue when team is found by id`() = runBlocking<Unit> {
+            val id = ExposedContainerObjectMother.TEAM_UUID
+
+            val result: String? = classUnderTest.getJmsQueueById(id = id)
+
+            result.shouldNotBeNull()
+        }
+
+        @Test
+        fun `should return null when team jmsQueue is not found by id`() = runBlocking {
+            val id = ExposedContainerObjectMother.UNKNOWN_UUID
+
+            val result: String? = classUnderTest.getJmsQueueById(id = id)
+
+            result.shouldBeNull()
+        }
+    }
+
+    @Nested
+    inner class GetAllTeamIds {
+        @Test
+        fun `should return at a minimum one team id`() = runBlocking<Unit> {
+            val result: List<UUID> = classUnderTest.getAllTeamIds()
+
+            result.shouldNotBeEmpty()
         }
     }
 }

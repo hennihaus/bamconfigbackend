@@ -8,7 +8,7 @@ import de.hennihaus.services.BankService
 import io.ktor.server.application.call
 import io.ktor.server.request.receive
 import io.ktor.server.resources.get
-import io.ktor.server.resources.put
+import io.ktor.server.resources.patch
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import org.koin.java.KoinJavaComponent.getKoin
@@ -16,7 +16,7 @@ import org.koin.java.KoinJavaComponent.getKoin
 fun Route.registerBankRoutes() {
     getAllBanks()
     getBankById()
-    saveBank()
+    patchBank()
 }
 
 private fun Route.getAllBanks() = get<Banks> {
@@ -35,11 +35,13 @@ private fun Route.getBankById() = get<Banks.Id> { request ->
     )
 }
 
-private fun Route.saveBank() = put<Banks.Id> {
+private fun Route.patchBank() = patch<Banks.Id> { request ->
     val bankService = getKoin().get<BankService>()
+    val bank = bankService.patchBank(
+        id = request.id,
+        bank = call.receive<BankDTO>().toBank(),
+    )
     call.respond(
-        message = bankService.saveBank(
-            bank = call.receive<BankDTO>().toBank(),
-        ),
+        message = bank.toBankDTO(),
     )
 }

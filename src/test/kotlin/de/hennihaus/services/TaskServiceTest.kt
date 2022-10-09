@@ -153,51 +153,121 @@ class TaskServiceTest {
     }
 
     @Nested
+    inner class GetAllParametersById {
+        @Test
+        fun `should return a list of parameterIds`() = runBlocking {
+            val id = getSchufaTask().uuid
+            coEvery { repository.getAllParametersById(id = any()) } returns getSchufaTask().parameters.map {
+                it.uuid
+            }
+
+            val result: List<UUID> = classUnderTest.getAllParametersById(
+                id = "$id",
+            )
+
+            result shouldContainExactly getSchufaTask().parameters.map { it.uuid }
+            coVerifySequence {
+                repository.getAllParametersById(id = id)
+            }
+        }
+
+        @Test
+        fun `should throw an exception when error occurs`() = runBlocking {
+            val id = getSchufaTask().uuid
+            coEvery { repository.getAllParametersById(id = any()) } throws Exception()
+
+            val result = shouldThrow<Exception> {
+                classUnderTest.getAllParametersById(id = "$id")
+            }
+
+            result should beInstanceOf<Exception>()
+            coVerifySequence {
+                repository.getAllParametersById(id = id)
+            }
+        }
+    }
+
+    @Nested
+    inner class GetAllResponsesById {
+        @Test
+        fun `should return a list of responseIds`() = runBlocking {
+            val id = getSchufaTask().uuid
+            coEvery { repository.getAllResponsesById(id = any()) } returns getSchufaTask().responses.map {
+                it.uuid
+            }
+
+            val result: List<UUID> = classUnderTest.getAllResponsesById(
+                id = "$id",
+            )
+
+            result shouldContainExactly getSchufaTask().responses.map { it.uuid }
+            coVerifySequence {
+                repository.getAllResponsesById(id = id)
+            }
+        }
+
+        @Test
+        fun `should throw an exception when error occurs`() = runBlocking {
+            val id = getSchufaTask().uuid
+            coEvery { repository.getAllResponsesById(id = any()) } throws Exception()
+
+            val result = shouldThrow<Exception> {
+                classUnderTest.getAllResponsesById(id = "$id")
+            }
+
+            result should beInstanceOf<Exception>()
+            coVerifySequence {
+                repository.getAllResponsesById(id = id)
+            }
+        }
+    }
+
+    @Nested
     inner class CheckTitle {
         @Test
         fun `should return true when title is already in db and ids are different`() = runBlocking {
             val (id, title) = getSchufaTask()
-            coEvery { repository.getTaskByTitle(title = title) } returns getAsynchronousBankTask()
+            coEvery { repository.getTaskIdByTitle(title = title) } returns getAsynchronousBankTask().uuid
 
             val result: Boolean = classUnderTest.checkTitle(id = "$id", title = title)
 
             result.shouldBeTrue()
-            coVerify(exactly = 1) { repository.getTaskByTitle(title = title) }
+            coVerify(exactly = 1) { repository.getTaskIdByTitle(title = title) }
         }
 
         @Test
         fun `should return false when title is in database and ids are equal`() = runBlocking {
             val (id, title) = getSchufaTask()
-            coEvery { repository.getTaskByTitle(title = any()) } returns getSchufaTask()
+            coEvery { repository.getTaskIdByTitle(title = any()) } returns getSchufaTask().uuid
 
             val result: Boolean = classUnderTest.checkTitle(id = "$id", title = title)
 
             result.shouldBeFalse()
-            coVerify(exactly = 1) { repository.getTaskByTitle(title = title) }
+            coVerify(exactly = 1) { repository.getTaskIdByTitle(title = title) }
         }
 
         @Test
         fun `should return false when title is not in database`() = runBlocking {
             val (id, title) = getSchufaTask()
-            coEvery { repository.getTaskByTitle(title = any()) } returns null
+            coEvery { repository.getTaskIdByTitle(title = any()) } returns null
 
             val result: Boolean = classUnderTest.checkTitle(id = "$id", title = title)
 
             result.shouldBeFalse()
-            coVerify(exactly = 1) { repository.getTaskByTitle(title = title) }
+            coVerify(exactly = 1) { repository.getTaskIdByTitle(title = title) }
         }
 
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
             val (id, title) = getSchufaTask()
-            coEvery { repository.getTaskByTitle(title = any()) } throws Exception()
+            coEvery { repository.getTaskIdByTitle(title = any()) } throws Exception()
 
             val result = shouldThrow<Exception> {
                 classUnderTest.checkTitle(id = "$id", title = title)
             }
 
             result should beInstanceOf<Exception>()
-            coVerify(exactly = 1) { repository.getTaskByTitle(title = title) }
+            coVerify(exactly = 1) { repository.getTaskIdByTitle(title = title) }
         }
     }
 }

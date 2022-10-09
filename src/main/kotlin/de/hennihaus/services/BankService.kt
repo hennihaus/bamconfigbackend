@@ -17,12 +17,32 @@ class BankService(private val repository: BankRepository) {
             ?: throw NotFoundException(message = BANK_NOT_FOUND_MESSAGE)
     }
 
-    suspend fun saveBank(bank: Bank): Bank = repository.save(
-        entry = bank,
-        repetitionAttempts = ONE_REPETITION_ATTEMPT,
+    suspend fun patchBank(id: String, bank: Bank): Bank = id.toUUID { uuid ->
+        repository.getById(id = uuid)
+            ?.patchBank(new = bank)
+            ?.let {
+                repository.save(
+                    entry = it,
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+            }
+            ?: throw NotFoundException(message = BANK_NOT_FOUND_MESSAGE)
+    }
+
+    suspend fun checkName(name: String): Boolean {
+        return repository.getBankIdByName(name = name)
+            ?.let { true }
+            ?: false
+    }
+
+    private fun Bank.patchBank(new: Bank) = copy(
+        thumbnailUrl = new.thumbnailUrl,
+        isActive = new.isActive,
+        creditConfiguration = new.creditConfiguration,
+        teams = new.teams,
     )
 
     companion object {
-        const val BANK_NOT_FOUND_MESSAGE = "[bank not found by uuid]"
+        const val BANK_NOT_FOUND_MESSAGE = "bank not found by uuid"
     }
 }

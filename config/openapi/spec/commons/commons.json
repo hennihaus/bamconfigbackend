@@ -12,7 +12,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/ExistsResponse"
+              "$ref": "#/components/schemas/Exists"
             },
             "example": {
               "exists": true
@@ -31,10 +31,15 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/ErrorResponse"
+              "$ref": "#/components/schemas/Errors"
             },
             "example": {
-              "message": "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+              "reasons": [
+                {
+                  "exception": "RequestValidationException",
+                  "message": "uuid must have valid uuid format"
+                }
+              ],
               "dateTime": "2022-01-31T07:43:30"
             }
           }
@@ -45,10 +50,15 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/ErrorResponse"
+              "$ref": "#/components/schemas/Errors"
             },
             "example": {
-              "message": "[Resource not found]",
+              "reasons": [
+                {
+                  "exception": "NotFoundException",
+                  "message": "resource not found"
+                }
+              ],
               "dateTime": "2022-01-31T07:43:30"
             }
           }
@@ -59,10 +69,15 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/ErrorResponse"
+              "$ref": "#/components/schemas/Errors"
             },
             "example": {
-              "message": "[could not serialize access due to concurrent update]",
+              "reasons": [
+                {
+                  "exception": "TransactionException",
+                  "message": "could not serialize access due to concurrent update"
+                }
+              ],
               "dateTime": "2022-01-31T07:43:30"
             }
           }
@@ -73,10 +88,15 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/ErrorResponse"
+              "$ref": "#/components/schemas/Errors"
             },
             "example": {
-              "message": "[kotlin.Exception: Internal server error]",
+              "reasons": [
+                {
+                  "exception": "Exception",
+                  "message": "internal server error"
+                }
+              ],
               "dateTime": "2022-01-31T07:43:30"
             }
           }
@@ -84,7 +104,7 @@
       }
     },
     "schemas": {
-      "ExistsResponse": {
+      "Exists": {
         "type": "object",
         "required": [
           "exists"
@@ -95,19 +115,40 @@
           }
         }
       },
-      "ErrorResponse": {
+      "Errors": {
         "type": "object",
         "required": [
-          "message",
+          "reasons",
           "dateTime"
         ],
         "properties": {
-          "message": {
-            "type": "string"
+          "reasons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Reason"
+            },
+            "minItems": 1,
+            "uniqueItems": true
           },
           "dateTime": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "Reason": {
+        "required": [
+          "exception",
+          "message"
+        ],
+        "properties": {
+          "exception": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
           }
         }
       }

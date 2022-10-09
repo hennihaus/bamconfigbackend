@@ -4,11 +4,15 @@ import de.hennihaus.bamdatamodel.Bank
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSchufaBank
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSyncBank
-import de.hennihaus.models.generated.rest.ErrorResponseDTO
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getBankNotFoundErrorResponse
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getConflictErrorResponse
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInternalServerErrorResponse
+import de.hennihaus.models.generated.rest.ErrorsDTO
+import de.hennihaus.objectmothers.ErrorsObjectMother.getBankNotFoundErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getConflictErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getInternalServerErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getInvalidBankErrors
+import de.hennihaus.objectmothers.ReasonObjectMother.INVALID_BANK_MESSAGE
 import de.hennihaus.plugins.TransactionException
+import de.hennihaus.routes.mappers.toBankDTO
+import de.hennihaus.routes.validations.BankValidationService
 import de.hennihaus.services.BankService
 import de.hennihaus.services.BankService.Companion.BANK_NOT_FOUND_MESSAGE
 import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
@@ -20,7 +24,7 @@ import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.client.request.put
+import io.ktor.client.request.patch
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
@@ -30,6 +34,7 @@ import io.ktor.server.plugins.NotFoundException
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.AfterEach
@@ -43,8 +48,16 @@ import java.util.UUID
 class BankRoutesTest {
 
     private val bankService = mockk<BankService>()
+    private val bankValidationService = mockk<BankValidationService>()
 
-    private val mockModule = module { single { bankService } }
+    private val mockModule = module {
+        single {
+            bankService
+        }
+        single {
+            bankValidationService
+        }
+    }
 
     @BeforeEach
     fun init() = clearAllMocks()
@@ -94,13 +107,13 @@ class BankRoutesTest {
             val response = testClient.get(urlString = "/v1/banks")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getInternalServerErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse().dateTime,
+                    other = getInternalServerErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -132,13 +145,13 @@ class BankRoutesTest {
             val response = testClient.get(urlString = "/v1/banks/$uuid")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getBankNotFoundErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getBankNotFoundErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getBankNotFoundErrorResponse().dateTime,
+                    other = getBankNotFoundErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -147,57 +160,83 @@ class BankRoutesTest {
     }
 
     @Nested
-    inner class SaveBank {
+    inner class PatchBank {
         @Test
-        fun `should return 200 and an updated bank`() = testApplicationWith(mockModule) {
+        fun `should return 200 and a patched bank`() = testApplicationWith(mockModule) {
             val testBank = getSchufaBank()
-            coEvery { bankService.saveBank(bank = any()) } returns testBank
+            coEvery { bankValidationService.validateBody(body = any()) } returns emptyList()
+            coEvery { bankService.patchBank(id = any(), bank = any()) } returns testBank
 
-            val response = testClient.put(urlString = "/v1/banks/${testBank.name}") {
+            val response = testClient.patch(urlString = "/v1/banks/${testBank.uuid}") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testBank)
             }
 
             response shouldHaveStatus HttpStatusCode.OK
             response.body<Bank>() shouldBe testBank
-            coVerify(exactly = 1) { bankService.saveBank(bank = testBank) }
+            coVerifySequence {
+                bankValidationService.validateBody(body = testBank.toBankDTO())
+                bankService.patchBank(id = "${testBank.uuid}", bank = testBank)
+            }
+        }
+
+        @Test
+        fun `should return 400 and an error response when request body is invalid`() = testApplicationWith(mockModule) {
+            val testBank = getSchufaBank().toBankDTO().copy(
+                uuid = "invalidUUID",
+            )
+            coEvery { bankValidationService.validateBody(body = any()) } returns listOf(INVALID_BANK_MESSAGE)
+
+            val response = testClient.patch(urlString = "/v1/banks/${testBank.uuid}") {
+                contentType(type = ContentType.Application.Json)
+                setBody(body = testBank)
+            }
+
+            response shouldHaveStatus HttpStatusCode.BadRequest
+            response.body<ErrorsDTO>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInvalidBankErrors(),
+                    property = ErrorsDTO::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInvalidBankErrors().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
+            coVerify(exactly = 1) {
+                bankValidationService.validateBody(body = testBank)
+            }
+            coVerify(exactly = 0) {
+                bankService.patchBank(id = any(), bank = any())
+            }
         }
 
         @Test
         fun `should return 409 and an error response when transaction failed`() = testApplicationWith(mockModule) {
             val testBank = getSchufaBank()
-            coEvery { bankService.saveBank(bank = any()) } throws TransactionException()
+            coEvery { bankValidationService.validateBody(body = any()) } returns emptyList()
+            coEvery { bankService.patchBank(id = any(), bank = any()) } throws TransactionException()
 
-            val response = testClient.put(urlString = "/v1/banks/${testBank.name}") {
+            val response = testClient.patch(urlString = "/v1/banks/${testBank.uuid}") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testBank)
             }
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getConflictErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse().dateTime,
+                    other = getConflictErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
-            coVerify(exactly = 1) { bankService.saveBank(bank = testBank) }
-        }
-
-        @Test
-        fun `should return 500 with invalid input`() = testApplicationWith(mockModule) {
-            val invalidInput = "{\"invalid\":\"invalid\"}"
-
-            val response = testClient.put(urlString = "/v1/banks/invalid") {
-                contentType(type = ContentType.Application.Json)
-                setBody(body = invalidInput)
+            coVerifySequence {
+                bankValidationService.validateBody(body = testBank.toBankDTO())
+                bankService.patchBank(id = any(), bank = testBank)
             }
-
-            response shouldHaveStatus HttpStatusCode.InternalServerError
-            coVerify(exactly = 0) { bankService.saveBank(bank = any()) }
         }
     }
 }

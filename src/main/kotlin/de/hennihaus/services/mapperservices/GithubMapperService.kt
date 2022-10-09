@@ -189,10 +189,10 @@ class GithubMapperService(@Property(DEFAULT_TITLE) private val defaultTitle: Str
     )
 
     private inline fun <reified T : Any> buildParameterErrorMessage(parameter: String) =
-        "Parameter $parameter not found in Task while updating ${T::class.simpleName}!"
+        "parameter $parameter not found in Task while updating ${T::class.simpleName}"
 
     private inline fun <reified T : Any> buildResponseErrorMessage(response: String) =
-        "Response $response not found in Task while updating ${T::class.simpleName}!"
+        "response $response not found in Task while updating ${T::class.simpleName}"
 
     companion object {
         const val SYNC_BANK_INDEX = 0
@@ -200,8 +200,8 @@ class GithubMapperService(@Property(DEFAULT_TITLE) private val defaultTitle: Str
         const val AMOUNT_IN_EUROS_PARAMETER = "amountInEuros"
         const val TERM_IN_MONTHS_PARAMETER = "termInMonths"
 
-        const val NO_SCHUFA_STEP_MESSAGE = "Provided task is not a schufa task!"
-        const val NO_BANK_STEP_MESSAGE = "Provided task is not a bank task!"
-        const val NO_CONFIGURATION_MESSAGE = "Provided task has no bank with credit configuration!"
+        const val NO_SCHUFA_STEP_MESSAGE = "provided task is not a schufa task"
+        const val NO_BANK_STEP_MESSAGE = "provided task is not a bank task"
+        const val NO_CONFIGURATION_MESSAGE = "provided task has no bank with credit configuration"
     }
 }

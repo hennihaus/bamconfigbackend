@@ -4,14 +4,18 @@ import de.hennihaus.bamdatamodel.Team
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getSecondTeam
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getThirdTeam
-import de.hennihaus.models.generated.rest.ErrorResponseDTO
-import de.hennihaus.models.generated.rest.ExistsResponseDTO
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getConflictErrorResponse
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInternalServerErrorResponse
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInvalidIdErrorResponse
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getTeamNotFoundErrorResponse
+import de.hennihaus.models.generated.rest.ErrorsDTO
+import de.hennihaus.models.generated.rest.ExistsDTO
+import de.hennihaus.objectmothers.ErrorsObjectMother.getConflictErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getInternalServerErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getInvalidIdErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getInvalidTeamErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getTeamNotFoundErrors
+import de.hennihaus.objectmothers.ReasonObjectMother.INVALID_TEAM_MESSAGE
 import de.hennihaus.plugins.TransactionException
 import de.hennihaus.plugins.UUIDException
+import de.hennihaus.routes.mappers.toTeamDTO
+import de.hennihaus.routes.validations.TeamValidationService
 import de.hennihaus.services.TeamService
 import de.hennihaus.services.TeamService.Companion.TEAM_NOT_FOUND_MESSAGE
 import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
@@ -34,6 +38,7 @@ import io.ktor.server.plugins.NotFoundException
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.AfterEach
@@ -47,10 +52,14 @@ import java.util.UUID
 class TeamRoutesTest {
 
     private val teamService = mockk<TeamService>()
+    private val teamValidationService = mockk<TeamValidationService>()
 
     private val mockModule = module {
         single {
             teamService
+        }
+        single {
+            teamValidationService
         }
     }
 
@@ -102,13 +111,13 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getInternalServerErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse().dateTime,
+                    other = getInternalServerErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -140,13 +149,13 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams/$uuid")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getTeamNotFoundErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getTeamNotFoundErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getTeamNotFoundErrorResponse().dateTime,
+                    other = getTeamNotFoundErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -164,7 +173,7 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams/$uuid/check/username/$username")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.body<ExistsResponseDTO>() shouldBe ExistsResponseDTO(exists = true)
+            response.body<ExistsDTO>() shouldBe ExistsDTO(exists = true)
             coVerify(exactly = 1) { teamService.checkUsername(id = "$uuid", username = username) }
         }
 
@@ -177,13 +186,13 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams/$uuid/check/username/$username")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getInvalidIdErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse().dateTime,
+                    other = getInvalidIdErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -201,7 +210,7 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams/$uuid/check/password/$password")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.body<ExistsResponseDTO>() shouldBe ExistsResponseDTO(exists = true)
+            response.body<ExistsDTO>() shouldBe ExistsDTO(exists = true)
             coVerify(exactly = 1) { teamService.checkPassword(id = "$uuid", password = password) }
         }
 
@@ -214,13 +223,13 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams/$uuid/check/password/$password")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getInvalidIdErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse().dateTime,
+                    other = getInvalidIdErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -238,7 +247,7 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams/$uuid/check/jmsQueue/$jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.body<ExistsResponseDTO>() shouldBe ExistsResponseDTO(exists = true)
+            response.body<ExistsDTO>() shouldBe ExistsDTO(exists = true)
             coVerify(exactly = 1) { teamService.checkJmsQueue(id = "$uuid", jmsQueue = jmsQueue) }
         }
 
@@ -251,13 +260,13 @@ class TeamRoutesTest {
             val response = testClient.get(urlString = "/v1/teams/$uuid/check/jmsQueue/$jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getInvalidIdErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse().dateTime,
+                    other = getInvalidIdErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -270,6 +279,7 @@ class TeamRoutesTest {
         @Test
         fun `should return 200 and a updated team`() = testApplicationWith(mockModule) {
             val testTeam = getFirstTeam()
+            coEvery { teamValidationService.validateBody(body = any()) } returns emptyList()
             coEvery { teamService.saveTeam(team = any()) } returns testTeam
 
             val response = testClient.put(urlString = "/v1/teams/${testTeam.uuid}") {
@@ -279,44 +289,69 @@ class TeamRoutesTest {
 
             response shouldHaveStatus HttpStatusCode.OK
             response.body<Team>() shouldBe testTeam
-            coVerify(exactly = 1) { teamService.saveTeam(team = testTeam) }
+            coVerifySequence {
+                teamValidationService.validateBody(body = testTeam.toTeamDTO())
+                teamService.saveTeam(team = testTeam)
+            }
+        }
+
+        @Test
+        fun `should return 400 and an error response when request body is invalid`() = testApplicationWith(mockModule) {
+            val testTeam = getFirstTeam().toTeamDTO().copy(
+                uuid = "invalidUUID",
+            )
+            coEvery { teamValidationService.validateBody(body = any()) } returns listOf(INVALID_TEAM_MESSAGE)
+
+            val response = testClient.put(urlString = "/v1/teams/${testTeam.uuid}") {
+                contentType(type = ContentType.Application.Json)
+                setBody(body = testTeam)
+            }
+
+            response shouldHaveStatus HttpStatusCode.BadRequest
+            response.body<ErrorsDTO>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInvalidTeamErrors(),
+                    property = ErrorsDTO::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInvalidTeamErrors().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
+            coVerify(exactly = 1) {
+                teamValidationService.validateBody(body = testTeam)
+            }
+            coVerify(exactly = 0) {
+                teamService.saveTeam(team = any())
+            }
         }
 
         @Test
         fun `should return 409 and an error response when transaction failed`() = testApplicationWith(mockModule) {
             val testTeam = getFirstTeam()
+            coEvery { teamValidationService.validateBody(body = any()) } returns emptyList()
             coEvery { teamService.saveTeam(team = any()) } throws TransactionException()
 
-            val response = testClient.put(urlString = "/v1/teams/invalid") {
+            val response = testClient.put(urlString = "/v1/teams/${testTeam.uuid}") {
                 contentType(type = ContentType.Application.Json)
                 setBody(body = testTeam)
             }
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getConflictErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse().dateTime,
+                    other = getConflictErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
-            coVerify(exactly = 1) { teamService.saveTeam(team = testTeam) }
-        }
-
-        @Test
-        fun `should return 500 with invalid input`() = testApplicationWith(mockModule) {
-            val invalidInput = "{\"invalid\":\"invalid\"}"
-
-            val response = testClient.put(urlString = "/v1/teams/invalid") {
-                contentType(type = ContentType.Application.Json)
-                setBody(body = invalidInput)
+            coVerifySequence {
+                teamValidationService.validateBody(body = testTeam.toTeamDTO())
+                teamService.saveTeam(team = testTeam)
             }
-
-            response shouldHaveStatus HttpStatusCode.InternalServerError
-            coVerify(exactly = 0) { teamService.saveTeam(team = any()) }
         }
     }
 
@@ -342,13 +377,13 @@ class TeamRoutesTest {
             val response = testClient.delete(urlString = "/v1/teams/$uuid")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getInternalServerErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse().dateTime,
+                    other = getInternalServerErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -380,13 +415,13 @@ class TeamRoutesTest {
             val response = testClient.delete(urlString = "/v1/teams/$uuid/statistics")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getTeamNotFoundErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getTeamNotFoundErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getTeamNotFoundErrorResponse().dateTime,
+                    other = getTeamNotFoundErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -401,13 +436,13 @@ class TeamRoutesTest {
             val response = testClient.delete(urlString = "/v1/teams/$uuid/statistics")
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getConflictErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse().dateTime,
+                    other = getConflictErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }

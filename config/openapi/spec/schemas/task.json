@@ -230,11 +230,13 @@
           },
           "url": {
             "type": "string",
-            "format": "url"
+            "format": "url",
+            "pattern": "(^$|^(https?|ftp|file|tcp)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])"
           },
           "docsUrl": {
             "type": "string",
-            "format": "url"
+            "format": "url",
+            "pattern": "(^$|^(https?|ftp|file|tcp)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])"
           }
         }
       },
@@ -292,8 +294,8 @@
           "httpStatusCode": {
             "type": "integer",
             "format": "http-status",
-            "minimum": 1,
-            "maximum": 999
+            "minimum": -1,
+            "maximum": 507
           },
           "contentType": {
             "type": "string",

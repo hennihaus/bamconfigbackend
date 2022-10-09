@@ -79,6 +79,8 @@ dependencies {
     val koinAnnotationsVersion: String by project
     val kotlinDateTimeVersion: String by project
     val julToSlf4jVersion: String by project
+    val konformVersion: String by project
+    val apacheCommonsValidatorVersion: String by project
     val bamdatamodelVersion: String by project
 
     // ktor common plugins
@@ -91,6 +93,7 @@ dependencies {
     implementation("io.ktor:ktor-server-cors-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-resources-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-request-validation-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-cio-jvm:$ktorVersion")
@@ -128,11 +131,14 @@ dependencies {
     implementation("org.passay:passay:$passayVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:$kotlinDateTimeVersion")
     implementation("org.slf4j:jul-to-slf4j:$julToSlf4jVersion")
+    implementation("io.konform:konform-jvm:$konformVersion")
+    implementation("commons-validator:commons-validator:$apacheCommonsValidatorVersion")
 
     // test plugins
     testImplementation("io.mockk:mockk:$mockkVersion")
-    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
-    testImplementation("io.kotest:kotest-assertions-ktor:$kotestLibrariesVersion")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
+    testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-ktor-jvm:$kotestLibrariesVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }

@@ -41,11 +41,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -81,11 +84,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -95,11 +101,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -137,11 +146,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -151,11 +163,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[Resource not found]",
+                  "reasons" : [ {
+                    "exception" : "NotFoundException",
+                    "message" : "resource not found"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -165,11 +180,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -210,11 +228,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -224,11 +245,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[could not serialize access due to concurrent update]",
+                  "reasons" : [ {
+                    "exception" : "TransactionException",
+                    "message" : "could not serialize access due to concurrent update"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -238,11 +262,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -282,11 +309,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -296,11 +326,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[Resource not found]",
+                  "reasons" : [ {
+                    "exception" : "NotFoundException",
+                    "message" : "resource not found"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -310,11 +343,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[could not serialize access due to concurrent update]",
+                  "reasons" : [ {
+                    "exception" : "TransactionException",
+                    "message" : "could not serialize access due to concurrent update"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -324,11 +360,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -371,7 +410,7 @@
                   "exists" : true
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ExistsResponse"
+                  "$ref" : "#/components/schemas/Exists"
                 }
               }
             },
@@ -381,11 +420,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -395,11 +437,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -443,7 +488,7 @@
                   "exists" : true
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ExistsResponse"
+                  "$ref" : "#/components/schemas/Exists"
                 }
               }
             },
@@ -453,11 +498,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -467,11 +515,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -514,7 +565,7 @@
                   "exists" : true
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ExistsResponse"
+                  "$ref" : "#/components/schemas/Exists"
                 }
               }
             },
@@ -524,11 +575,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -538,11 +592,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -574,11 +631,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -588,11 +648,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[Resource not found]",
+                  "reasons" : [ {
+                    "exception" : "NotFoundException",
+                    "message" : "resource not found"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -602,11 +665,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -646,11 +712,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -701,11 +770,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[Resource not found]",
+                  "reasons" : [ {
+                    "exception" : "NotFoundException",
+                    "message" : "resource not found"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -715,11 +787,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -729,8 +804,8 @@
         "summary" : "Finds bank by UUID",
         "tags" : [ "Bank" ]
       },
-      "put" : {
-        "operationId" : "saveBank",
+      "patch" : {
+        "operationId" : "patchBank",
         "parameters" : [ {
           "example" : "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
           "in" : "path",
@@ -771,11 +846,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -785,11 +863,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[Resource not found]",
+                  "reasons" : [ {
+                    "exception" : "NotFoundException",
+                    "message" : "resource not found"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -799,11 +880,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[could not serialize access due to concurrent update]",
+                  "reasons" : [ {
+                    "exception" : "TransactionException",
+                    "message" : "could not serialize access due to concurrent update"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -813,18 +897,21 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Updates a bank",
+        "summary" : "Updates particular fields of a bank",
         "tags" : [ "Bank" ]
       }
     },
@@ -852,11 +939,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -896,11 +986,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -910,11 +1003,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[Resource not found]",
+                  "reasons" : [ {
+                    "exception" : "NotFoundException",
+                    "message" : "resource not found"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -924,11 +1020,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -969,11 +1068,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -983,11 +1085,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[Resource not found]",
+                  "reasons" : [ {
+                    "exception" : "NotFoundException",
+                    "message" : "resource not found"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -997,11 +1102,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[could not serialize access due to concurrent update]",
+                  "reasons" : [ {
+                    "exception" : "TransactionException",
+                    "message" : "could not serialize access due to concurrent update"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -1011,11 +1119,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -1065,11 +1176,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -1079,11 +1193,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -1108,11 +1225,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[could not serialize access due to concurrent update]",
+                  "reasons" : [ {
+                    "exception" : "TransactionException",
+                    "message" : "could not serialize access due to concurrent update"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -1122,11 +1242,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -1162,11 +1285,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "message" : "[kotlin.Exception: Internal server error]",
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
                   "dateTime" : "2022-01-31T07:43:30"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponse"
+                  "$ref" : "#/components/schemas/Errors"
                 }
               }
             },
@@ -1517,11 +1643,14 @@
         "content" : {
           "application/json" : {
             "example" : {
-              "message" : "[kotlin.Exception: Internal server error]",
+              "reasons" : [ {
+                "exception" : "Exception",
+                "message" : "internal server error"
+              } ],
               "dateTime" : "2022-01-31T07:43:30"
             },
             "schema" : {
-              "$ref" : "#/components/schemas/ErrorResponse"
+              "$ref" : "#/components/schemas/Errors"
             }
           }
         },
@@ -1541,11 +1670,14 @@
         "content" : {
           "application/json" : {
             "example" : {
-              "message" : "[id must match the expected pattern ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$]",
+              "reasons" : [ {
+                "exception" : "RequestValidationException",
+                "message" : "uuid must have valid uuid format"
+              } ],
               "dateTime" : "2022-01-31T07:43:30"
             },
             "schema" : {
-              "$ref" : "#/components/schemas/ErrorResponse"
+              "$ref" : "#/components/schemas/Errors"
             }
           }
         },
@@ -1555,11 +1687,14 @@
         "content" : {
           "application/json" : {
             "example" : {
-              "message" : "[Resource not found]",
+              "reasons" : [ {
+                "exception" : "NotFoundException",
+                "message" : "resource not found"
+              } ],
               "dateTime" : "2022-01-31T07:43:30"
             },
             "schema" : {
-              "$ref" : "#/components/schemas/ErrorResponse"
+              "$ref" : "#/components/schemas/Errors"
             }
           }
         },
@@ -1569,11 +1704,14 @@
         "content" : {
           "application/json" : {
             "example" : {
-              "message" : "[could not serialize access due to concurrent update]",
+              "reasons" : [ {
+                "exception" : "TransactionException",
+                "message" : "could not serialize access due to concurrent update"
+              } ],
               "dateTime" : "2022-01-31T07:43:30"
             },
             "schema" : {
-              "$ref" : "#/components/schemas/ErrorResponse"
+              "$ref" : "#/components/schemas/Errors"
             }
           }
         },
@@ -1684,20 +1822,38 @@
         "required" : [ "firstname", "lastname", "uuid" ],
         "type" : "object"
       },
-      "ErrorResponse" : {
+      "Errors" : {
         "properties" : {
-          "message" : {
-            "type" : "string"
+          "reasons" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Reason"
+            },
+            "minItems" : 1,
+            "type" : "array",
+            "uniqueItems" : true
           },
           "dateTime" : {
             "format" : "date-time",
             "type" : "string"
           }
         },
-        "required" : [ "dateTime", "message" ],
+        "required" : [ "dateTime", "reasons" ],
         "type" : "object"
       },
-      "ExistsResponse" : {
+      "Reason" : {
+        "properties" : {
+          "exception" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "message" : {
+            "minLength" : 1,
+            "type" : "string"
+          }
+        },
+        "required" : [ "exception", "message" ]
+      },
+      "Exists" : {
         "properties" : {
           "exists" : {
             "type" : "boolean"
@@ -1751,7 +1907,7 @@
           },
           "thumbnailUrl" : {
             "format" : "url",
-            "pattern" : "(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})",
+            "pattern" : "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]",
             "type" : "string"
           },
           "isAsync" : {
@@ -2000,10 +2156,12 @@
           },
           "url" : {
             "format" : "url",
+            "pattern" : "(^$|^(https?|ftp|file|tcp)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])",
             "type" : "string"
           },
           "docsUrl" : {
             "format" : "url",
+            "pattern" : "(^$|^(https?|ftp|file|tcp)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])",
             "type" : "string"
           }
         },
@@ -2049,8 +2207,8 @@
           },
           "httpStatusCode" : {
             "format" : "http-status",
-            "maximum" : 999,
-            "minimum" : 1,
+            "maximum" : 507,
+            "minimum" : -1,
             "type" : "integer"
           },
           "contentType" : {

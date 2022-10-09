@@ -17,6 +17,7 @@ import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
 import java.util.UUID
@@ -61,6 +62,13 @@ class BankRepository : Repository<Bank, UUID> {
             ?.load(relations = getBankRelations())
             ?.toBank()
             ?: throw IllegalStateException(BANK_NOT_FOUND_MESSAGE)
+    }
+
+    suspend fun getBankIdByName(name: String): UUID? = inTransaction {
+        BankTable.slice(column = BankTable.id)
+            .select { BankTable.name eq name }
+            .singleOrNull()
+            ?.let { it[BankTable.id].value }
     }
 
     private fun Bank.saveBank(now: Instant) = BankTable.update(

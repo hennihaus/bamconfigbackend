@@ -12,6 +12,7 @@ import org.koin.core.annotation.Single
 import org.passay.CharacterRule
 import org.passay.EnglishCharacterData
 import org.passay.PasswordGenerator
+import java.util.UUID
 
 @Single
 class TeamService(
@@ -22,33 +23,43 @@ class TeamService(
 
     suspend fun getAllTeams(): List<Team> = teamRepository.getAll().sortedBy { it.username }
 
+    suspend fun getAllTeamIds(): List<UUID> = teamRepository.getAllTeamIds()
+
     suspend fun getTeamById(id: String): Team = id.toUUID { uuid ->
         teamRepository.getById(id = uuid)
             ?: throw NotFoundException(message = TEAM_NOT_FOUND_MESSAGE)
     }
 
     suspend fun checkUsername(id: String, username: String): Boolean = id.toUUID { uuid ->
-        teamRepository.getTeamByUsername(username = username)
-            ?.let { it.uuid != uuid }
+        teamRepository.getTeamIdByUsername(username = username)
+            ?.let { it != uuid }
             ?: false
     }
 
     suspend fun checkPassword(id: String, password: String): Boolean = id.toUUID { uuid ->
-        teamRepository.getTeamByPassword(password = password)
-            ?.let { it.uuid != uuid }
+        teamRepository.getTeamIdByPassword(password = password)
+            ?.let { it != uuid }
             ?: false
     }
 
     suspend fun checkJmsQueue(id: String, jmsQueue: String): Boolean = id.toUUID { uuid ->
-        teamRepository.getTeamByJmsQueue(jmsQueue = jmsQueue)
-            ?.let { it.uuid != uuid }
+        teamRepository.getTeamIdByJmsQueue(jmsQueue = jmsQueue)
+            ?.let { it != uuid }
             ?: false
     }
 
     suspend fun saveTeam(team: Team): Team = teamRepository.save(
-        entry = team,
+        entry = team.copy(
+            statistics = team.statistics.mapValues { (_, requests) ->
+                if (requests < ZERO_REQUESTS) ZERO_REQUESTS else requests
+            },
+        ),
         repetitionAttempts = ONE_REPETITION_ATTEMPT,
     )
+
+    suspend fun getJmsQueueById(id: String): String? = id.toUUID { uuid ->
+        teamRepository.getJmsQueueById(id = uuid)
+    }
 
     suspend fun deleteTeamById(id: String): Boolean = id.toUUID { uuid ->
         teamRepository.deleteById(id = uuid)
@@ -88,7 +99,7 @@ class TeamService(
     }
 
     companion object {
-        const val TEAM_NOT_FOUND_MESSAGE = "[team not found by uuid]"
+        const val TEAM_NOT_FOUND_MESSAGE = "team not found by uuid"
         const val ZERO_REQUESTS = 0L
     }
 }

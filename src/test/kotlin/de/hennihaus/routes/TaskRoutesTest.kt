@@ -1,17 +1,21 @@
 package de.hennihaus.routes
 
 import de.hennihaus.models.Task
-import de.hennihaus.models.generated.rest.ErrorResponseDTO
-import de.hennihaus.models.generated.rest.ExistsResponseDTO
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getConflictErrorResponse
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInternalServerErrorResponse
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInvalidIdErrorResponse
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getTaskNotFoundErrorResponse
+import de.hennihaus.models.generated.rest.ErrorsDTO
+import de.hennihaus.models.generated.rest.ExistsDTO
+import de.hennihaus.objectmothers.ErrorsObjectMother.getConflictErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getInternalServerErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getInvalidBankErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getInvalidIdErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getTaskNotFoundErrors
+import de.hennihaus.objectmothers.ReasonObjectMother.INVALID_TASK_MESSAGE
 import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask
 import de.hennihaus.plugins.TransactionException
 import de.hennihaus.plugins.UUIDException
+import de.hennihaus.routes.mappers.toTaskDTO
+import de.hennihaus.routes.validations.TaskValidationService
 import de.hennihaus.services.TaskService
 import de.hennihaus.services.TaskService.Companion.TASK_NOT_FOUND_MESSAGE
 import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
@@ -33,6 +37,7 @@ import io.ktor.server.plugins.NotFoundException
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.AfterEach
@@ -46,10 +51,14 @@ import java.util.UUID
 class TaskRoutesTest {
 
     private val taskService = mockk<TaskService>()
+    private val taskValidationService = mockk<TaskValidationService>()
 
     private val mockModule = module {
         single {
             taskService
+        }
+        single {
+            taskValidationService
         }
     }
 
@@ -101,13 +110,13 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getInternalServerErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrorResponse().dateTime,
+                    other = getInternalServerErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -137,13 +146,13 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks/$uuid")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getTaskNotFoundErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getTaskNotFoundErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getTaskNotFoundErrorResponse().dateTime,
+                    other = getTaskNotFoundErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -161,7 +170,7 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks/$uuid/check/title/$title")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.body<ExistsResponseDTO>() shouldBe ExistsResponseDTO(exists = true)
+            response.body<ExistsDTO>() shouldBe ExistsDTO(exists = true)
             coVerify(exactly = 1) { taskService.checkTitle(id = "$uuid", title = title) }
         }
 
@@ -174,13 +183,13 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks/$uuid/check/title/$title")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getInvalidIdErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse().dateTime,
+                    other = getInvalidIdErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -193,6 +202,7 @@ class TaskRoutesTest {
         @Test
         fun `should return 200 and a patched task`() = testApplicationWith(mockModule) {
             val testTask = getSchufaTask()
+            coEvery { taskValidationService.validateBody(body = any()) } returns emptyList()
             coEvery { taskService.patchTask(id = any(), task = any()) } returns testTask
 
             val response = testClient.patch(urlString = "/v1/tasks/${testTask.uuid}") {
@@ -202,13 +212,48 @@ class TaskRoutesTest {
 
             response shouldHaveStatus HttpStatusCode.OK
             response.body<Task>() shouldBe testTask
-            coVerify(exactly = 1) { taskService.patchTask(id = "${testTask.uuid}", task = testTask) }
+            coVerifySequence {
+                taskValidationService.validateBody(body = testTask.toTaskDTO())
+                taskService.patchTask(id = "${testTask.uuid}", task = testTask)
+            }
+        }
+
+        @Test
+        fun `should return 400 and error response request body is invalid`() = testApplicationWith(mockModule) {
+            val testTask = getSchufaTask().toTaskDTO().copy(
+                uuid = "invalidUUID"
+            )
+            coEvery { taskValidationService.validateBody(body = any()) } returns listOf(INVALID_TASK_MESSAGE)
+
+            val response = testClient.patch(urlString = "/v1/tasks/${testTask.uuid}") {
+                contentType(type = ContentType.Application.Json)
+                setBody(body = testTask)
+            }
+
+            response shouldHaveStatus HttpStatusCode.BadRequest
+            response.body<ErrorsDTO>() should {
+                it.shouldBeEqualToIgnoringFields(
+                    other = getInvalidBankErrors(),
+                    property = ErrorsDTO::dateTime,
+                )
+                it.dateTime.shouldBeEqualToIgnoringFields(
+                    other = getInvalidBankErrors().dateTime,
+                    property = LocalDateTime::second,
+                )
+            }
+            coVerify(exactly = 1) {
+                taskValidationService.validateBody(body = testTask)
+            }
+            coVerify(exactly = 0) {
+                taskService.patchTask(id = any(), task = any())
+            }
         }
 
         @Test
         fun `should return 400 and error response when uuid is invalid`() = testApplicationWith(mockModule) {
             val uuid = "invalidUUID"
             val testTask = getSchufaTask()
+            coEvery { taskValidationService.validateBody(body = any()) } returns emptyList()
             coEvery { taskService.patchTask(id = any(), task = any()) } throws UUIDException()
 
             val response = testClient.patch(urlString = "/v1/tasks/$uuid") {
@@ -217,22 +262,26 @@ class TaskRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getInvalidIdErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrorResponse().dateTime,
+                    other = getInvalidIdErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
-            coVerify(exactly = 1) { taskService.patchTask(id = uuid, task = testTask) }
+            coVerifySequence {
+                taskValidationService.validateBody(body = testTask.toTaskDTO())
+                taskService.patchTask(id = uuid, task = testTask)
+            }
         }
 
         @Test
         fun `should return 409 and an error response when transaction failed`() = testApplicationWith(mockModule) {
             val testTask = getSchufaTask()
+            coEvery { taskValidationService.validateBody(body = any()) } returns emptyList()
             coEvery { taskService.patchTask(id = any(), task = any()) } throws TransactionException()
 
             val response = testClient.patch(urlString = "/v1/tasks/${testTask.uuid}") {
@@ -241,17 +290,20 @@ class TaskRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getConflictErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse().dateTime,
+                    other = getConflictErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
-            coVerify(exactly = 1) { taskService.patchTask(id = "${testTask.uuid}", task = testTask) }
+            coVerifySequence {
+                taskValidationService.validateBody(body = testTask.toTaskDTO())
+                taskService.patchTask(id = "${testTask.uuid}", task = testTask)
+            }
         }
     }
 }

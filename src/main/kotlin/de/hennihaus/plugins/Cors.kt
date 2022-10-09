@@ -16,7 +16,7 @@ fun Application.configureCors() {
     val allowedSwaggerProtocol = environment.config.property(path = ALLOWED_SWAGGER_PROTOCOL).getString()
     val allowedSwaggerHost = environment.config.property(path = ALLOWED_SWAGGER_HOST).getString()
 
-    install(CORS) {
+    install(plugin = CORS) {
         allowCredentials = true
 
         allowHost(host = allowedFrontendHost, schemes = listOf(allowedFrontendProtocol))

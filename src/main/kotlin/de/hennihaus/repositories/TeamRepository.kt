@@ -18,6 +18,7 @@ import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.koin.core.annotation.Single
 import java.util.UUID
 
@@ -60,25 +61,40 @@ class TeamRepository : Repository<Team, UUID> {
             ?: throw IllegalStateException(TEAM_NOT_FOUND_MESSAGE)
     }
 
-    suspend fun getTeamByUsername(username: String): Team? = inTransaction {
-        TeamEntity.find { TeamTable.username eq username }
+    suspend fun getTeamIdByUsername(username: String): UUID? = inTransaction {
+        TeamTable.slice(column = TeamTable.id)
+            .select { TeamTable.username eq username }
             .singleOrNull()
-            ?.load(relations = getTeamRelations())
-            ?.toTeam()
+            ?.let { it[TeamTable.id].value }
     }
 
-    suspend fun getTeamByPassword(password: String): Team? = inTransaction {
-        TeamEntity.all()
-            .with(relations = getTeamRelations())
-            .find { it.password == password }
-            ?.toTeam()
+    suspend fun getTeamIdByPassword(password: String): UUID? = inTransaction {
+        TeamTable.slice(columns = listOf(TeamTable.id, TeamTable.password))
+            .selectAll()
+            .find { it[TeamTable.password] == password }
+            ?.let { it[TeamTable.id].value }
     }
 
-    suspend fun getTeamByJmsQueue(jmsQueue: String): Team? = inTransaction {
-        TeamEntity.find { TeamTable.jmsQueue eq jmsQueue }
+    suspend fun getTeamIdByJmsQueue(jmsQueue: String): UUID? = inTransaction {
+        TeamTable.slice(column = TeamTable.id)
+            .select { TeamTable.jmsQueue eq jmsQueue }
             .singleOrNull()
-            ?.load(relations = getTeamRelations())
-            ?.toTeam()
+            ?.let { it[TeamTable.id].value }
+    }
+
+    suspend fun getJmsQueueById(id: UUID): String? = inTransaction {
+        TeamTable.slice(column = TeamTable.jmsQueue)
+            .select { TeamTable.id eq id }
+            .singleOrNull()
+            ?.let { it[TeamTable.jmsQueue] }
+    }
+
+    suspend fun getAllTeamIds(): List<UUID> = inTransaction {
+        TeamTable.slice(column = TeamTable.id)
+            .selectAll()
+            .map {
+                it[TeamTable.id].value
+            }
     }
 
     private fun Team.saveTeam(now: Instant) = TeamTable.upsert(conflictColumns = listOf(TeamTable.id)) { teamTable ->

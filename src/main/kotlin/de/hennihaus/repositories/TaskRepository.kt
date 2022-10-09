@@ -16,15 +16,14 @@ import de.hennihaus.repositories.tables.TaskTable
 import de.hennihaus.utils.batchUpsert
 import de.hennihaus.utils.inTransaction
 import de.hennihaus.utils.upsert
-import kotlinx.coroutines.Dispatchers
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.koin.core.annotation.Single
 import java.util.UUID
 
@@ -69,11 +68,23 @@ class TaskRepository : Repository<Task, UUID> {
             ?: throw IllegalStateException(TASK_NOT_FOUND_MESSAGE)
     }
 
-    suspend fun getTaskByTitle(title: String): Task? = newSuspendedTransaction(context = Dispatchers.IO) {
-        TaskEntity.find { TaskTable.title eq title }
+    suspend fun getTaskIdByTitle(title: String): UUID? = inTransaction {
+        TaskTable.slice(column = TaskTable.id)
+            .select { TaskTable.title eq title }
             .singleOrNull()
-            ?.load(relations = getTaskRelations())
-            ?.toTask()
+            ?.let { it[TaskTable.id].value }
+    }
+
+    suspend fun getAllParametersById(id: UUID): List<UUID> = inTransaction {
+        TaskParameterTable.slice(column = TaskParameterTable.parameterId)
+            .select { TaskParameterTable.taskId eq id }
+            .map { it[TaskParameterTable.parameterId].value }
+    }
+
+    suspend fun getAllResponsesById(id: UUID): List<UUID> = inTransaction {
+        TaskResponseTable.slice(column = TaskResponseTable.responseId)
+            .select { TaskResponseTable.taskId eq id }
+            .map { it[TaskResponseTable.responseId].value }
     }
 
     private fun Task.saveContact(now: Instant) {

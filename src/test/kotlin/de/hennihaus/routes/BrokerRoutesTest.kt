@@ -3,9 +3,9 @@ package de.hennihaus.routes
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getSecondTeam
-import de.hennihaus.models.generated.rest.ErrorResponseDTO
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getConflictErrorResponse
-import de.hennihaus.objectmothers.ErrorResponseObjectMother.getInternalServerErrorResponse
+import de.hennihaus.models.generated.rest.ErrorsDTO
+import de.hennihaus.objectmothers.ErrorsObjectMother.getConflictErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getInternalServerErrors
 import de.hennihaus.plugins.TransactionException
 import de.hennihaus.services.BrokerService
 import de.hennihaus.services.TeamService
@@ -77,13 +77,13 @@ class BrokerRoutesTest {
             val response = testClient.delete(urlString = "/v1/activemq")
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorResponseDTO>() should {
+            response.body<ErrorsDTO>() should {
                 it.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse(),
-                    property = ErrorResponseDTO::dateTime,
+                    other = getConflictErrors(),
+                    property = ErrorsDTO::dateTime,
                 )
                 it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrorResponse().dateTime,
+                    other = getConflictErrors().dateTime,
                     property = LocalDateTime::second,
                 )
             }
@@ -99,7 +99,7 @@ class BrokerRoutesTest {
             val response = testClient.delete(urlString = "/v1/activemq")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponseDTO>() shouldBe getInternalServerErrorResponse()
+            response.body<ErrorsDTO>() shouldBe getInternalServerErrors()
             coVerifySequence {
                 teamService.resetAllTeams()
                 brokerService.resetBroker()
@@ -129,7 +129,7 @@ class BrokerRoutesTest {
             val response = testClient.delete(urlString = "/v1/activemq/$name")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorResponseDTO>() shouldBe getInternalServerErrorResponse()
+            response.body<ErrorsDTO>() shouldBe getInternalServerErrors()
             coVerify(exactly = 1) { brokerService.deleteQueueByName(name = name) }
         }
     }

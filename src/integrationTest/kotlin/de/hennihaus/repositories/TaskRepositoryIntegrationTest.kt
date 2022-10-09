@@ -172,12 +172,12 @@ class TaskRepositoryIntegrationTest : KoinTest {
     }
 
     @Nested
-    inner class GetTaskByTitle {
+    inner class GetTaskIdByTitle {
         @Test
-        fun `should return a task when task is found by title`() = runBlocking<Unit> {
+        fun `should return a task uuid when task is found by title`() = runBlocking<Unit> {
             val title = ExposedContainerObjectMother.TASK_TITLE
 
-            val result: Task? = classUnderTest.getTaskByTitle(title = title)
+            val result: UUID? = classUnderTest.getTaskIdByTitle(title = title)
 
             result.shouldNotBeNull()
         }
@@ -186,9 +186,33 @@ class TaskRepositoryIntegrationTest : KoinTest {
         fun `should return null when task is not found by title`() = runBlocking {
             val title = "unknownTitle"
 
-            val result: Task? = classUnderTest.getTaskByTitle(title = title)
+            val result: UUID? = classUnderTest.getTaskIdByTitle(title = title)
 
             result.shouldBeNull()
+        }
+    }
+
+    @Nested
+    inner class GetAllParametersById {
+        @Test
+        fun `should return at a minimum one parameterId`() = runBlocking<Unit> {
+            val id = ExposedContainerObjectMother.TASK_UUID
+
+            val result: List<UUID> = classUnderTest.getAllParametersById(id = id)
+
+            result.shouldNotBeEmpty()
+        }
+    }
+
+    @Nested
+    inner class GetAllResponsesById {
+        @Test
+        fun `should return at a minimum one responseId`() = runBlocking<Unit> {
+            val id = ExposedContainerObjectMother.TASK_UUID
+
+            val result: List<UUID> = classUnderTest.getAllResponsesById(id = id)
+
+            result.shouldNotBeEmpty()
         }
     }
 }
