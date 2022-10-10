@@ -16,8 +16,8 @@ import de.hennihaus.utils.validations.email
 import de.hennihaus.utils.validations.httpStatusCode
 import de.hennihaus.utils.validations.json
 import de.hennihaus.utils.validations.notConst
-import de.hennihaus.utils.validations.notExist
 import de.hennihaus.utils.validations.oneOf
+import de.hennihaus.utils.validations.unique
 import de.hennihaus.utils.validations.url
 import de.hennihaus.utils.validations.uuid
 import io.konform.validation.Validation
@@ -60,7 +60,7 @@ class TaskValidationService(private val task: TaskService) : ValidationService<T
     }
 
     private suspend fun titleValidation(body: TaskDTO): Validation<TaskDTO> {
-        val titleExists = task.checkTitle(
+        val isTitleUnique = task.isTitleUnique(
             id = body.uuid,
             title = body.title,
         )
@@ -69,7 +69,7 @@ class TaskValidationService(private val task: TaskService) : ValidationService<T
             TaskDTO::title {
                 minLength(length = TASK_TITLE_MIN_LENGTH)
                 maxLength(length = TASK_TITLE_MAX_LENGTH)
-                notExist(exist = titleExists)
+                unique(isUnique = isTitleUnique)
             }
         }
     }

@@ -5,7 +5,7 @@ import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getSecondTeam
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getThirdTeam
 import de.hennihaus.models.generated.rest.ErrorsDTO
-import de.hennihaus.models.generated.rest.ExistsDTO
+import de.hennihaus.models.generated.rest.UniqueDTO
 import de.hennihaus.objectmothers.ErrorsObjectMother.getConflictErrors
 import de.hennihaus.objectmothers.ErrorsObjectMother.getInternalServerErrors
 import de.hennihaus.objectmothers.ErrorsObjectMother.getInvalidIdErrors
@@ -164,26 +164,26 @@ class TeamRoutesTest {
     }
 
     @Nested
-    inner class CheckUsername {
+    inner class IsUsernameUnique {
         @Test
-        fun `should return 200 and true when username exists`() = testApplicationWith(mockModule) {
+        fun `should return 200 and true when username is unique`() = testApplicationWith(mockModule) {
             val (uuid, username) = getFirstTeam()
-            coEvery { teamService.checkUsername(id = any(), username = any()) } returns true
+            coEvery { teamService.isUsernameUnique(id = any(), username = any()) } returns true
 
-            val response = testClient.get(urlString = "/v1/teams/$uuid/check/username/$username")
+            val response = testClient.get(urlString = "/v1/teams/$uuid/unique/username/$username")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.body<ExistsDTO>() shouldBe ExistsDTO(exists = true)
-            coVerify(exactly = 1) { teamService.checkUsername(id = "$uuid", username = username) }
+            response.body<UniqueDTO>() shouldBe UniqueDTO(isUnique = true)
+            coVerify(exactly = 1) { teamService.isUsernameUnique(id = "$uuid", username = username) }
         }
 
         @Test
         fun `should return 400 and an error response when uuid is invalid`() = testApplicationWith(mockModule) {
             val uuid = "invalidUUID"
             val username = getFirstTeam().username
-            coEvery { teamService.checkUsername(id = any(), username = any()) } throws UUIDException()
+            coEvery { teamService.isUsernameUnique(id = any(), username = any()) } throws UUIDException()
 
-            val response = testClient.get(urlString = "/v1/teams/$uuid/check/username/$username")
+            val response = testClient.get(urlString = "/v1/teams/$uuid/unique/username/$username")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
             response.body<ErrorsDTO>() should {
@@ -196,31 +196,31 @@ class TeamRoutesTest {
                     property = LocalDateTime::second,
                 )
             }
-            coVerify(exactly = 1) { teamService.checkUsername(id = uuid, username = username) }
+            coVerify(exactly = 1) { teamService.isUsernameUnique(id = uuid, username = username) }
         }
     }
 
     @Nested
-    inner class CheckPassword {
+    inner class IsPasswordUnique {
         @Test
-        fun `should return 200 and true when password exists`() = testApplicationWith(mockModule) {
+        fun `should return 200 and true when password is unique`() = testApplicationWith(mockModule) {
             val (uuid, _, password) = getFirstTeam()
-            coEvery { teamService.checkPassword(id = any(), password = any()) } returns true
+            coEvery { teamService.isPasswordUnique(id = any(), password = any()) } returns true
 
-            val response = testClient.get(urlString = "/v1/teams/$uuid/check/password/$password")
+            val response = testClient.get(urlString = "/v1/teams/$uuid/unique/password/$password")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.body<ExistsDTO>() shouldBe ExistsDTO(exists = true)
-            coVerify(exactly = 1) { teamService.checkPassword(id = "$uuid", password = password) }
+            response.body<UniqueDTO>() shouldBe UniqueDTO(isUnique = true)
+            coVerify(exactly = 1) { teamService.isPasswordUnique(id = "$uuid", password = password) }
         }
 
         @Test
         fun `should return 400 and an error response when uuid is invalid`() = testApplicationWith(mockModule) {
             val uuid = "invalidUUID"
             val password = getFirstTeam().password
-            coEvery { teamService.checkPassword(id = any(), password = any()) } throws UUIDException()
+            coEvery { teamService.isPasswordUnique(id = any(), password = any()) } throws UUIDException()
 
-            val response = testClient.get(urlString = "/v1/teams/$uuid/check/password/$password")
+            val response = testClient.get(urlString = "/v1/teams/$uuid/unique/password/$password")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
             response.body<ErrorsDTO>() should {
@@ -233,31 +233,31 @@ class TeamRoutesTest {
                     property = LocalDateTime::second,
                 )
             }
-            coVerify(exactly = 1) { teamService.checkPassword(id = uuid, password = password) }
+            coVerify(exactly = 1) { teamService.isPasswordUnique(id = uuid, password = password) }
         }
     }
 
     @Nested
-    inner class CheckJmsQueue {
+    inner class IsJmsQueueUnique {
         @Test
-        fun `should return 200 and true when jmsQueue exists`() = testApplicationWith(mockModule) {
+        fun `should return 200 and true when jmsQueue is unique`() = testApplicationWith(mockModule) {
             val (uuid, _, _, jmsQueue) = getFirstTeam()
-            coEvery { teamService.checkJmsQueue(id = any(), jmsQueue = any()) } returns true
+            coEvery { teamService.isJmsQueueUnique(id = any(), jmsQueue = any()) } returns true
 
-            val response = testClient.get(urlString = "/v1/teams/$uuid/check/jmsQueue/$jmsQueue")
+            val response = testClient.get(urlString = "/v1/teams/$uuid/unique/jmsQueue/$jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.body<ExistsDTO>() shouldBe ExistsDTO(exists = true)
-            coVerify(exactly = 1) { teamService.checkJmsQueue(id = "$uuid", jmsQueue = jmsQueue) }
+            response.body<UniqueDTO>() shouldBe UniqueDTO(isUnique = true)
+            coVerify(exactly = 1) { teamService.isJmsQueueUnique(id = "$uuid", jmsQueue = jmsQueue) }
         }
 
         @Test
         fun `should return 400 and an error response when uuid is invalid`() = testApplicationWith(mockModule) {
             val uuid = "invalidUUID"
             val jmsQueue = getFirstTeam().jmsQueue
-            coEvery { teamService.checkJmsQueue(id = any(), jmsQueue = any()) } throws UUIDException()
+            coEvery { teamService.isJmsQueueUnique(id = any(), jmsQueue = any()) } throws UUIDException()
 
-            val response = testClient.get(urlString = "/v1/teams/$uuid/check/jmsQueue/$jmsQueue")
+            val response = testClient.get(urlString = "/v1/teams/$uuid/unique/jmsQueue/$jmsQueue")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
             response.body<ErrorsDTO>() should {
@@ -270,7 +270,7 @@ class TeamRoutesTest {
                     property = LocalDateTime::second,
                 )
             }
-            coVerify(exactly = 1) { teamService.checkJmsQueue(id = uuid, jmsQueue = jmsQueue) }
+            coVerify(exactly = 1) { teamService.isJmsQueueUnique(id = uuid, jmsQueue = jmsQueue) }
         }
     }
 

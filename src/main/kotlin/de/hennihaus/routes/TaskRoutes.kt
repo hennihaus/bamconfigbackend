@@ -1,7 +1,7 @@
 package de.hennihaus.routes
 
-import de.hennihaus.models.generated.rest.ExistsDTO
 import de.hennihaus.models.generated.rest.TaskDTO
+import de.hennihaus.models.generated.rest.UniqueDTO
 import de.hennihaus.routes.mappers.toTask
 import de.hennihaus.routes.mappers.toTaskDTO
 import de.hennihaus.routes.resources.Tasks
@@ -17,7 +17,7 @@ import org.koin.java.KoinJavaComponent.getKoin
 fun Route.registerTaskRoutes() {
     getAllTask()
     getTaskById()
-    checkTitle()
+    isTitleUnique()
     patchTask()
 }
 
@@ -37,11 +37,11 @@ private fun Route.getTaskById() = get<Tasks.Id> { request ->
     )
 }
 
-private fun Route.checkTitle() = get<Tasks.Id.CheckTitle> { request ->
+private fun Route.isTitleUnique() = get<Tasks.Id.UniqueTitle> { request ->
     val taskService = getKoin().get<TaskService>()
     call.respond(
-        message = ExistsDTO(
-            exists = taskService.checkTitle(
+        message = UniqueDTO(
+            isUnique = taskService.isTitleUnique(
                 id = request.parent.id,
                 title = request.title,
             ),

@@ -8,8 +8,8 @@ import de.hennihaus.routes.validations.ValidationService.Companion.NAME_MAX_LENG
 import de.hennihaus.routes.validations.ValidationService.Companion.NAME_MIN_LENGTH
 import de.hennihaus.services.BankService
 import de.hennihaus.services.TeamService
-import de.hennihaus.utils.validations.notExist
 import de.hennihaus.utils.validations.oneOf
+import de.hennihaus.utils.validations.unique
 import de.hennihaus.utils.validations.uuid
 import io.konform.validation.Validation
 import io.konform.validation.ValidationBuilder
@@ -50,7 +50,7 @@ class TeamValidationService(
     }
 
     private suspend fun usernameValidation(body: TeamDTO): Validation<TeamDTO> {
-        val usernameExists = team.checkUsername(
+        val isUsernameUnique = team.isUsernameUnique(
             id = body.uuid,
             username = body.username,
         )
@@ -59,13 +59,13 @@ class TeamValidationService(
             TeamDTO::username {
                 minLength(length = TEAM_USERNAME_MIN_LENGTH)
                 maxLength(length = TEAM_USERNAME_MAX_LENGTH)
-                notExist(exist = usernameExists)
+                unique(isUnique = isUsernameUnique)
             }
         }
     }
 
     private suspend fun passwordValidation(body: TeamDTO): Validation<TeamDTO> {
-        val passwordExists = team.checkPassword(
+        val isPasswordUnique = team.isPasswordUnique(
             id = body.uuid,
             password = body.password,
         )
@@ -74,32 +74,32 @@ class TeamValidationService(
             TeamDTO::password {
                 minLength(length = TEAM_PASSWORD_MIN_LENGTH)
                 maxLength(length = TEAM_PASSWORD_MAX_LENGTH)
-                notExist(exist = passwordExists)
+                unique(isUnique = isPasswordUnique)
             }
         }
     }
 
     private suspend fun jmsQueueValidation(body: TeamDTO): Validation<TeamDTO> = coroutineScope {
-        val jmsQueueExistsRequest = async {
-            team.checkJmsQueue(
+        val isJmsQueueUniqueRequest = async {
+            team.isJmsQueueUnique(
                 id = body.uuid,
                 jmsQueue = body.jmsQueue,
             )
         }
-        val existingJmsQueueRequest = async {
+        val oldJmsQueueRequest = async {
             team.getJmsQueueById(
                 id = body.uuid,
             )
         }
-        val jmsQueueExists = jmsQueueExistsRequest.await()
-        val existingJmsQueue = existingJmsQueueRequest.await()
+        val isJmsQueueUnique = isJmsQueueUniqueRequest.await()
+        val oldJmsQueue = oldJmsQueueRequest.await()
 
         Validation {
             TeamDTO::jmsQueue {
                 minLength(length = JMS_QUEUE_MIN_LENGTH)
                 maxLength(length = JMS_QUEUE_MAX_LENGTH)
-                notExist(exist = jmsQueueExists)
-                oldJmsQueue(existingJmsQueue = existingJmsQueue)
+                unique(isUnique = isJmsQueueUnique)
+                oldJmsQueue(oldJmsQueue = oldJmsQueue)
             }
         }
     }
@@ -107,7 +107,7 @@ class TeamValidationService(
     private suspend fun statisticsValidation(body: TeamDTO): Validation<TeamDTO> = coroutineScope {
         val bankNameExistsRequests = body.statistics.keys.map { name ->
             async {
-                name to bank.checkName(name = name)
+                name to bank.hasName(name = name)
             }
         }
         val bankNamesExists = bankNameExistsRequests.awaitAll().filter { (_, exists) -> exists }.map { it.first }
@@ -140,10 +140,10 @@ class TeamValidationService(
         }
     }
 
-    private fun ValidationBuilder<String>.oldJmsQueue(existingJmsQueue: String?) = addConstraint(
-        errorMessage = "must be old $existingJmsQueue",
+    private fun ValidationBuilder<String>.oldJmsQueue(oldJmsQueue: String?) = addConstraint(
+        errorMessage = "must be old $oldJmsQueue",
     ) {
-        existingJmsQueue?.let { jmsQueue -> jmsQueue == it } ?: true
+        oldJmsQueue?.let { jmsQueue -> jmsQueue == it } ?: true
     }
 
     companion object {

@@ -46,10 +46,10 @@ class TaskService(
         repository.getAllResponsesById(id = uuid)
     }
 
-    suspend fun checkTitle(id: String, title: String): Boolean = id.toUUID { uuid ->
+    suspend fun isTitleUnique(id: String, title: String): Boolean = id.toUUID { uuid ->
         repository.getTaskIdByTitle(title = title)
-            ?.let { it != uuid }
-            ?: false
+            ?.let { it == uuid }
+            ?: true
     }
 
     private fun Task.patchTask(new: Task) = copy(

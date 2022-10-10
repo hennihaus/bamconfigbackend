@@ -223,37 +223,37 @@ class TaskServiceTest {
     }
 
     @Nested
-    inner class CheckTitle {
+    inner class IsTitleUnique {
         @Test
-        fun `should return true when title is already in db and ids are different`() = runBlocking {
+        fun `should return false when title is already in db and ids are different`() = runBlocking {
             val (id, title) = getSchufaTask()
             coEvery { repository.getTaskIdByTitle(title = title) } returns getAsynchronousBankTask().uuid
 
-            val result: Boolean = classUnderTest.checkTitle(id = "$id", title = title)
+            val result: Boolean = classUnderTest.isTitleUnique(id = "$id", title = title)
+
+            result.shouldBeFalse()
+            coVerify(exactly = 1) { repository.getTaskIdByTitle(title = title) }
+        }
+
+        @Test
+        fun `should return true when title is in database and ids are equal`() = runBlocking {
+            val (id, title) = getSchufaTask()
+            coEvery { repository.getTaskIdByTitle(title = any()) } returns getSchufaTask().uuid
+
+            val result: Boolean = classUnderTest.isTitleUnique(id = "$id", title = title)
 
             result.shouldBeTrue()
             coVerify(exactly = 1) { repository.getTaskIdByTitle(title = title) }
         }
 
         @Test
-        fun `should return false when title is in database and ids are equal`() = runBlocking {
-            val (id, title) = getSchufaTask()
-            coEvery { repository.getTaskIdByTitle(title = any()) } returns getSchufaTask().uuid
-
-            val result: Boolean = classUnderTest.checkTitle(id = "$id", title = title)
-
-            result.shouldBeFalse()
-            coVerify(exactly = 1) { repository.getTaskIdByTitle(title = title) }
-        }
-
-        @Test
-        fun `should return false when title is not in database`() = runBlocking {
+        fun `should return true when title is not in database`() = runBlocking {
             val (id, title) = getSchufaTask()
             coEvery { repository.getTaskIdByTitle(title = any()) } returns null
 
-            val result: Boolean = classUnderTest.checkTitle(id = "$id", title = title)
+            val result: Boolean = classUnderTest.isTitleUnique(id = "$id", title = title)
 
-            result.shouldBeFalse()
+            result.shouldBeTrue()
             coVerify(exactly = 1) { repository.getTaskIdByTitle(title = title) }
         }
 
@@ -263,7 +263,7 @@ class TaskServiceTest {
             coEvery { repository.getTaskIdByTitle(title = any()) } throws Exception()
 
             val result = shouldThrow<Exception> {
-                classUnderTest.checkTitle(id = "$id", title = title)
+                classUnderTest.isTitleUnique(id = "$id", title = title)
             }
 
             result should beInstanceOf<Exception>()

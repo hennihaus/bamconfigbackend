@@ -29,7 +29,7 @@ class BankService(private val repository: BankRepository) {
             ?: throw NotFoundException(message = BANK_NOT_FOUND_MESSAGE)
     }
 
-    suspend fun checkName(name: String): Boolean {
+    suspend fun hasName(name: String): Boolean {
         return repository.getBankIdByName(name = name)
             ?.let { true }
             ?: false

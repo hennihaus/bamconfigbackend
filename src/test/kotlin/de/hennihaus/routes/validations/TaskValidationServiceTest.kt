@@ -46,7 +46,7 @@ class TaskValidationServiceTest {
     inner class ValidateBody {
         @BeforeEach
         fun init() {
-            coEvery { task.checkTitle(id = any(), title = any()) } returns false
+            coEvery { task.isTitleUnique(id = any(), title = any()) } returns true
             coEvery { task.getAllParametersById(id = any()) } returns buildList {
                 addAll(elements = getSchufaTask().parameters.map { it.uuid })
                 addAll(elements = getSynchronousBankTask().parameters.map { it.uuid })
@@ -69,7 +69,7 @@ class TaskValidationServiceTest {
 
             result.shouldBeEmpty()
             coVerifyAll {
-                task.checkTitle(id = body.uuid, title = body.title)
+                task.isTitleUnique(id = body.uuid, title = body.title)
                 task.getAllParametersById(id = body.uuid)
                 task.getAllResponsesById(id = body.uuid)
             }
@@ -150,16 +150,16 @@ class TaskValidationServiceTest {
         }
 
         @Test
-        fun `should return a list with one error when title exists already`() = runBlocking {
-            coEvery { task.checkTitle(id = any(), title = any()) } returns true
+        fun `should return a list with one error when title is not unique`() = runBlocking {
+            coEvery { task.isTitleUnique(id = any(), title = any()) } returns false
             val body = getSchufaTask().toTaskDTO()
 
             val result: List<String> = classUnderTest.validateBody(
                 body = body,
             )
 
-            result shouldContainExactly listOf("title must not exists already")
-            coVerify(exactly = 1) { task.checkTitle(id = body.uuid, body.title) }
+            result shouldContainExactly listOf("title must be unique")
+            coVerify(exactly = 1) { task.isTitleUnique(id = body.uuid, body.title) }
         }
 
         @Test

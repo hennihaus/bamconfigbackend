@@ -378,9 +378,9 @@
         "tags" : [ "Team" ]
       }
     },
-    "/teams/{uuid}/check/username/{username}" : {
+    "/teams/{uuid}/unique/username/{username}" : {
       "get" : {
-        "operationId" : "checkUsername",
+        "operationId" : "isUsernameUnique",
         "parameters" : [ {
           "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
           "in" : "path",
@@ -407,14 +407,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "exists" : true
+                  "isUnique" : true
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/Exists"
+                  "$ref" : "#/components/schemas/Unique"
                 }
               }
             },
-            "description" : "Exists"
+            "description" : "OK"
           },
           "400" : {
             "content" : {
@@ -451,13 +451,13 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Checks existence of a team based on username",
+        "summary" : "Checks uniqueness of a username based on team id",
         "tags" : [ "Team" ]
       }
     },
-    "/teams/{uuid}/check/password/{password}" : {
+    "/teams/{uuid}/unique/password/{password}" : {
       "get" : {
-        "operationId" : "checkPassword",
+        "operationId" : "isPasswordUnique",
         "parameters" : [ {
           "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
           "in" : "path",
@@ -485,14 +485,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "exists" : true
+                  "isUnique" : true
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/Exists"
+                  "$ref" : "#/components/schemas/Unique"
                 }
               }
             },
-            "description" : "Exists"
+            "description" : "OK"
           },
           "400" : {
             "content" : {
@@ -529,13 +529,13 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Checks existence of a team based on password",
+        "summary" : "Checks uniqueness of a password based on team id",
         "tags" : [ "Team" ]
       }
     },
-    "/teams/{uuid}/check/jmsQueue/{jmsQueue}" : {
+    "/teams/{uuid}/unique/jmsQueue/{jmsQueue}" : {
       "get" : {
-        "operationId" : "checkJmsQueue",
+        "operationId" : "isJmsQueueUnique",
         "parameters" : [ {
           "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
           "in" : "path",
@@ -562,14 +562,14 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "exists" : true
+                  "isUnique" : true
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/Exists"
+                  "$ref" : "#/components/schemas/Unique"
                 }
               }
             },
-            "description" : "Exists"
+            "description" : "OK"
           },
           "400" : {
             "content" : {
@@ -606,7 +606,7 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Checks existence of a team based on jmsQueue",
+        "summary" : "Checks uniqueness of a jmsQueue based on team id",
         "tags" : [ "Team" ]
       }
     },
@@ -1137,9 +1137,9 @@
         "tags" : [ "Task" ]
       }
     },
-    "/tasks/{uuid}/check/title/{title}" : {
+    "/tasks/{uuid}/unique/title/{title}" : {
       "get" : {
-        "operationId" : "checkTitle",
+        "operationId" : "isTitleUnique",
         "parameters" : [ {
           "example" : "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
           "in" : "path",
@@ -1207,7 +1207,7 @@
             "description" : "Internal Server Error"
           }
         },
-        "summary" : "Checks existence of a task based on title",
+        "summary" : "Checks uniqueness of a title based on task id",
         "tags" : [ "Task" ]
       }
     },
@@ -1853,13 +1853,13 @@
         },
         "required" : [ "exception", "message" ]
       },
-      "Exists" : {
+      "Unique" : {
         "properties" : {
-          "exists" : {
+          "isUnique" : {
             "type" : "boolean"
           }
         },
-        "required" : [ "exists" ],
+        "required" : [ "isUnique" ],
         "type" : "object"
       },
       "Statistic" : {

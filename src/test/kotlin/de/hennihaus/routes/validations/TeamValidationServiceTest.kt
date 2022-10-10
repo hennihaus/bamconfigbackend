@@ -47,11 +47,11 @@ class TeamValidationServiceTest {
     inner class ValidateBody {
         @BeforeEach
         fun init() {
-            coEvery { team.checkUsername(id = any(), username = any()) } returns false
-            coEvery { team.checkPassword(id = any(), password = any()) } returns false
-            coEvery { team.checkJmsQueue(id = any(), jmsQueue = any()) } returns false
+            coEvery { team.isUsernameUnique(id = any(), username = any()) } returns true
+            coEvery { team.isPasswordUnique(id = any(), password = any()) } returns true
+            coEvery { team.isJmsQueueUnique(id = any(), jmsQueue = any()) } returns true
             coEvery { team.getJmsQueueById(id = any()) } returns getFirstTeam().jmsQueue
-            coEvery { bank.checkName(name = any()) } returns true
+            coEvery { bank.hasName(name = any()) } returns true
         }
 
         @Test
@@ -64,13 +64,13 @@ class TeamValidationServiceTest {
 
             result.shouldBeEmpty()
             coVerifyAll {
-                team.checkUsername(id = body.uuid, username = body.username)
-                team.checkPassword(id = body.uuid, password = body.password)
-                team.checkJmsQueue(id = body.uuid, jmsQueue = body.jmsQueue)
+                team.isUsernameUnique(id = body.uuid, username = body.username)
+                team.isPasswordUnique(id = body.uuid, password = body.password)
+                team.isJmsQueueUnique(id = body.uuid, jmsQueue = body.jmsQueue)
                 team.getJmsQueueById(id = body.uuid)
-                bank.checkName(name = SCHUFA_BANK_NAME)
-                bank.checkName(name = SYNC_BANK_NAME)
-                bank.checkName(name = ASYNC_BANK_NAME)
+                bank.hasName(name = SCHUFA_BANK_NAME)
+                bank.hasName(name = SYNC_BANK_NAME)
+                bank.hasName(name = ASYNC_BANK_NAME)
             }
         }
 
@@ -84,7 +84,7 @@ class TeamValidationServiceTest {
             )
 
             result.shouldBeEmpty()
-            coVerify(exactly = 1) { team.checkJmsQueue(id = body.uuid, jmsQueue = body.jmsQueue) }
+            coVerify(exactly = 1) { team.getJmsQueueById(id = body.uuid) }
         }
 
         @Test
@@ -127,16 +127,16 @@ class TeamValidationServiceTest {
         }
 
         @Test
-        fun `should return a list with one error when username exists already`() = runBlocking {
-            coEvery { team.checkUsername(id = any(), username = any()) } returns true
+        fun `should return a list with one error when username is not unique`() = runBlocking {
+            coEvery { team.isUsernameUnique(id = any(), username = any()) } returns false
             val body = getFirstTeam().toTeamDTO()
 
             val result: List<String> = classUnderTest.validateBody(
                 body = body,
             )
 
-            result shouldContainExactly listOf("username must not exists already")
-            coVerify(exactly = 1) { team.checkUsername(id = body.uuid, username = body.username) }
+            result shouldContainExactly listOf("username must be unique")
+            coVerify(exactly = 1) { team.isUsernameUnique(id = body.uuid, username = body.username) }
         }
 
         @Test
@@ -166,16 +166,16 @@ class TeamValidationServiceTest {
         }
 
         @Test
-        fun `should return a list with one error when password exists already`() = runBlocking {
-            coEvery { team.checkPassword(id = any(), password = any()) } returns true
+        fun `should return a list with one error when password is not unique`() = runBlocking {
+            coEvery { team.isPasswordUnique(id = any(), password = any()) } returns false
             val body = getFirstTeam().toTeamDTO()
 
             val result: List<String> = classUnderTest.validateBody(
                 body = body,
             )
 
-            result shouldContainExactly listOf("password must not exists already")
-            coVerify(exactly = 1) { team.checkPassword(id = body.uuid, password = body.password) }
+            result shouldContainExactly listOf("password must be unique")
+            coVerify(exactly = 1) { team.isPasswordUnique(id = body.uuid, password = body.password) }
         }
 
         @Test
@@ -209,16 +209,16 @@ class TeamValidationServiceTest {
         }
 
         @Test
-        fun `should return a list with one error when jmsQueue exists already`() = runBlocking {
-            coEvery { team.checkJmsQueue(id = any(), jmsQueue = any()) } returns true
+        fun `should return a list with one error when jmsQueue is not unique`() = runBlocking {
+            coEvery { team.isJmsQueueUnique(id = any(), jmsQueue = any()) } returns false
             val body = getFirstTeam().toTeamDTO()
 
             val result: List<String> = classUnderTest.validateBody(
                 body = body,
             )
 
-            result shouldContainExactly listOf("jmsQueue must not exists already")
-            coVerify(exactly = 1) { team.checkJmsQueue(id = body.uuid, jmsQueue = body.jmsQueue) }
+            result shouldContainExactly listOf("jmsQueue must be unique")
+            coVerify(exactly = 1) { team.isJmsQueueUnique(id = body.uuid, jmsQueue = body.jmsQueue) }
         }
 
         @Test
@@ -236,7 +236,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when bankName in statistic does not exist`() = runBlocking {
-            coEvery { bank.checkName(name = any()) } returnsMany listOf(true, true, true, false)
+            coEvery { bank.hasName(name = any()) } returnsMany listOf(true, true, true, false)
             val body = getFirstTeam().toTeamDTO().copy(
                 statistics = getFirstTeam().statistics + Pair(
                     first = "unknownBankName",
@@ -250,10 +250,10 @@ class TeamValidationServiceTest {
 
             result shouldContainExactly listOf("statistics.unknownBankName.key must exists")
             coVerifyAll {
-                bank.checkName(name = SCHUFA_BANK_NAME)
-                bank.checkName(name = SYNC_BANK_NAME)
-                bank.checkName(name = ASYNC_BANK_NAME)
-                bank.checkName(name = "unknownBankName")
+                bank.hasName(name = SCHUFA_BANK_NAME)
+                bank.hasName(name = SYNC_BANK_NAME)
+                bank.hasName(name = ASYNC_BANK_NAME)
+                bank.hasName(name = "unknownBankName")
             }
         }
 

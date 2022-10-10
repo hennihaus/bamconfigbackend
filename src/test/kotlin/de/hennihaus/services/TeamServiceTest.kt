@@ -146,37 +146,37 @@ class TeamServiceTest {
     }
 
     @Nested
-    inner class CheckUsername {
+    inner class IsUsernameUnique {
         @Test
-        fun `should return true when username is already in db and ids are different`() = runBlocking {
+        fun `should return false when username is already in db and ids are different`() = runBlocking {
             val (id, username) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByUsername(username = username) } returns getSecondTeam().uuid
 
-            val result: Boolean = classUnderTest.checkUsername(id = "$id", username = username)
+            val result: Boolean = classUnderTest.isUsernameUnique(id = "$id", username = username)
+
+            result.shouldBeFalse()
+            coVerify(exactly = 1) { teamRepository.getTeamIdByUsername(username = username) }
+        }
+
+        @Test
+        fun `should return true when username is in database and ids are equal`() = runBlocking {
+            val (id, username) = getFirstTeam()
+            coEvery { teamRepository.getTeamIdByUsername(username = any()) } returns getFirstTeam().uuid
+
+            val result: Boolean = classUnderTest.isUsernameUnique(id = "$id", username = username)
 
             result.shouldBeTrue()
             coVerify(exactly = 1) { teamRepository.getTeamIdByUsername(username = username) }
         }
 
         @Test
-        fun `should return false when username is in database and ids are equal`() = runBlocking {
-            val (id, username) = getFirstTeam()
-            coEvery { teamRepository.getTeamIdByUsername(username = any()) } returns getFirstTeam().uuid
-
-            val result: Boolean = classUnderTest.checkUsername(id = "$id", username = username)
-
-            result.shouldBeFalse()
-            coVerify(exactly = 1) { teamRepository.getTeamIdByUsername(username = username) }
-        }
-
-        @Test
-        fun `should return false when username is not in database`() = runBlocking {
+        fun `should return true when username is not in database`() = runBlocking {
             val (id, username) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByUsername(username = any()) } returns null
 
-            val result: Boolean = classUnderTest.checkUsername(id = "$id", username = username)
+            val result: Boolean = classUnderTest.isUsernameUnique(id = "$id", username = username)
 
-            result.shouldBeFalse()
+            result.shouldBeTrue()
             coVerify(exactly = 1) { teamRepository.getTeamIdByUsername(username = username) }
         }
 
@@ -186,7 +186,7 @@ class TeamServiceTest {
             coEvery { teamRepository.getTeamIdByUsername(username = any()) } throws Exception()
 
             val result = shouldThrow<Exception> {
-                classUnderTest.checkUsername(id = "$id", username = username)
+                classUnderTest.isUsernameUnique(id = "$id", username = username)
             }
 
             result should beInstanceOf<Exception>()
@@ -195,37 +195,37 @@ class TeamServiceTest {
     }
 
     @Nested
-    inner class CheckPassword {
+    inner class IsPasswordUnique {
         @Test
-        fun `should return true when password is already in db and ids are different`() = runBlocking {
+        fun `should return false when password is already in db and ids are different`() = runBlocking {
             val (id, _, password) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByPassword(password = password) } returns getSecondTeam().uuid
 
-            val result: Boolean = classUnderTest.checkPassword(id = "$id", password = password)
+            val result: Boolean = classUnderTest.isPasswordUnique(id = "$id", password = password)
+
+            result.shouldBeFalse()
+            coVerify(exactly = 1) { teamRepository.getTeamIdByPassword(password = password) }
+        }
+
+        @Test
+        fun `should return true when password is in database and ids are equal`() = runBlocking {
+            val (id, _, password) = getFirstTeam()
+            coEvery { teamRepository.getTeamIdByPassword(password = any()) } returns getFirstTeam().uuid
+
+            val result: Boolean = classUnderTest.isPasswordUnique(id = "$id", password = password)
 
             result.shouldBeTrue()
             coVerify(exactly = 1) { teamRepository.getTeamIdByPassword(password = password) }
         }
 
         @Test
-        fun `should return false when password is in database and ids are equal`() = runBlocking {
-            val (id, _, password) = getFirstTeam()
-            coEvery { teamRepository.getTeamIdByPassword(password = any()) } returns getFirstTeam().uuid
-
-            val result: Boolean = classUnderTest.checkPassword(id = "$id", password = password)
-
-            result.shouldBeFalse()
-            coVerify(exactly = 1) { teamRepository.getTeamIdByPassword(password = password) }
-        }
-
-        @Test
-        fun `should return false when password is not in database`() = runBlocking {
+        fun `should return true when password is not in database`() = runBlocking {
             val (id, _, password) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByPassword(password = any()) } returns null
 
-            val result: Boolean = classUnderTest.checkPassword(id = "$id", password = password)
+            val result: Boolean = classUnderTest.isPasswordUnique(id = "$id", password = password)
 
-            result.shouldBeFalse()
+            result.shouldBeTrue()
             coVerify(exactly = 1) { teamRepository.getTeamIdByPassword(password = password) }
         }
 
@@ -235,7 +235,7 @@ class TeamServiceTest {
             coEvery { teamRepository.getTeamIdByPassword(password = any()) } throws Exception()
 
             val result = shouldThrow<Exception> {
-                classUnderTest.checkPassword(id = "$id", password = password)
+                classUnderTest.isPasswordUnique(id = "$id", password = password)
             }
 
             result should beInstanceOf<Exception>()
@@ -244,37 +244,37 @@ class TeamServiceTest {
     }
 
     @Nested
-    inner class CheckJmsQueue {
+    inner class IsJmsQueueUnique {
         @Test
-        fun `should return true when jmsQueue is already in db and ids are different`() = runBlocking {
+        fun `should return false when jmsQueue is already in db and ids are different`() = runBlocking {
             val (id, _, _, jmsQueue) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByJmsQueue(jmsQueue = jmsQueue) } returns getSecondTeam().uuid
 
-            val result: Boolean = classUnderTest.checkJmsQueue(id = "$id", jmsQueue = jmsQueue)
+            val result: Boolean = classUnderTest.isJmsQueueUnique(id = "$id", jmsQueue = jmsQueue)
+
+            result.shouldBeFalse()
+            coVerify(exactly = 1) { teamRepository.getTeamIdByJmsQueue(jmsQueue = jmsQueue) }
+        }
+
+        @Test
+        fun `should return true when jmsQueue is in database and ids are equal`() = runBlocking {
+            val (id, _, _, jmsQueue) = getFirstTeam()
+            coEvery { teamRepository.getTeamIdByJmsQueue(jmsQueue = any()) } returns getFirstTeam().uuid
+
+            val result: Boolean = classUnderTest.isJmsQueueUnique(id = "$id", jmsQueue = jmsQueue)
 
             result.shouldBeTrue()
             coVerify(exactly = 1) { teamRepository.getTeamIdByJmsQueue(jmsQueue = jmsQueue) }
         }
 
         @Test
-        fun `should return false when jmsQueue is in database and ids are equal`() = runBlocking {
-            val (id, _, _, jmsQueue) = getFirstTeam()
-            coEvery { teamRepository.getTeamIdByJmsQueue(jmsQueue = any()) } returns getFirstTeam().uuid
-
-            val result: Boolean = classUnderTest.checkJmsQueue(id = "$id", jmsQueue = jmsQueue)
-
-            result.shouldBeFalse()
-            coVerify(exactly = 1) { teamRepository.getTeamIdByJmsQueue(jmsQueue = jmsQueue) }
-        }
-
-        @Test
-        fun `should return false when jmsQueue is not in database`() = runBlocking {
+        fun `should return true when jmsQueue is not in database`() = runBlocking {
             val (id, _, _, jmsQueue) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByJmsQueue(jmsQueue = any()) } returns null
 
-            val result: Boolean = classUnderTest.checkJmsQueue(id = "$id", jmsQueue = jmsQueue)
+            val result: Boolean = classUnderTest.isJmsQueueUnique(id = "$id", jmsQueue = jmsQueue)
 
-            result.shouldBeFalse()
+            result.shouldBeTrue()
             coVerify(exactly = 1) { teamRepository.getTeamIdByJmsQueue(jmsQueue = jmsQueue) }
         }
 
@@ -284,7 +284,7 @@ class TeamServiceTest {
             coEvery { teamRepository.getTeamIdByJmsQueue(jmsQueue = any()) } throws Exception()
 
             val result = shouldThrow<Exception> {
-                classUnderTest.checkJmsQueue(id = "$id", jmsQueue = jmsQueue)
+                classUnderTest.isJmsQueueUnique(id = "$id", jmsQueue = jmsQueue)
             }
 
             result should beInstanceOf<Exception>()

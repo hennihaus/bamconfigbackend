@@ -7,7 +7,7 @@ object TaskPaths {
     const val TASKS_PATH = "/tasks"
     const val ID_PATH = "/{id}"
 
-    const val TITLE_EXISTS_PATH = "/check/title/{title}"
+    const val TITLE_UNIQUE_PATH = "/unique/title/{title}"
 }
 
 @Serializable
@@ -19,7 +19,7 @@ class Tasks {
     data class Id(val parent: Tasks = Tasks(), val id: String) {
 
         @Serializable
-        @Resource(TaskPaths.TITLE_EXISTS_PATH)
-        data class CheckTitle(val parent: Id, val title: String)
+        @Resource(TaskPaths.TITLE_UNIQUE_PATH)
+        data class UniqueTitle(val parent: Id, val title: String)
     }
 }

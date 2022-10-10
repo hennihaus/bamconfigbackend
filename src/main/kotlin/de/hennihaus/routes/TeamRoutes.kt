@@ -1,7 +1,7 @@
 package de.hennihaus.routes
 
-import de.hennihaus.models.generated.rest.ExistsDTO
 import de.hennihaus.models.generated.rest.TeamDTO
+import de.hennihaus.models.generated.rest.UniqueDTO
 import de.hennihaus.routes.mappers.toTeam
 import de.hennihaus.routes.mappers.toTeamDTO
 import de.hennihaus.routes.resources.Teams
@@ -19,9 +19,9 @@ import org.koin.java.KoinJavaComponent.getKoin
 fun Route.registerTeamRoutes() {
     getAllTeams()
     getTeamById()
-    checkUsername()
-    checkPassword()
-    checkJmsQueue()
+    isUsernameUnique()
+    isPasswordUnique()
+    isJmsQueueUnique()
     saveTeam()
     deleteTeamById()
     resetStatistics()
@@ -43,11 +43,11 @@ private fun Route.getTeamById() = get<Teams.Id> { request ->
     )
 }
 
-private fun Route.checkUsername() = get<Teams.Id.CheckUsername> { request ->
+private fun Route.isUsernameUnique() = get<Teams.Id.UniqueUsername> { request ->
     val teamService = getKoin().get<TeamService>()
     call.respond(
-        message = ExistsDTO(
-            exists = teamService.checkUsername(
+        message = UniqueDTO(
+            isUnique = teamService.isUsernameUnique(
                 id = request.parent.id,
                 username = request.username,
             ),
@@ -55,11 +55,11 @@ private fun Route.checkUsername() = get<Teams.Id.CheckUsername> { request ->
     )
 }
 
-private fun Route.checkPassword() = get<Teams.Id.CheckPassword> { request ->
+private fun Route.isPasswordUnique() = get<Teams.Id.UniquePassword> { request ->
     val teamService = getKoin().get<TeamService>()
     call.respond(
-        message = ExistsDTO(
-            exists = teamService.checkPassword(
+        message = UniqueDTO(
+            isUnique = teamService.isPasswordUnique(
                 id = request.parent.id,
                 password = request.password,
             ),
@@ -67,11 +67,11 @@ private fun Route.checkPassword() = get<Teams.Id.CheckPassword> { request ->
     )
 }
 
-private fun Route.checkJmsQueue() = get<Teams.Id.CheckJmsQueue> { request ->
+private fun Route.isJmsQueueUnique() = get<Teams.Id.UniqueJmsQueue> { request ->
     val teamService = getKoin().get<TeamService>()
     call.respond(
-        message = ExistsDTO(
-            exists = teamService.checkJmsQueue(
+        message = UniqueDTO(
+            isUnique = teamService.isJmsQueueUnique(
                 id = request.parent.id,
                 jmsQueue = request.jmsQueue,
             ),
