@@ -8,14 +8,14 @@
   "components": {
     "responses": {
       "200": {
-        "description": "Exists",
+        "description": "OK",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Exists"
+              "$ref": "#/components/schemas/Unique"
             },
             "example": {
-              "exists": true
+              "isUnique": true
             }
           }
         }
@@ -104,13 +104,13 @@
       }
     },
     "schemas": {
-      "Exists": {
+      "Unique": {
         "type": "object",
         "required": [
-          "exists"
+          "isUnique"
         ],
         "properties": {
-          "exists": {
+          "isUnique": {
             "type": "boolean"
           }
         }

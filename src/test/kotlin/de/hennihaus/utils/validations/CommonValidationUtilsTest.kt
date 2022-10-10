@@ -12,7 +12,7 @@ class CommonValidationUtilsTest {
 
     data class NotConstTestResource(val value: Any)
 
-    data class NotExistTestResource(val value: String)
+    data class UniqueTestResource(val value: String)
 
     @Nested
     inner class NotConst {
@@ -91,21 +91,22 @@ class CommonValidationUtilsTest {
     }
 
     @Nested
-    inner class NotExist {
+    inner class Unique {
 
-        private val classUnderTest = object : ValidationService<NotExistTestResource> {
-            override suspend fun bodyValidation(body: NotExistTestResource): Validation<NotExistTestResource> {
-                return Validation {
-                    NotExistTestResource::value {
-                        notExist(exist = false)
+        private lateinit var classUnderTest: ValidationService<UniqueTestResource>
+
+        @Test
+        fun `should return an empty list when isUnique = true`() = runBlocking<Unit> {
+            classUnderTest = object : ValidationService<UniqueTestResource> {
+                override suspend fun bodyValidation(body: UniqueTestResource): Validation<UniqueTestResource> {
+                    return Validation {
+                        UniqueTestResource::value {
+                            unique(isUnique = true)
+                        }
                     }
                 }
             }
-        }
-
-        @Test
-        fun `should return an empty list when exist = false`() = runBlocking<Unit> {
-            val body = NotExistTestResource(
+            val body = UniqueTestResource(
                 value = "irrelevant",
             )
 
@@ -114,6 +115,28 @@ class CommonValidationUtilsTest {
             )
 
             result.shouldBeEmpty()
+        }
+
+        @Test
+        fun `should return a list with one error when isUnique = false`() = runBlocking {
+            classUnderTest = object : ValidationService<UniqueTestResource> {
+                override suspend fun bodyValidation(body: UniqueTestResource): Validation<UniqueTestResource> {
+                    return Validation {
+                        UniqueTestResource::value {
+                            unique(isUnique = false)
+                        }
+                    }
+                }
+            }
+            val body = UniqueTestResource(
+                value = "irrelevant",
+            )
+
+            val result: List<String> = classUnderTest.validateBody(
+                body = body,
+            )
+
+            result shouldContainExactly listOf("value must be unique")
         }
     }
 }

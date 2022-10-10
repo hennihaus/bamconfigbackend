@@ -2,7 +2,7 @@ package de.hennihaus.routes
 
 import de.hennihaus.models.Task
 import de.hennihaus.models.generated.rest.ErrorsDTO
-import de.hennihaus.models.generated.rest.ExistsDTO
+import de.hennihaus.models.generated.rest.UniqueDTO
 import de.hennihaus.objectmothers.ErrorsObjectMother.getConflictErrors
 import de.hennihaus.objectmothers.ErrorsObjectMother.getInternalServerErrors
 import de.hennihaus.objectmothers.ErrorsObjectMother.getInvalidBankErrors
@@ -161,26 +161,26 @@ class TaskRoutesTest {
     }
 
     @Nested
-    inner class CheckTitle {
+    inner class IsTitleUnique {
         @Test
-        fun `should return 200 and true when title exists`() = testApplicationWith(mockModule) {
+        fun `should return 200 and true when title is unique`() = testApplicationWith(mockModule) {
             val (uuid, title) = getSchufaTask()
-            coEvery { taskService.checkTitle(id = any(), title = any()) } returns true
+            coEvery { taskService.isTitleUnique(id = any(), title = any()) } returns true
 
-            val response = testClient.get(urlString = "/v1/tasks/$uuid/check/title/$title")
+            val response = testClient.get(urlString = "/v1/tasks/$uuid/unique/title/$title")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.body<ExistsDTO>() shouldBe ExistsDTO(exists = true)
-            coVerify(exactly = 1) { taskService.checkTitle(id = "$uuid", title = title) }
+            response.body<UniqueDTO>() shouldBe UniqueDTO(isUnique = true)
+            coVerify(exactly = 1) { taskService.isTitleUnique(id = "$uuid", title = title) }
         }
 
         @Test
         fun `should return 400 and an error response when uuid is invalid`() = testApplicationWith(mockModule) {
             val uuid = "invalidUUID"
             val title = getSchufaTask().title
-            coEvery { taskService.checkTitle(id = any(), title = any()) } throws UUIDException()
+            coEvery { taskService.isTitleUnique(id = any(), title = any()) } throws UUIDException()
 
-            val response = testClient.get(urlString = "/v1/tasks/$uuid/check/title/$title")
+            val response = testClient.get(urlString = "/v1/tasks/$uuid/unique/title/$title")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
             response.body<ErrorsDTO>() should {
@@ -193,7 +193,7 @@ class TaskRoutesTest {
                     property = LocalDateTime::second,
                 )
             }
-            coVerify(exactly = 1) { taskService.checkTitle(id = uuid, title = title) }
+            coVerify(exactly = 1) { taskService.isTitleUnique(id = uuid, title = title) }
         }
     }
 

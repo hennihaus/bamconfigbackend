@@ -151,13 +151,13 @@ class BankServiceTest {
     }
 
     @Nested
-    inner class CheckName {
+    inner class HasName {
         @Test
         fun `should return true when name is already in database`() = runBlocking {
             val (_, name) = getSchufaBank()
             coEvery { repository.getBankIdByName(name = any()) } returns getSchufaBank().uuid
 
-            val result: Boolean = classUnderTest.checkName(name = name)
+            val result: Boolean = classUnderTest.hasName(name = name)
 
             result.shouldBeTrue()
             coVerify(exactly = 1) { repository.getBankIdByName(name = name) }
@@ -168,7 +168,7 @@ class BankServiceTest {
             val (_, name) = getSchufaBank()
             coEvery { repository.getBankIdByName(name = any()) } returns null
 
-            val result: Boolean = classUnderTest.checkName(name = name)
+            val result: Boolean = classUnderTest.hasName(name = name)
 
             result.shouldBeFalse()
             coVerify(exactly = 1) { repository.getBankIdByName(name = name) }
@@ -180,7 +180,7 @@ class BankServiceTest {
             coEvery { repository.getBankIdByName(name = any()) } throws Exception()
 
             val result = shouldThrow<Exception> {
-                classUnderTest.checkName(name = name)
+                classUnderTest.hasName(name = name)
             }
 
             result should beInstanceOf<Exception>()

@@ -30,22 +30,22 @@ class TeamService(
             ?: throw NotFoundException(message = TEAM_NOT_FOUND_MESSAGE)
     }
 
-    suspend fun checkUsername(id: String, username: String): Boolean = id.toUUID { uuid ->
+    suspend fun isUsernameUnique(id: String, username: String): Boolean = id.toUUID { uuid ->
         teamRepository.getTeamIdByUsername(username = username)
-            ?.let { it != uuid }
-            ?: false
+            ?.let { it == uuid }
+            ?: true
     }
 
-    suspend fun checkPassword(id: String, password: String): Boolean = id.toUUID { uuid ->
+    suspend fun isPasswordUnique(id: String, password: String): Boolean = id.toUUID { uuid ->
         teamRepository.getTeamIdByPassword(password = password)
-            ?.let { it != uuid }
-            ?: false
+            ?.let { it == uuid }
+            ?: true
     }
 
-    suspend fun checkJmsQueue(id: String, jmsQueue: String): Boolean = id.toUUID { uuid ->
+    suspend fun isJmsQueueUnique(id: String, jmsQueue: String): Boolean = id.toUUID { uuid ->
         teamRepository.getTeamIdByJmsQueue(jmsQueue = jmsQueue)
-            ?.let { it != uuid }
-            ?: false
+            ?.let { it == uuid }
+            ?: true
     }
 
     suspend fun saveTeam(team: Team): Team = teamRepository.save(

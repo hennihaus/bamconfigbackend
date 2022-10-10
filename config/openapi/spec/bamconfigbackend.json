@@ -28,14 +28,14 @@
     "/teams/{uuid}/statistics": {
       "$ref": "./paths/team.json#/paths/~1teams~1{uuid}~1statistics"
     },
-    "/teams/{uuid}/check/username/{username}": {
-      "$ref": "./paths/team.json#/paths/~1teams~1{uuid}~1check~1username~1{username}"
+    "/teams/{uuid}/unique/username/{username}": {
+      "$ref": "./paths/team.json#/paths/~1teams~1{uuid}~1unique~1username~1{username}"
     },
-    "/teams/{uuid}/check/password/{password}": {
-      "$ref": "./paths/team.json#/paths/~1teams~1{uuid}~1check~1password~1{password}"
+    "/teams/{uuid}/unique/password/{password}": {
+      "$ref": "./paths/team.json#/paths/~1teams~1{uuid}~1unique~1password~1{password}"
     },
-    "/teams/{uuid}/check/jmsQueue/{jmsQueue}": {
-      "$ref": "./paths/team.json#/paths/~1teams~1{uuid}~1check~1jmsQueue~1{jmsQueue}"
+    "/teams/{uuid}/unique/jmsQueue/{jmsQueue}": {
+      "$ref": "./paths/team.json#/paths/~1teams~1{uuid}~1unique~1jmsQueue~1{jmsQueue}"
     },
     "/statistics/increment": {
       "$ref": "./paths/statistic.json#/paths/~1statistics~1increment"
@@ -52,8 +52,8 @@
     "/tasks/{uuid}": {
       "$ref": "./paths/task.json#/paths/~1tasks~1{uuid}"
     },
-    "/tasks/{uuid}/check/title/{title}": {
-      "$ref": "./paths/task.json#/paths/~1tasks~1{uuid}~1check~1title~1{title}"
+    "/tasks/{uuid}/unique/title/{title}": {
+      "$ref": "./paths/task.json#/paths/~1tasks~1{uuid}~1unique~1title~1{title}"
     },
     "/activemq": {
       "$ref": "./paths/broker.json#/paths/~1activemq"

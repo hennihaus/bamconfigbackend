@@ -11,10 +11,10 @@ fun <T : Any> ValidationBuilder<T>.notConst(notExpected: T): Constraint<T> = add
     else it != notExpected
 }
 
-fun <T> ValidationBuilder<T>.notExist(exist: Boolean, errorMessage: String = "must not exists already"): Constraint<T> {
+fun <T> ValidationBuilder<T>.unique(isUnique: Boolean, errorMessage: String = "must be unique"): Constraint<T> {
     return addConstraint(
         errorMessage = errorMessage,
     ) {
-        exist.not()
+        isUnique
     }
 }

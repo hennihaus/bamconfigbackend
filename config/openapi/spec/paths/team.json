@@ -152,13 +152,13 @@
         }
       }
     },
-    "/teams/{uuid}/check/username/{username}": {
+    "/teams/{uuid}/unique/username/{username}": {
       "get": {
         "tags": [
           "Team"
         ],
-        "operationId": "checkUsername",
-        "summary": "Checks existence of a team based on username",
+        "operationId": "isUsernameUnique",
+        "summary": "Checks uniqueness of a username based on team id",
         "parameters": [
           {
             "$ref": "#/components/parameters/uuid"
@@ -180,13 +180,13 @@
         }
       }
     },
-    "/teams/{uuid}/check/password/{password}": {
+    "/teams/{uuid}/unique/password/{password}": {
       "get": {
         "tags": [
           "Team"
         ],
-        "operationId": "checkPassword",
-        "summary": "Checks existence of a team based on password",
+        "operationId": "isPasswordUnique",
+        "summary": "Checks uniqueness of a password based on team id",
         "parameters": [
           {
             "$ref": "#/components/parameters/uuid"
@@ -208,13 +208,13 @@
         }
       }
     },
-    "/teams/{uuid}/check/jmsQueue/{jmsQueue}": {
+    "/teams/{uuid}/unique/jmsQueue/{jmsQueue}": {
       "get": {
         "tags": [
           "Team"
         ],
-        "operationId": "checkJmsQueue",
-        "summary": "Checks existence of a team based on jmsQueue",
+        "operationId": "isJmsQueueUnique",
+        "summary": "Checks uniqueness of a jmsQueue based on team id",
         "parameters": [
           {
             "$ref": "#/components/parameters/uuid"

@@ -101,13 +101,13 @@
         }
       }
     },
-    "/tasks/{uuid}/check/title/{title}": {
+    "/tasks/{uuid}/unique/title/{title}": {
       "get": {
         "tags": [
           "Task"
         ],
-        "operationId": "checkTitle",
-        "summary": "Checks existence of a task based on title",
+        "operationId": "isTitleUnique",
+        "summary": "Checks uniqueness of a title based on task id",
         "parameters": [
           {
             "$ref": "#/components/parameters/uuid"
