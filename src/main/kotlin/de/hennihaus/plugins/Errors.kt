@@ -1,6 +1,5 @@
 package de.hennihaus.plugins
 
-import de.hennihaus.configurations.Configuration.TIMEZONE
 import de.hennihaus.models.generated.rest.ErrorsDTO
 import de.hennihaus.models.generated.rest.ReasonDTO
 import de.hennihaus.plugins.ErrorMessage.ANONYMOUS_OBJECT
@@ -8,7 +7,6 @@ import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.EXPOSED_TRANSACTION_EXCEPTION
 import de.hennihaus.plugins.ErrorMessage.MISSING_PROPERTY_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.UUID_EXCEPTION_MESSAGE
-import de.hennihaus.utils.withoutNanos
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -17,23 +15,12 @@ import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import java.time.ZonedDateTime
 
 fun Application.configureErrorHandling() {
-    val zoneId = environment.config.property(path = TIMEZONE).getString()
-
     install(plugin = StatusPages) {
         exception<Throwable> { call, throwable ->
-            val dateTime = Clock.System.now()
-                .toLocalDateTime(
-                    timeZone = TimeZone.of(
-                        zoneId = zoneId,
-                    ),
-                )
-                .withoutNanos()
+            val dateTime = ZonedDateTime.now()
 
             when (throwable) {
                 is UUIDException -> call.respond(
@@ -66,7 +53,7 @@ fun Application.configureErrorHandling() {
     }
 }
 
-private fun Throwable.toErrorsDTO(dateTime: LocalDateTime) = ErrorsDTO(
+private fun Throwable.toErrorsDTO(dateTime: ZonedDateTime) = ErrorsDTO(
     reasons = listOf(
         ReasonDTO(
             exception = this::class.simpleName ?: ANONYMOUS_OBJECT,
@@ -76,7 +63,7 @@ private fun Throwable.toErrorsDTO(dateTime: LocalDateTime) = ErrorsDTO(
     dateTime = "$dateTime",
 )
 
-private fun RequestValidationException.toErrorsDTO(dateTime: LocalDateTime) = ErrorsDTO(
+private fun RequestValidationException.toErrorsDTO(dateTime: ZonedDateTime) = ErrorsDTO(
     reasons = this.reasons.map {
         ReasonDTO(
             exception = this::class.simpleName ?: ANONYMOUS_OBJECT,

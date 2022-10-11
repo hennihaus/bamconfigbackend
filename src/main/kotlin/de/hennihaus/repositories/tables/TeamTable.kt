@@ -21,7 +21,7 @@ import org.jetbrains.exposed.crypt.Algorithms
 import org.jetbrains.exposed.crypt.encryptedVarchar
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
+import org.jetbrains.exposed.sql.javatime.timestamp
 import org.koin.java.KoinJavaComponent.getKoin
 
 object TeamTable : UUIDTable(columnName = TEAM_UUID_COLUMN) {

@@ -77,14 +77,13 @@ dependencies {
     val junitVersion: String by project
     val koinVersion: String by project
     val koinAnnotationsVersion: String by project
-    val kotlinDateTimeVersion: String by project
     val julToSlf4jVersion: String by project
     val konformVersion: String by project
     val apacheCommonsValidatorVersion: String by project
     val bamdatamodelVersion: String by project
 
     // ktor common plugins
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     // ktor server plugins
@@ -120,7 +119,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
 
     // model plugins
@@ -129,7 +128,6 @@ dependencies {
 
     // utility plugins
     implementation("org.passay:passay:$passayVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime-jvm:$kotlinDateTimeVersion")
     implementation("org.slf4j:jul-to-slf4j:$julToSlf4jVersion")
     implementation("io.konform:konform-jvm:$konformVersion")
     implementation("commons-validator:commons-validator:$apacheCommonsValidatorVersion")

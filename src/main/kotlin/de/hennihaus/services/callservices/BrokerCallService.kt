@@ -1,5 +1,6 @@
 package de.hennihaus.services.callservices
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import de.hennihaus.configurations.BrokerConfiguration
 import de.hennihaus.models.generated.broker.DeleteJobsResponse
 import de.hennihaus.models.generated.broker.DeleteQueueResponse
@@ -20,14 +21,12 @@ import io.ktor.client.plugins.resources.Resources
 import io.ktor.client.plugins.resources.get
 import io.ktor.client.request.headers
 import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
 import io.ktor.http.isSuccess
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.serialization.jackson.jackson
 import io.ktor.util.appendIfNameAbsent
-import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Single
 
 @Single
@@ -98,12 +97,9 @@ class BrokerCallService(private val engine: HttpClientEngine, private val config
 
     private fun HttpClientConfig<*>.configureSerialization() {
         install(plugin = ContentNegotiation) {
-            json(
-                contentType = ContentType.Any,
-                json = Json {
-                    ignoreUnknownKeys = true
-                }
-            )
+            jackson {
+                disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            }
         }
         install(plugin = Resources)
     }

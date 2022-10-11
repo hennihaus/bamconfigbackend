@@ -1,5 +1,6 @@
 package de.hennihaus.utils.validations
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.hennihaus.utils.validations.RequestValidationUtils.DEFAULT_UNKNOWN_HTTP_STATUS_CODE
 import de.hennihaus.utils.validations.RequestValidationUtils.HTTP_PROTOCOL
 import de.hennihaus.utils.validations.RequestValidationUtils.TCP_PROTOCOL
@@ -8,11 +9,6 @@ import io.konform.validation.ValidationBuilder
 import io.konform.validation.jsonschema.enum
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
 import org.apache.commons.validator.routines.EmailValidator
 import org.apache.commons.validator.routines.UrlValidator
 import java.util.UUID
@@ -57,8 +53,5 @@ fun ValidationBuilder<String>.contentType(): Constraint<String> = addConstraint(
 fun ValidationBuilder<String>.json(): Constraint<String> = addConstraint(
     errorMessage = "must have valid json format",
 ) {
-    when (Json.parseToJsonElement(string = it)) {
-        is JsonObject, is JsonArray -> true
-        is JsonNull, is JsonPrimitive -> false
-    }
+    runCatching { jacksonObjectMapper().readTree(it) }.map { true }.getOrElse { false }
 }

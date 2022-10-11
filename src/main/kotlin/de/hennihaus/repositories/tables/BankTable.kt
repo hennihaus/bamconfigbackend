@@ -15,7 +15,7 @@ import de.hennihaus.repositories.tables.CreditConfigurationTableDescription.CRED
 import de.hennihaus.repositories.tables.CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MIN_TERM_IN_MONTHS_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_UUID_COLUMN
 import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
+import org.jetbrains.exposed.sql.javatime.timestamp
 
 object BankTable : UUIDTable(columnName = BANK_UUID_COLUMN) {
     val taskId = reference(name = TASK_UUID_COLUMN, foreign = TaskTable)

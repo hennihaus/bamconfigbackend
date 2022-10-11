@@ -1,5 +1,10 @@
 package de.hennihaus.services
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import de.hennihaus.configurations.GithubCommitConfiguration
 import de.hennihaus.configurations.GithubFileConfiguration
 import de.hennihaus.configurations.GithubFileConfiguration.Companion.BANK_FILE_CONFIG
@@ -12,10 +17,6 @@ import de.hennihaus.models.generated.openapi.BankApi
 import de.hennihaus.models.generated.openapi.SchufaApi
 import de.hennihaus.services.callservices.GithubCallService
 import de.hennihaus.services.mapperservices.GithubMapperService
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 import java.util.Base64
@@ -29,11 +30,10 @@ class GithubService(
     @Named(BANK_FILE_CONFIG) private val bankFileConfig: GithubFileConfiguration,
 ) {
 
-    @OptIn(ExperimentalSerializationApi::class)
-    private val format = Json {
-        explicitNulls = false
-        ignoreUnknownKeys = true
-        prettyPrint = true
+    private val mapper = jacksonObjectMapper().apply {
+        disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        enable(SerializationFeature.INDENT_OUTPUT)
+        setSerializationInclusion(JsonInclude.Include.NON_NULL)
     }
 
     suspend fun updateOpenApi(task: Task) = when (task.integrationStep) {
@@ -70,7 +70,6 @@ class GithubService(
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     private suspend inline fun <reified T> getGithubFileAsEntity(fileConfig: GithubFileConfiguration): Pair<String, T> {
         val file = githubCall.getFile(
             fileConfig = fileConfig,
@@ -79,8 +78,8 @@ class GithubService(
          * Source: https://github.com/hub4j/github-api/blob/main/src/main/java/org/kohsuke/github/GHContent.java
          */
         return Base64.getMimeDecoder().decode(file.content.toByteArray(charset = Charsets.US_ASCII)).inputStream().use {
-            file.sha to format.decodeFromStream(
-                stream = it,
+            file.sha to mapper.readValue(
+                src = it,
             )
         }
     }
@@ -90,7 +89,7 @@ class GithubService(
         sha: String,
         entity: T,
     ) {
-        val content = format.encodeToString(value = entity).toByteArray().let {
+        val content = mapper.writeValueAsString(entity).toByteArray().let {
             /**
              * Source: https://github.com/hub4j/github-api/blob/main/src/main/java/org/kohsuke/github/GHContent.java
              */
