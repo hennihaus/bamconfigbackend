@@ -82,7 +82,7 @@ dependencies {
     val bamdatamodelVersion: String by project
 
     // ktor common plugins
-    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-jackson-jvm:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     // ktor server plugins

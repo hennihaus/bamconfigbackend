@@ -19,7 +19,6 @@ object Configuration {
     const val ALLOWED_FRONTEND_HOST = "ktor.cors.frontend.allowedHost"
     const val ALLOWED_SWAGGER_PROTOCOL = "ktor.cors.swagger.allowedProtocol"
     const val ALLOWED_SWAGGER_HOST = "ktor.cors.swagger.allowedHost"
-    const val TIMEZONE = "ktor.application.timezone"
     const val PASSWORD_LENGTH = "common.passwordLength"
     const val API_VERSION = "ktor.application.apiVersion"
     const val JAVA_UTIL_LOGGING_CONFIGURATION_FILE = "logging.properties"
