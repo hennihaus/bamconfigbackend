@@ -1,5 +1,6 @@
 package de.hennihaus.services.callservices
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import de.hennihaus.configurations.BrokerConfiguration
 import de.hennihaus.models.generated.broker.DeleteQueueResponse
 import de.hennihaus.models.generated.broker.DeleteTopicResponse
@@ -18,20 +19,22 @@ import de.hennihaus.services.callservices.paths.BrokerPaths.REMOVE_TOPIC_PATH
 import de.hennihaus.services.callservices.paths.BrokerPaths.TOPICS_PATH
 import de.hennihaus.utils.configureMonitoring
 import de.hennihaus.utils.configureRetryBehavior
-import de.hennihaus.utils.configureSerialization
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
 import io.ktor.http.appendPathSegments
 import io.ktor.http.isSuccess
+import io.ktor.serialization.jackson.jackson
 import io.ktor.util.appendIfNameAbsent
 import org.koin.core.annotation.Single
 
@@ -134,6 +137,12 @@ class BrokerCallService(private val engine: HttpClientEngine, private val config
             HttpStatusCode.fromValue(value = it).isSuccess()
         }
         valid ?: throw BrokerException(message = error)
+    }
+
+    private fun HttpClientConfig<*>.configureSerialization() = install(plugin = ContentNegotiation) {
+        jackson(contentType = ContentType.Any) {
+            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        }
     }
 
     private fun HttpClientConfig<*>.configureDefaultRequests() = install(plugin = DefaultRequest) {
