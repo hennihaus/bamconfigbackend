@@ -1,5 +1,6 @@
 package de.hennihaus.utils.validations
 
+import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.hennihaus.utils.validations.RequestValidationUtils.DEFAULT_UNKNOWN_HTTP_STATUS_CODE
 import de.hennihaus.utils.validations.RequestValidationUtils.HTTP_PROTOCOL
@@ -53,5 +54,5 @@ fun ValidationBuilder<String>.contentType(): Constraint<String> = addConstraint(
 fun ValidationBuilder<String>.json(): Constraint<String> = addConstraint(
     errorMessage = "must have valid json format",
 ) {
-    runCatching { jacksonObjectMapper().readTree(it) }.map { true }.getOrElse { false }
+    runCatching { jacksonObjectMapper().readTree(it) }.map { it !is NullNode }.getOrElse { false }
 }

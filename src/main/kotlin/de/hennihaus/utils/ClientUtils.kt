@@ -8,7 +8,6 @@ import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.resources.Resources
 import io.ktor.serialization.jackson.jackson
 
 fun HttpClientConfig<*>.configureMonitoring() = install(plugin = Logging) {
@@ -21,11 +20,8 @@ fun HttpClientConfig<*>.configureRetryBehavior(maxRetries: Int) = install(plugin
     exponentialDelay()
 }
 
-fun HttpClientConfig<*>.configureSerialization() {
-    install(plugin = ContentNegotiation) {
-        jackson {
-            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        }
+fun HttpClientConfig<*>.configureSerialization() = install(plugin = ContentNegotiation) {
+    jackson {
+        disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     }
-    install(plugin = Resources)
 }

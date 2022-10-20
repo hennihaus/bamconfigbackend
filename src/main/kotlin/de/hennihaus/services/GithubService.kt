@@ -1,6 +1,9 @@
 package de.hennihaus.services
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.util.DefaultIndenter
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -33,6 +36,15 @@ class GithubService(
     private val mapper = jacksonObjectMapper().apply {
         disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         enable(SerializationFeature.INDENT_OUTPUT)
+        setDefaultPrettyPrinter(
+            object : DefaultPrettyPrinter() {
+                override fun createInstance(): DefaultPrettyPrinter = this
+
+                override fun writeObjectFieldValueSeparator(generator: JsonGenerator) = generator.writeRaw(": ")
+            }.apply {
+                indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE)
+            }
+        )
         setSerializationInclusion(JsonInclude.Include.NON_NULL)
     }
 

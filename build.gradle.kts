@@ -9,7 +9,6 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     application
     kotlin("jvm")
-    id("org.jetbrains.kotlin.plugin.serialization")
     id("org.jlleitschuh.gradle.ktlint")
     id("org.jetbrains.kotlinx.kover")
     id("com.google.devtools.ksp")
@@ -91,7 +90,6 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-cors-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-server-resources-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-request-validation-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
@@ -102,7 +100,6 @@ dependencies {
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-cio-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-resources-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
 
@@ -136,6 +133,7 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
+    testImplementation("io.kotest:kotest-extensions-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-ktor-jvm:$kotestLibrariesVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")

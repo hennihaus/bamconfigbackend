@@ -11,16 +11,18 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.BadRequestException
+import io.ktor.server.plugins.MissingRequestParameterException
 import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 fun Application.configureErrorHandling() {
     install(plugin = StatusPages) {
         exception<Throwable> { call, throwable ->
-            val dateTime = ZonedDateTime.now()
+            val dateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS)
 
             when (throwable) {
                 is UUIDException -> call.respond(
@@ -31,9 +33,13 @@ fun Application.configureErrorHandling() {
                     status = HttpStatusCode.BadRequest,
                     message = throwable.toErrorsDTO(dateTime = dateTime),
                 )
+                is MissingRequestParameterException -> call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = throwable.toErrorsDTO(dateTime = dateTime),
+                )
                 is BadRequestException -> call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = throwable.toErrorsDTO(dateTime),
+                    message = throwable.toErrorsDTO(dateTime = dateTime),
                 )
                 is NotFoundException -> call.respond(
                     status = HttpStatusCode.NotFound,

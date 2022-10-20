@@ -22,8 +22,6 @@ import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -39,7 +37,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.mockk
-import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -96,10 +93,7 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.bodyAsText() shouldBe """
-                [
-                ]
-            """.trimIndent()
+            response.bodyAsText() shouldBe "[ ]"
             coVerify(exactly = 1) { taskService.getAllTasks() }
         }
 
@@ -110,16 +104,7 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getInternalServerErrors()
             coVerify(exactly = 1) { taskService.getAllTasks() }
         }
     }
@@ -146,16 +131,7 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks/$uuid")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getTaskNotFoundErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getTaskNotFoundErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getTaskNotFoundErrors()
             coVerify(exactly = 1) { taskService.getTaskById(id = uuid) }
         }
     }
@@ -183,16 +159,7 @@ class TaskRoutesTest {
             val response = testClient.get(urlString = "/v1/tasks/$uuid/unique/title/$title")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getInvalidIdErrors()
             coVerify(exactly = 1) { taskService.isTitleUnique(id = uuid, title = title) }
         }
     }
@@ -231,16 +198,7 @@ class TaskRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidBankErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidBankErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getInvalidBankErrors()
             coVerify(exactly = 1) {
                 taskValidationService.validateBody(body = testTask)
             }
@@ -262,16 +220,7 @@ class TaskRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidIdErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getInvalidIdErrors()
             coVerifySequence {
                 taskValidationService.validateBody(body = testTask.toTaskDTO())
                 taskService.patchTask(id = uuid, task = testTask)
@@ -290,16 +239,7 @@ class TaskRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getConflictErrors()
             coVerifySequence {
                 taskValidationService.validateBody(body = testTask.toTaskDTO())
                 taskService.patchTask(id = "${testTask.uuid}", task = testTask)

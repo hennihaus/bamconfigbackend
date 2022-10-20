@@ -13,102 +13,97 @@ import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidTeamReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getStatisticNotFoundReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getTaskNotFoundReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getTeamNotFoundReason
-import de.hennihaus.utils.withoutNanos
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 object ErrorsObjectMother {
 
-    const val DEFAULT_ZONE_ID = "Europe/Berlin"
-
     fun getInvalidIdErrors(
         reasons: List<ReasonDTO> = getInvalidIdReasons(),
-        dateTime: Instant = Clock.System.now(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
-        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
     )
 
     fun getInvalidTeamErrors(
         reasons: List<ReasonDTO> = getInvalidTeamReasons(),
-        dateTime: Instant = Clock.System.now(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
-        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
     )
 
     fun getInvalidBankErrors(
         reasons: List<ReasonDTO> = getInvalidBankReasons(),
-        dateTime: Instant = Clock.System.now(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
-        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
     )
 
     fun getInvalidTaskErrors(
         reasons: List<ReasonDTO> = getInvalidTaskReasons(),
-        dateTime: Instant = Clock.System.now(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
-        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
     )
 
     fun getInvalidStatisticErrors(
         reasons: List<ReasonDTO> = getInvalidStatisticReasons(),
-        dateTime: Instant = Clock.System.now(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
-        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
     )
 
     fun getTeamNotFoundErrors(
         reasons: List<ReasonDTO> = getTeamNotFoundReasons(),
-        dateTime: Instant = Clock.System.now(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
-        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
     )
 
     fun getBankNotFoundErrors(
         reasons: List<ReasonDTO> = getBankNotFoundReasons(),
-        dateTime: Instant = Clock.System.now(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
-        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
     )
 
     fun getTaskNotFoundErrors(
         reasons: List<ReasonDTO> = getTaskNotFoundReasons(),
-        dateTime: Instant = Clock.System.now(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
-        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
     )
 
     fun getStatisticNotFoundErrors(
         reasons: List<ReasonDTO> = getStatisticNotFoundReasons(),
-        dateTime: Instant = Clock.System.now(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
-        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
     )
 
     fun getConflictErrors(
         reasons: List<ReasonDTO> = getConflictReasons(),
-        dateTime: Instant = Clock.System.now(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
-        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
     )
 
     fun getInternalServerErrors(
         reasons: List<ReasonDTO> = getInternalServerErrorReasons(),
-        dateTime: Instant = Clock.System.now(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
-        dateTime = "${dateTime.toLocalDateTime(timeZone = TimeZone.of(zoneId = DEFAULT_ZONE_ID)).withoutNanos()}",
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
     )
 
     private fun getInvalidIdReasons() = listOf(

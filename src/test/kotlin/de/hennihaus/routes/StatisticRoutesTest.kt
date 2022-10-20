@@ -13,8 +13,6 @@ import de.hennihaus.services.StatisticService.Companion.STATISTIC_NOT_FOUND_MESS
 import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
-import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.patch
@@ -28,7 +26,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.mockk
-import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -96,16 +93,7 @@ class StatisticRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidStatisticErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidStatisticErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getInvalidStatisticErrors()
             coVerify(exactly = 1) { statisticValidationService.validateBody(body = testStatistic) }
             coVerify(exactly = 0) { statisticService.incrementRequest(statistic = any()) }
         }
@@ -124,16 +112,7 @@ class StatisticRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getStatisticNotFoundErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getStatisticNotFoundErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getStatisticNotFoundErrors()
             coVerifySequence {
                 statisticValidationService.validateBody(
                     body = testStatistic.toStatisticDTO(),

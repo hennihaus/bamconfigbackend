@@ -12,8 +12,6 @@ import de.hennihaus.services.TeamService
 import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
-import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.ktor.client.call.body
@@ -26,7 +24,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.mockk
-import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -77,16 +74,7 @@ class BrokerRoutesTest {
             val response = testClient.delete(urlString = "/v1/activemq")
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getConflictErrors()
             coVerify(exactly = 1) { teamService.resetAllTeams() }
             coVerify { brokerService wasNot Called }
         }
