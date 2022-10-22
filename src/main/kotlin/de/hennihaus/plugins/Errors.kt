@@ -19,42 +19,40 @@ import io.ktor.server.response.respond
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-fun Application.configureErrorHandling() {
-    install(plugin = StatusPages) {
-        exception<Throwable> { call, throwable ->
-            val dateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+fun Application.configureErrorHandling() = install(plugin = StatusPages) {
+    exception<Throwable> { call, throwable ->
+        val dateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS)
 
-            when (throwable) {
-                is UUIDException -> call.respond(
-                    status = HttpStatusCode.BadRequest,
+        when (throwable) {
+            is UUIDException -> call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            is RequestValidationException -> call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            is MissingRequestParameterException -> call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            is BadRequestException -> call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            is NotFoundException -> call.respond(
+                status = HttpStatusCode.NotFound,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            is TransactionException -> call.respond(
+                status = HttpStatusCode.Conflict,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            else -> call.also { it.application.environment.log.error("Internal Server Error: ", throwable) }
+                .respond(
+                    status = HttpStatusCode.InternalServerError,
                     message = throwable.toErrorsDTO(dateTime = dateTime),
                 )
-                is RequestValidationException -> call.respond(
-                    status = HttpStatusCode.BadRequest,
-                    message = throwable.toErrorsDTO(dateTime = dateTime),
-                )
-                is MissingRequestParameterException -> call.respond(
-                    status = HttpStatusCode.BadRequest,
-                    message = throwable.toErrorsDTO(dateTime = dateTime),
-                )
-                is BadRequestException -> call.respond(
-                    status = HttpStatusCode.BadRequest,
-                    message = throwable.toErrorsDTO(dateTime = dateTime),
-                )
-                is NotFoundException -> call.respond(
-                    status = HttpStatusCode.NotFound,
-                    message = throwable.toErrorsDTO(dateTime = dateTime),
-                )
-                is TransactionException -> call.respond(
-                    status = HttpStatusCode.Conflict,
-                    message = throwable.toErrorsDTO(dateTime = dateTime),
-                )
-                else -> call.also { it.application.environment.log.error("Internal Server Error: ", throwable) }
-                    .respond(
-                        status = HttpStatusCode.InternalServerError,
-                        message = throwable.toErrorsDTO(dateTime = dateTime),
-                    )
-            }
         }
     }
 }
