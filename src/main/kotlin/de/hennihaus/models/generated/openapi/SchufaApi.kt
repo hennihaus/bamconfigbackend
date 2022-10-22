@@ -76,8 +76,10 @@ data class SchufaSchemas(
     val ratingLevel: SchufaRatingLevel,
     @JsonProperty("Rating")
     val rating: SchufaRating,
-    @JsonProperty("Error")
-    val error: SchufaError,
+    @JsonProperty("Errors")
+    val errors: SchufaErrors,
+    @JsonProperty("Reason")
+    val reason: SchufaReason,
 )
 
 data class SchufaParameter(
@@ -95,6 +97,9 @@ data class SchufaSchema(
     @JsonProperty("\$ref")
     val ref: String?,
     val format: String?,
+    val minLength: Int?,
+    val maxLength: Int?,
+    val minimum: Int?,
 )
 
 data class SchufaResponse(
@@ -110,8 +115,13 @@ data class SchufaMediaType(
 data class SchufaExample(
     val score: Int?,
     val failureRiskInPercent: Double?,
-    val message: String?,
+    val reasons: List<SchufaExampleReason>?,
     val dateTime: String?,
+)
+
+data class SchufaExampleReason(
+    val exception: String,
+    val message: String,
 )
 
 data class SchufaRatingLevel(
@@ -125,10 +135,16 @@ data class SchufaRating(
     val properties: SchufaRatingProperties,
 )
 
-data class SchufaError(
+data class SchufaErrors(
     val type: String,
     val required: List<String>,
     val properties: SchufaErrorProperties,
+)
+
+data class SchufaReason(
+    val type: String,
+    val required: List<String>,
+    val properties: SchufaReasonProperties,
 )
 
 data class SchufaRatingProperties(
@@ -151,17 +167,35 @@ data class SchufaFailureRiskInPercent(
 )
 
 data class SchufaErrorProperties(
-    val message: SchufaMessage,
+    val reasons: SchufaReasons,
     val dateTime: SchufaDateTime,
 )
 
-data class SchufaMessage(
+data class SchufaReasons(
     val type: String,
+    val items: SchufaRef,
+    val minItems: Int,
+    val uniqueItems: Boolean,
 )
 
 data class SchufaDateTime(
     val type: String,
     val format: String,
+)
+
+data class SchufaReasonProperties(
+    val exception: SchufaException,
+    val message: SchufaMessage,
+)
+
+data class SchufaException(
+    val type: String,
+    val minLength: Int,
+)
+
+data class SchufaMessage(
+    val type: String,
+    val minLength: Int,
 )
 
 data class SchufaRef(
