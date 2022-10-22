@@ -1,9 +1,7 @@
 package de.hennihaus.models.generated.openapi
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.fasterxml.jackson.annotation.JsonProperty
 
-@Serializable
 data class SchufaApi(
     val openapi: String,
     val info: SchufaInfo,
@@ -13,7 +11,6 @@ data class SchufaApi(
     val components: SchufaComponents,
 )
 
-@Serializable
 data class SchufaInfo(
     val title: String,
     val contact: SchufaContact,
@@ -22,48 +19,40 @@ data class SchufaInfo(
     val version: String,
 )
 
-@Serializable
 data class SchufaServer(
     val url: String,
     val description: String,
 )
 
-@Serializable
 data class SchufaPaths(
-    @SerialName("/rating")
+    @JsonProperty("/rating")
     val rating: SchufaPath,
 )
 
-@Serializable
 data class SchufaTag(
     val name: String,
 )
 
-@Serializable
 data class SchufaComponents(
     val parameters: LinkedHashMap<String, SchufaParameter>,
     val responses: LinkedHashMap<String, SchufaResponse>,
     val schemas: SchufaSchemas,
 )
 
-@Serializable
 data class SchufaContact(
     val name: String,
     val email: String,
 )
 
-@Serializable
 data class SchufaLicense(
     val name: String,
     val url: String,
 )
 
-@Serializable
 data class SchufaPath(
     val get: SchufaOperation,
 )
 
-@Serializable
 data class SchufaOperation(
     val tags: List<String>,
     val operationId: String,
@@ -71,60 +60,53 @@ data class SchufaOperation(
     val responses: SchufaResponses,
 )
 
-@Serializable
 data class SchufaResponses(
-    @SerialName("200")
+    @JsonProperty("200")
     val ok: SchufaRef,
-    @SerialName("400")
+    @JsonProperty("400")
     val badRequest: SchufaRef,
-    @SerialName("404")
+    @JsonProperty("404")
     val notFound: SchufaRef,
-    @SerialName("500")
+    @JsonProperty("500")
     val internalServerError: SchufaRef,
 )
 
-@Serializable
 data class SchufaSchemas(
-    @SerialName("RatingLevel")
+    @JsonProperty("RatingLevel")
     val ratingLevel: SchufaRatingLevel,
-    @SerialName("Rating")
+    @JsonProperty("Rating")
     val rating: SchufaRating,
-    @SerialName("Error")
+    @JsonProperty("Error")
     val error: SchufaError,
 )
 
-@Serializable
 data class SchufaParameter(
     val name: String,
     val description: String,
-    @SerialName("in")
+    @JsonProperty("in")
     val inOption: String,
     val required: Boolean,
     val example: String,
     val schema: SchufaSchema,
 )
 
-@Serializable
 data class SchufaSchema(
     val type: String?,
-    @SerialName("\$ref")
+    @JsonProperty("\$ref")
     val ref: String?,
     val format: String?,
 )
 
-@Serializable
 data class SchufaResponse(
     val description: String,
     val content: LinkedHashMap<String, SchufaMediaType>,
 )
 
-@Serializable
 data class SchufaMediaType(
     val schema: SchufaRef,
     val example: SchufaExample,
 )
 
-@Serializable
 data class SchufaExample(
     val score: Int?,
     val failureRiskInPercent: Double?,
@@ -132,33 +114,28 @@ data class SchufaExample(
     val dateTime: String?,
 )
 
-@Serializable
 data class SchufaRatingLevel(
     val type: String,
     val enum: List<String>,
 )
 
-@Serializable
 data class SchufaRating(
     val type: String,
     val required: List<String>,
     val properties: SchufaRatingProperties,
 )
 
-@Serializable
 data class SchufaError(
     val type: String,
     val required: List<String>,
     val properties: SchufaErrorProperties,
 )
 
-@Serializable
 data class SchufaRatingProperties(
     val score: SchufaScore,
     val failureRiskInPercent: SchufaFailureRiskInPercent,
 )
 
-@Serializable
 data class SchufaScore(
     val type: String,
     val format: String,
@@ -166,7 +143,6 @@ data class SchufaScore(
     val maximum: Int,
 )
 
-@Serializable
 data class SchufaFailureRiskInPercent(
     val type: String,
     val format: String,
@@ -174,25 +150,21 @@ data class SchufaFailureRiskInPercent(
     val maximum: Double,
 )
 
-@Serializable
 data class SchufaErrorProperties(
     val message: SchufaMessage,
     val dateTime: SchufaDateTime,
 )
 
-@Serializable
 data class SchufaMessage(
     val type: String,
 )
 
-@Serializable
 data class SchufaDateTime(
     val type: String,
     val format: String,
 )
 
-@Serializable
 data class SchufaRef(
-    @SerialName("\$ref")
+    @JsonProperty("\$ref")
     val ref: String,
 )

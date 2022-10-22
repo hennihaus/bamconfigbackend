@@ -1,13 +1,13 @@
 package de.hennihaus.objectmothers
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import de.hennihaus.configurations.GithubCommitConfiguration
 import de.hennihaus.configurations.GithubConfiguration
 import de.hennihaus.configurations.GithubFileConfiguration
 import de.hennihaus.models.generated.github.GetFileResponse
 import de.hennihaus.models.generated.github.UpdateFileRequest
 import io.ktor.http.URLProtocol
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import java.io.File
 
 object GithubObjectMother {
@@ -33,20 +33,20 @@ object GithubObjectMother {
     const val DEFAULT_REPO = "bamschufarest"
     const val DEFAULT_PATH = "docs/rating.json"
 
-    fun getRatingFileResponse(): GetFileResponse = Json.decodeFromString(
-        string = File("./src/test/resources/github/getRatingFileResponse.json").readText(),
+    fun getRatingFileResponse(): GetFileResponse = jacksonObjectMapper().readValue(
+        src = File("./src/test/resources/github/getRatingFileResponse.json"),
     )
 
-    fun getCreditFileResponse(): GetFileResponse = Json.decodeFromString(
-        string = File("./src/test/resources/github/getCreditFileResponse.json").readText(),
+    fun getCreditFileResponse(): GetFileResponse = jacksonObjectMapper().readValue(
+        src = File("./src/test/resources/github/getCreditFileResponse.json"),
     )
 
-    fun getRatingUpdateFileRequest(): UpdateFileRequest = Json.decodeFromString(
-        string = File("./src/test/resources/github/updateRatingFileRequest.json").readText(),
+    fun getRatingUpdateFileRequest(): UpdateFileRequest = jacksonObjectMapper().readValue(
+        src = File("./src/test/resources/github/updateRatingFileRequest.json"),
     )
 
-    fun getCreditUpdateFileRequest(): UpdateFileRequest = Json.decodeFromString(
-        string = File("./src/test/resources/github/updateCreditFileRequest.json").readText(),
+    fun getCreditUpdateFileRequest(): UpdateFileRequest = jacksonObjectMapper().readValue(
+        src = File("./src/test/resources/github/updateCreditFileRequest.json"),
     )
 
     fun getGithubConfiguration(

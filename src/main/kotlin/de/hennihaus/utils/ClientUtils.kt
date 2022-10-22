@@ -1,5 +1,6 @@
 package de.hennihaus.utils
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -7,10 +8,7 @@ import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.resources.Resources
-import io.ktor.http.ContentType
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.json.Json
+import io.ktor.serialization.jackson.jackson
 
 fun HttpClientConfig<*>.configureMonitoring() = install(plugin = Logging) {
     logger = Logger.DEFAULT
@@ -22,14 +20,8 @@ fun HttpClientConfig<*>.configureRetryBehavior(maxRetries: Int) = install(plugin
     exponentialDelay()
 }
 
-fun HttpClientConfig<*>.configureSerialization() {
-    install(plugin = ContentNegotiation) {
-        json(
-            contentType = ContentType.Application.Json,
-            json = Json {
-                ignoreUnknownKeys = true
-            }
-        )
+fun HttpClientConfig<*>.configureSerialization() = install(plugin = ContentNegotiation) {
+    jackson {
+        disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     }
-    install(plugin = Resources)
 }

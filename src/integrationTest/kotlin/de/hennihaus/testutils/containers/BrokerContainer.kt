@@ -1,10 +1,10 @@
 package de.hennihaus.testutils.containers
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import de.hennihaus.models.generated.broker.GetQueuesResponse
 import de.hennihaus.models.generated.broker.GetTopicsResponse
 import de.hennihaus.services.BrokerService.Companion.DESTINATION_NAME_DELIMITER
 import de.hennihaus.services.BrokerService.Companion.DESTINATION_TYPE_DELIMITER
-import de.hennihaus.services.callservices.resources.Broker
 import de.hennihaus.testutils.model.Job
 import de.hennihaus.testutils.model.generated.GetJobsResponse
 import io.ktor.client.HttpClient
@@ -12,8 +12,6 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.resources.Resources
-import io.ktor.client.plugins.resources.get
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -22,9 +20,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.Parameters
 import io.ktor.http.URLProtocol
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.serialization.jackson.jackson
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.Wait
 
@@ -44,15 +41,18 @@ object BrokerContainer {
     /**
      * ActiveMQ mock configurations
      */
-    private const val BASE_MESSAGE_PATH = "/api/message"
-    private const val BASE_CONFIG_PATH = "/api/jolokia"
+    private const val MESSAGE_PATH = "api/message"
+    private const val CONFIG_PATH = "api/jolokia"
     private const val EXEC_PATH = "exec"
     private const val READ_PATH = "read"
-    private const val BASE_M_BEAN_PATH = "org.apache.activemq:type=Broker,brokerName=localhost"
-    private const val BASE_JMS_M_BEAN_PATH =
+    private const val M_BEAN_PATH = "org.apache.activemq:type=Broker,brokerName=localhost"
+    private const val JOB_M_BEAN_PATH =
         "org.apache.activemq:brokerName=localhost,name=JMS,service=JobScheduler,type=Broker"
     private const val ADD_QUEUE_OPERATION = "addQueue(java.lang.String)"
     private const val ADD_TOPIC_OPERATION = "addTopic(java.lang.String)"
+    private const val REMOVE_QUEUE_OPERATION = "removeQueue(java.lang.String)"
+    private const val REMOVE_TOPIC_OPERATION = "removeTopic(java.lang.String)"
+    private const val REMOVE_JOBS_OPERATION = "removeAllJobs()"
     private const val GET_JOBS_OPERATION = "AllJobs"
     private const val GET_QUEUES_OPERATION = "Queues"
     private const val GET_TOPICS_OPERATION = "Topics"
@@ -79,12 +79,8 @@ object BrokerContainer {
         topics: List<String> = emptyList(),
         jobs: Map<String, Job> = emptyMap()
     ) {
-        queues.forEach {
-            TEST_CLIENT.get(urlString = "$BASE_CONFIG_PATH/$EXEC_PATH/$BASE_M_BEAN_PATH/$ADD_QUEUE_OPERATION/$it")
-        }
-        topics.forEach {
-            TEST_CLIENT.get(urlString = "$BASE_CONFIG_PATH/$EXEC_PATH/$BASE_M_BEAN_PATH/$ADD_TOPIC_OPERATION/$it")
-        }
+        queues.forEach { TEST_CLIENT.get(urlString = addQueueUrl(queue = it)) }
+        topics.forEach { TEST_CLIENT.get(urlString = addTopicUrl(topic = it)) }
         jobs.toList().forEach { (queue, job) ->
             sendMessage(
                 message = job.message,
@@ -96,31 +92,26 @@ object BrokerContainer {
 
     fun resetState() = runBlocking<Unit> {
         // remove queues
-        TEST_CLIENT.get(resource = Broker.Read.MBean.Queues()).body<GetQueuesResponse>().value
-            .map {
-                it.objectName.substringAfter(delimiter = DESTINATION_NAME_DELIMITER)
-                    .substringBefore(delimiter = DESTINATION_TYPE_DELIMITER)
-            }
-            .forEach { TEST_CLIENT.get(resource = Broker.Exec.MBean.RemoveQueue(name = it)) }
+        TEST_CLIENT.get(urlString = getQueuesUrl()).body<GetQueuesResponse>().value
+            .map { it.objectName }
+            .map { it.substringAfter(delimiter = DESTINATION_NAME_DELIMITER) }
+            .map { it.substringBefore(delimiter = DESTINATION_TYPE_DELIMITER) }
+            .forEach { TEST_CLIENT.get(urlString = removeQueueUrl(queue = it)) }
         // remove topics
-        TEST_CLIENT.get(resource = Broker.Read.MBean.Topics()).body<GetTopicsResponse>().value
-            .map {
-                it.objectName.substringAfter(delimiter = DESTINATION_NAME_DELIMITER)
-                    .substringBefore(delimiter = DESTINATION_TYPE_DELIMITER)
-            }
-            .forEach { TEST_CLIENT.get(resource = Broker.Exec.MBean.RemoveTopic(name = it)) }
+        TEST_CLIENT.get(urlString = getTopicsUrl()).body<GetTopicsResponse>().value
+            .map { it.objectName }
+            .map { it.substringAfter(delimiter = DESTINATION_NAME_DELIMITER) }
+            .map { it.substringBefore(delimiter = DESTINATION_TYPE_DELIMITER) }
+            .forEach { TEST_CLIENT.get(urlString = removeTopicUrl(topic = it)) }
         // remove jobs
-        TEST_CLIENT.get(resource = Broker.Exec.JobMBean.RemoveAllJobs())
+        TEST_CLIENT.get(urlString = removeJobsUrl())
     }
 
-    suspend fun getTestQueues(): GetQueuesResponse =
-        TEST_CLIENT.get(urlString = "$BASE_CONFIG_PATH/$READ_PATH/$BASE_M_BEAN_PATH/$GET_QUEUES_OPERATION").body()
+    suspend fun getTestQueues(): GetQueuesResponse = TEST_CLIENT.get(urlString = getQueuesUrl()).body()
 
-    suspend fun getTestTopics(): GetTopicsResponse =
-        TEST_CLIENT.get(urlString = "$BASE_CONFIG_PATH/$READ_PATH/$BASE_M_BEAN_PATH/$GET_TOPICS_OPERATION").body()
+    suspend fun getTestTopics(): GetTopicsResponse = TEST_CLIENT.get(urlString = getTopicsUrl()).body()
 
-    suspend fun getTestJobs(): GetJobsResponse =
-        TEST_CLIENT.get(urlString = "$BASE_CONFIG_PATH/$READ_PATH/$BASE_JMS_M_BEAN_PATH/$GET_JOBS_OPERATION").body()
+    suspend fun getTestJobs(): GetJobsResponse = TEST_CLIENT.get(urlString = getJobsUrl()).body()
 
     private fun startBrokerContainer() = GenericContainer<Nothing>("$IMAGE_NAME:$IMAGE_VERSION").apply {
         env = listOf(
@@ -141,18 +132,14 @@ object BrokerContainer {
             header(key = HttpHeaders.Origin, value = ACTIVE_MQ_ORIGIN_HEADER)
         }
         install(plugin = ContentNegotiation) {
-            json(
-                contentType = ContentType.Any,
-                json = Json {
-                    ignoreUnknownKeys = true
-                }
-            )
+            jackson(contentType = ContentType.Any) {
+                disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            }
         }
-        install(plugin = Resources)
     }
 
     private suspend fun sendMessage(message: String, queue: String, delayInMilliseconds: Long) = TEST_CLIENT.submitForm(
-        url = "$BASE_MESSAGE_PATH/$queue",
+        url = "/$MESSAGE_PATH/$queue",
         block = {
             parameter(key = ACTIVE_MQ_MESSAGE_TYPE_PARAMETER, ACTIVE_MQ_MESSAGE_QUEUE)
         },
@@ -161,4 +148,100 @@ object BrokerContainer {
             append(name = ACTIVE_MQ_DELAY_PROPERTY, "$delayInMilliseconds")
         }
     )
+
+    private fun getQueuesUrl() = buildString {
+        append("/")
+        append(CONFIG_PATH)
+        append("/")
+        append(READ_PATH)
+        append("/")
+        append(M_BEAN_PATH)
+        append("/")
+        append(GET_QUEUES_OPERATION)
+    }
+
+    private fun getTopicsUrl() = buildString {
+        append("/")
+        append(CONFIG_PATH)
+        append("/")
+        append(READ_PATH)
+        append("/")
+        append(M_BEAN_PATH)
+        append("/")
+        append(GET_TOPICS_OPERATION)
+    }
+
+    private fun getJobsUrl() = buildString {
+        append("/")
+        append(CONFIG_PATH)
+        append("/")
+        append(READ_PATH)
+        append("/")
+        append(JOB_M_BEAN_PATH)
+        append("/")
+        append(GET_JOBS_OPERATION)
+    }
+
+    private fun addQueueUrl(queue: String) = buildString {
+        append("/")
+        append(CONFIG_PATH)
+        append("/")
+        append(EXEC_PATH)
+        append("/")
+        append(M_BEAN_PATH)
+        append("/")
+        append(ADD_QUEUE_OPERATION)
+        append("/")
+        append(queue)
+    }
+
+    private fun addTopicUrl(topic: String) = buildString {
+        append("/")
+        append(CONFIG_PATH)
+        append("/")
+        append(EXEC_PATH)
+        append("/")
+        append(M_BEAN_PATH)
+        append("/")
+        append(ADD_TOPIC_OPERATION)
+        append("/")
+        append(topic)
+    }
+
+    private fun removeQueueUrl(queue: String) = buildString {
+        append("/")
+        append(CONFIG_PATH)
+        append("/")
+        append(EXEC_PATH)
+        append("/")
+        append(M_BEAN_PATH)
+        append("/")
+        append(REMOVE_QUEUE_OPERATION)
+        append("/")
+        append(queue)
+    }
+
+    private fun removeTopicUrl(topic: String) = buildString {
+        append("/")
+        append(CONFIG_PATH)
+        append("/")
+        append(EXEC_PATH)
+        append("/")
+        append(M_BEAN_PATH)
+        append("/")
+        append(REMOVE_TOPIC_OPERATION)
+        append("/")
+        append(topic)
+    }
+
+    private fun removeJobsUrl() = buildString {
+        append("/")
+        append(CONFIG_PATH)
+        append("/")
+        append(EXEC_PATH)
+        append("/")
+        append(JOB_M_BEAN_PATH)
+        append("/")
+        append(REMOVE_JOBS_OPERATION)
+    }
 }

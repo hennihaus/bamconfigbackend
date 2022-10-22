@@ -19,7 +19,7 @@ import org.jetbrains.exposed.sql.IntegerColumnType
 import org.jetbrains.exposed.sql.LongColumnType
 import org.jetbrains.exposed.sql.TextColumnType
 import org.jetbrains.exposed.sql.UUIDColumnType
-import org.jetbrains.exposed.sql.kotlin.datetime.KotlinLocalDateTimeColumnType
+import org.jetbrains.exposed.sql.javatime.JavaInstantColumnType
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.testcontainers.containers.GenericContainer
@@ -164,7 +164,7 @@ object ExposedContainer {
         TextColumnType().sqlType().uppercase() -> TextColumnType()
         BooleanColumnType().sqlType().uppercase() -> BooleanColumnType()
         JsonColumnType().sqlType().uppercase() -> TextColumnType()
-        TIMESTAMP_WITH_TIMEZONE_COLUMN_TYPE.uppercase() -> KotlinLocalDateTimeColumnType()
+        TIMESTAMP_WITH_TIMEZONE_COLUMN_TYPE.uppercase() -> JavaInstantColumnType()
         BOOLEAN_COLUMN_TYPE.uppercase() -> BooleanColumnType()
         INTEGER_COLUMN_TYPE.uppercase() -> IntegerColumnType()
         SERIAL_COLUMN_TYPE.uppercase() -> IntegerColumnType()

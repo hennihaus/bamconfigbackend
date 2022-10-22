@@ -1,13 +1,22 @@
 package de.hennihaus.services.callservices
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import de.hennihaus.configurations.BrokerConfiguration
-import de.hennihaus.models.generated.broker.DeleteJobsResponse
 import de.hennihaus.models.generated.broker.DeleteQueueResponse
 import de.hennihaus.models.generated.broker.DeleteTopicResponse
 import de.hennihaus.models.generated.broker.GetQueuesResponse
 import de.hennihaus.models.generated.broker.GetTopicsResponse
 import de.hennihaus.plugins.BrokerException
-import de.hennihaus.services.callservices.resources.Broker
+import de.hennihaus.services.callservices.paths.BrokerPaths.ACTIVE_MQ_PATH
+import de.hennihaus.services.callservices.paths.BrokerPaths.EXEC_PATH
+import de.hennihaus.services.callservices.paths.BrokerPaths.JMS_M_BEAN_PATH
+import de.hennihaus.services.callservices.paths.BrokerPaths.M_BEAN_PATH
+import de.hennihaus.services.callservices.paths.BrokerPaths.QUEUES_PATH
+import de.hennihaus.services.callservices.paths.BrokerPaths.READ_PATH
+import de.hennihaus.services.callservices.paths.BrokerPaths.REMOVE_JOBS_PATH
+import de.hennihaus.services.callservices.paths.BrokerPaths.REMOVE_QUEUE_PATH
+import de.hennihaus.services.callservices.paths.BrokerPaths.REMOVE_TOPIC_PATH
+import de.hennihaus.services.callservices.paths.BrokerPaths.TOPICS_PATH
 import de.hennihaus.utils.configureMonitoring
 import de.hennihaus.utils.configureRetryBehavior
 import io.ktor.client.HttpClient
@@ -16,18 +25,17 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.DefaultRequest
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.resources.Resources
-import io.ktor.client.plugins.resources.get
+import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol
+import io.ktor.http.appendPathSegments
 import io.ktor.http.isSuccess
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.serialization.jackson.jackson
 import io.ktor.util.appendIfNameAbsent
-import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Single
 
 @Single
@@ -42,7 +50,12 @@ class BrokerCallService(private val engine: HttpClientEngine, private val config
     }
 
     suspend fun getAllQueues(): GetQueuesResponse {
-        return client.get(resource = Broker.Read.MBean.Queues()).body<GetQueuesResponse>().also {
+        val response = client.get {
+            url {
+                appendPathSegments(segments = buildReadMBeanPath() + QUEUES_PATH)
+            }
+        }
+        return response.body<GetQueuesResponse>().also {
             validateResponse(
                 status = it.status,
                 error = it.error,
@@ -51,7 +64,12 @@ class BrokerCallService(private val engine: HttpClientEngine, private val config
     }
 
     suspend fun getAllTopics(): GetTopicsResponse {
-        return client.get(resource = Broker.Read.MBean.Topics()).body<GetTopicsResponse>().also {
+        val response = client.get {
+            url {
+                appendPathSegments(segments = buildReadMBeanPath() + TOPICS_PATH)
+            }
+        }
+        return response.body<GetTopicsResponse>().also {
             validateResponse(
                 status = it.status,
                 error = it.error,
@@ -60,8 +78,21 @@ class BrokerCallService(private val engine: HttpClientEngine, private val config
     }
 
     suspend fun deleteAllJobs(): HttpResponse {
-        return client.get(resource = Broker.Exec.JobMBean.RemoveAllJobs()).also {
-            val body = it.body<DeleteJobsResponse>()
+        val response = client.get {
+            url {
+                appendPathSegments(
+                    segments = listOf(
+                        ACTIVE_MQ_PATH,
+                        EXEC_PATH,
+                        JMS_M_BEAN_PATH,
+                        REMOVE_JOBS_PATH,
+                    ),
+                )
+            }
+        }
+        return response.also {
+            val body = it.body<DeleteQueueResponse>()
+
             validateResponse(
                 status = body.status,
                 error = body.error,
@@ -70,8 +101,14 @@ class BrokerCallService(private val engine: HttpClientEngine, private val config
     }
 
     suspend fun deleteQueueByName(name: String): HttpResponse {
-        return client.get(resource = Broker.Exec.MBean.RemoveQueue(name = name)).also {
+        val response = client.get {
+            url {
+                appendPathSegments(segments = buildExecuteMBeanPath() + REMOVE_QUEUE_PATH + name)
+            }
+        }
+        return response.also {
             val body = it.body<DeleteQueueResponse>()
+
             validateResponse(
                 status = body.status,
                 error = body.error,
@@ -80,8 +117,14 @@ class BrokerCallService(private val engine: HttpClientEngine, private val config
     }
 
     suspend fun deleteTopicByName(name: String): HttpResponse {
-        return client.get(resource = Broker.Exec.MBean.RemoveTopic(name = name)).also {
+        val response = client.get {
+            url {
+                appendPathSegments(segments = buildExecuteMBeanPath() + REMOVE_TOPIC_PATH + name)
+            }
+        }
+        return response.also {
             val body = it.body<DeleteTopicResponse>()
+
             validateResponse(
                 status = body.status,
                 error = body.error,
@@ -96,16 +139,10 @@ class BrokerCallService(private val engine: HttpClientEngine, private val config
         valid ?: throw BrokerException(message = error)
     }
 
-    private fun HttpClientConfig<*>.configureSerialization() {
-        install(plugin = ContentNegotiation) {
-            json(
-                contentType = ContentType.Any,
-                json = Json {
-                    ignoreUnknownKeys = true
-                }
-            )
+    private fun HttpClientConfig<*>.configureSerialization() = install(plugin = ContentNegotiation) {
+        jackson(contentType = ContentType.Any) {
+            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         }
-        install(plugin = Resources)
     }
 
     private fun HttpClientConfig<*>.configureDefaultRequests() = install(plugin = DefaultRequest) {
@@ -120,4 +157,16 @@ class BrokerCallService(private val engine: HttpClientEngine, private val config
             appendIfNameAbsent(name = HttpHeaders.Origin, value = originHeader)
         }
     }
+
+    private fun buildReadMBeanPath() = listOf(
+        ACTIVE_MQ_PATH,
+        READ_PATH,
+        M_BEAN_PATH,
+    )
+
+    private fun buildExecuteMBeanPath() = listOf(
+        ACTIVE_MQ_PATH,
+        EXEC_PATH,
+        M_BEAN_PATH,
+    )
 }

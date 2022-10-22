@@ -1,11 +1,19 @@
 package de.hennihaus.testutils
 
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.module.kotlin.addDeserializer
+import com.fasterxml.jackson.module.kotlin.addSerializer
+import de.hennihaus.models.IntegrationStep
 import de.hennihaus.module
+import io.kotest.extensions.time.withConstantNow
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.jackson.jackson
 import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.testing.ApplicationTestBuilder
 import org.koin.core.module.Module
+import java.time.ZonedDateTime
 import io.ktor.server.testing.testApplication as ktorTestApplication
 
 object KtorTestUtils {
@@ -23,7 +31,9 @@ object KtorTestUtils {
                     koinModules = mockModules,
                 )
             }
-            block()
+            withConstantNow(now = ZonedDateTime.now()) {
+                block()
+            }
         }
     }
 }
@@ -31,6 +41,16 @@ object KtorTestUtils {
 val ApplicationTestBuilder.testClient
     get() = createClient {
         install(ContentNegotiation) {
-            json()
+            jackson {
+                registerModule(
+                    SimpleModule()
+                        .addSerializer(kClass = HttpStatusCode::class, serializer = HttpStatusCodeSerializer)
+                        .addDeserializer(kClass = HttpStatusCode::class, deserializer = HttpStatusCodeDeserializer)
+                        .addSerializer(kClass = ContentType::class, serializer = ContentTypeSerializer)
+                        .addDeserializer(kClass = ContentType::class, deserializer = ContentTypeDeserializer)
+                        .addSerializer(kClass = IntegrationStep::class, serializer = IntegrationStepSerializer)
+                        .addDeserializer(kClass = IntegrationStep::class, deserializer = IntegrationStepDeserializer)
+                )
+            }
         }
     }

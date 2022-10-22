@@ -32,7 +32,7 @@ import de.hennihaus.repositories.tables.TaskTableDescription.TASK_UUID_COLUMN
 import de.hennihaus.repositories.types.jsonb
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
+import org.jetbrains.exposed.sql.javatime.timestamp
 
 object TaskTable : UUIDTable(columnName = TASK_UUID_COLUMN) {
     val contactId = reference(name = CONTACT_UUID_COLUMN, foreign = ContactTable)

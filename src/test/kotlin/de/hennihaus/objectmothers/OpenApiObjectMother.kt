@@ -1,5 +1,7 @@
 package de.hennihaus.objectmothers
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.DEFAULT_MAX_AMOUNT_IN_EUROS
 import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.DEFAULT_MAX_TERM_IN_MONTHS
 import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.DEFAULT_MIN_AMOUNT_IN_EUROS
@@ -55,27 +57,19 @@ import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_SCHUFA_DESCRIPTION
 import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_SCHUFA_TITLE
 import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_SYNC_BANK_DESCRIPTION
 import de.hennihaus.objectmothers.TaskObjectMother.DEFAULT_SYNC_BANK_TITLE
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import java.io.File
 
 object OpenApiObjectMother {
 
-    @OptIn(ExperimentalSerializationApi::class)
-    private val format = Json {
-        explicitNulls = false
-    }
-
     private val schufaApi: SchufaApi by lazy {
-        format.decodeFromString(
-            string = File("./src/test/resources/openapi/rating.json").readText(),
+        jacksonObjectMapper().readValue(
+            src = File("./src/test/resources/openapi/rating.json"),
         )
     }
 
     private val bankApi: BankApi by lazy {
-        format.decodeFromString(
-            string = File("./src/test/resources/openapi/credit.json").readText(),
+        jacksonObjectMapper().readValue(
+            src = File("./src/test/resources/openapi/credit.json"),
         )
     }
 

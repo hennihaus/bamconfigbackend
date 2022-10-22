@@ -11,8 +11,6 @@ import de.hennihaus.repositories.tables.StatisticTable
 import de.hennihaus.utils.batchUpsert
 import de.hennihaus.utils.inTransaction
 import de.hennihaus.utils.upsert
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.and
@@ -20,6 +18,8 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
+import java.time.Instant
+import java.time.ZonedDateTime
 import java.util.UUID
 
 @Single
@@ -52,7 +52,7 @@ class BankRepository : Repository<Bank, UUID> {
     override suspend fun save(entry: Bank, repetitionAttempts: Int): Bank = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {
-        val now = Clock.System.now()
+        val now = ZonedDateTime.now().toInstant()
 
         entry.saveBank(now = now)
         entry.saveCreditConfiguration()

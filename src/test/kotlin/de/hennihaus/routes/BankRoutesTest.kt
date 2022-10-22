@@ -19,8 +19,6 @@ import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
 import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -36,7 +34,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.mockk
-import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -93,10 +90,7 @@ class BankRoutesTest {
             val response = testClient.get(urlString = "/v1/banks")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.bodyAsText() shouldBe """
-                [
-                ]
-            """.trimIndent()
+            response.bodyAsText() shouldBe "[ ]"
             coVerify(exactly = 1) { bankService.getAllBanks() }
         }
 
@@ -107,16 +101,7 @@ class BankRoutesTest {
             val response = testClient.get(urlString = "/v1/banks")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInternalServerErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getInternalServerErrors()
             coVerify(exactly = 1) { bankService.getAllBanks() }
         }
     }
@@ -145,16 +130,7 @@ class BankRoutesTest {
             val response = testClient.get(urlString = "/v1/banks/$uuid")
 
             response shouldHaveStatus HttpStatusCode.NotFound
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getBankNotFoundErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getBankNotFoundErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getBankNotFoundErrors()
             coVerify(exactly = 1) { bankService.getBankById(id = uuid) }
         }
     }
@@ -193,16 +169,7 @@ class BankRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.BadRequest
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getInvalidBankErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getInvalidBankErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getInvalidBankErrors()
             coVerify(exactly = 1) {
                 bankValidationService.validateBody(body = testBank)
             }
@@ -223,16 +190,7 @@ class BankRoutesTest {
             }
 
             response shouldHaveStatus HttpStatusCode.Conflict
-            response.body<ErrorsDTO>() should {
-                it.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrors(),
-                    property = ErrorsDTO::dateTime,
-                )
-                it.dateTime.shouldBeEqualToIgnoringFields(
-                    other = getConflictErrors().dateTime,
-                    property = LocalDateTime::second,
-                )
-            }
+            response.body<ErrorsDTO>() shouldBe getConflictErrors()
             coVerifySequence {
                 bankValidationService.validateBody(body = testBank.toBankDTO())
                 bankService.patchBank(id = any(), bank = testBank)

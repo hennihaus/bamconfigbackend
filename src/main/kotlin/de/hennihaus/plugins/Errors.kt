@@ -1,6 +1,5 @@
 package de.hennihaus.plugins
 
-import de.hennihaus.configurations.Configuration.TIMEZONE
 import de.hennihaus.models.generated.rest.ErrorsDTO
 import de.hennihaus.models.generated.rest.ReasonDTO
 import de.hennihaus.plugins.ErrorMessage.ANONYMOUS_OBJECT
@@ -8,79 +7,71 @@ import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.EXPOSED_TRANSACTION_EXCEPTION
 import de.hennihaus.plugins.ErrorMessage.MISSING_PROPERTY_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.UUID_EXCEPTION_MESSAGE
-import de.hennihaus.utils.withoutNanos
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.BadRequestException
+import io.ktor.server.plugins.MissingRequestParameterException
 import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
-fun Application.configureErrorHandling() {
-    val zoneId = environment.config.property(path = TIMEZONE).getString()
+fun Application.configureErrorHandling() = install(plugin = StatusPages) {
+    exception<Throwable> { call, throwable ->
+        val dateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS)
 
-    install(plugin = StatusPages) {
-        exception<Throwable> { call, throwable ->
-            val dateTime = Clock.System.now()
-                .toLocalDateTime(
-                    timeZone = TimeZone.of(
-                        zoneId = zoneId,
-                    ),
-                )
-                .withoutNanos()
-
-            when (throwable) {
-                is UUIDException -> call.respond(
-                    status = HttpStatusCode.BadRequest,
+        when (throwable) {
+            is UUIDException -> call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            is RequestValidationException -> call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            is MissingRequestParameterException -> call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            is BadRequestException -> call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            is NotFoundException -> call.respond(
+                status = HttpStatusCode.NotFound,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            is TransactionException -> call.respond(
+                status = HttpStatusCode.Conflict,
+                message = throwable.toErrorsDTO(dateTime = dateTime),
+            )
+            else -> call.also { it.application.environment.log.error("Internal Server Error: ", throwable) }
+                .respond(
+                    status = HttpStatusCode.InternalServerError,
                     message = throwable.toErrorsDTO(dateTime = dateTime),
                 )
-                is RequestValidationException -> call.respond(
-                    status = HttpStatusCode.BadRequest,
-                    message = throwable.toErrorsDTO(dateTime = dateTime),
-                )
-                is BadRequestException -> call.respond(
-                    status = HttpStatusCode.BadRequest,
-                    message = throwable.toErrorsDTO(dateTime),
-                )
-                is NotFoundException -> call.respond(
-                    status = HttpStatusCode.NotFound,
-                    message = throwable.toErrorsDTO(dateTime = dateTime),
-                )
-                is TransactionException -> call.respond(
-                    status = HttpStatusCode.Conflict,
-                    message = throwable.toErrorsDTO(dateTime = dateTime),
-                )
-                else -> call.also { it.application.environment.log.error("Internal Server Error: ", throwable) }
-                    .respond(
-                        status = HttpStatusCode.InternalServerError,
-                        message = throwable.toErrorsDTO(dateTime = dateTime),
-                    )
-            }
         }
     }
 }
 
-private fun Throwable.toErrorsDTO(dateTime: LocalDateTime) = ErrorsDTO(
+private fun Throwable.toErrorsDTO(dateTime: ZonedDateTime) = ErrorsDTO(
     reasons = listOf(
         ReasonDTO(
             exception = this::class.simpleName ?: ANONYMOUS_OBJECT,
-            message = "$message",
+            message = "$message".replaceFirstChar { it.lowercase() },
         ),
     ),
     dateTime = "$dateTime",
 )
 
-private fun RequestValidationException.toErrorsDTO(dateTime: LocalDateTime) = ErrorsDTO(
-    reasons = this.reasons.map {
+private fun RequestValidationException.toErrorsDTO(dateTime: ZonedDateTime) = ErrorsDTO(
+    reasons = this.reasons.map { reason ->
         ReasonDTO(
             exception = this::class.simpleName ?: ANONYMOUS_OBJECT,
-            message = it,
+            message = reason.replaceFirstChar { it.lowercase() },
         )
     },
     dateTime = "$dateTime",

@@ -1,10 +1,10 @@
 package de.hennihaus.objectmothers
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import de.hennihaus.models.generated.broker.DeleteJobsResponse
 import de.hennihaus.models.generated.broker.GetQueuesResponse
 import de.hennihaus.models.generated.broker.GetTopicsResponse
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import java.io.File
 
 object BrokerObjectMother {
@@ -24,23 +24,23 @@ object BrokerObjectMother {
     const val TOPIC_CREATION_DELETION_INFO = "ActiveMQ.Advisory.Topic"
     const val IS_MASTER_BROKER_INFO = "ActiveMQ.Advisory.MasterBroker"
 
-    fun getQueuesResponse(): GetQueuesResponse = Json.decodeFromString(
-        string = File("./src/test/resources/broker/getQueuesResponse.json").readText(),
+    fun getQueuesResponse(): GetQueuesResponse = jacksonObjectMapper().readValue(
+        src = File("./src/test/resources/broker/getQueuesResponse.json"),
     )
 
-    fun getTopicsResponse(): GetTopicsResponse = Json.decodeFromString(
-        string = File("./src/test/resources/broker/getTopicsResponse.json").readText(),
+    fun getTopicsResponse(): GetTopicsResponse = jacksonObjectMapper().readValue(
+        src = File("./src/test/resources/broker/getTopicsResponse.json"),
     )
 
-    fun getQueuesErrorResponse(): GetQueuesResponse = Json.decodeFromString(
-        string = File("./src/test/resources/broker/getQueuesErrorResponse.json").readText(),
+    fun getQueuesErrorResponse(): GetQueuesResponse = jacksonObjectMapper().readValue(
+        src = File("./src/test/resources/broker/getQueuesErrorResponse.json"),
     )
 
-    fun getTopicsErrorResponse(): GetTopicsResponse = Json.decodeFromString(
-        string = File("./src/test/resources/broker/getTopicsErrorResponse.json").readText(),
+    fun getTopicsErrorResponse(): GetTopicsResponse = jacksonObjectMapper().readValue(
+        src = File("./src/test/resources/broker/getTopicsErrorResponse.json"),
     )
 
-    fun getDeleteJobsErrorResponse(): DeleteJobsResponse = Json.decodeFromString(
-        string = File("./src/test/resources/broker/deleteJobsErrorResponse.json").readText(),
+    fun getDeleteJobsErrorResponse(): DeleteJobsResponse = jacksonObjectMapper().readValue(
+        src = File("./src/test/resources/broker/deleteJobsErrorResponse.json"),
     )
 }

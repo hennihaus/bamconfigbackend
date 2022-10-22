@@ -13,7 +13,7 @@ import io.ktor.client.request.headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
 import io.ktor.http.encodedPath
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.serialization.jackson.jackson
 
 object GithubTestUtils {
 
@@ -23,7 +23,7 @@ object GithubTestUtils {
         val (owner, repo, path, branch) = fileConfig
         val (protocol, host, _, apiVersionHeader, authorizationHeader) = githubConfig
 
-        return HttpClient(CIO) { install(plugin = ContentNegotiation) { json() } }.use {
+        return HttpClient(CIO) { install(plugin = ContentNegotiation) { jackson() } }.use {
             val response = it.get {
                 url {
                     this.protocol = URLProtocol.createOrDefault(name = protocol)

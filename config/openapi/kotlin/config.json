@@ -3,7 +3,7 @@
   "dateLibrary": "java8",
   "enumPropertyNaming": "UPPERCASE",
   "library": "jvm-ktor",
-  "serializationLibrary": "kotlinx_serialization",
+  "serializationLibrary": "jackson",
   "sortModelPropertiesByRequiredFlag": false,
   "modelMutable": false,
   "requestDateConverter": "toString",

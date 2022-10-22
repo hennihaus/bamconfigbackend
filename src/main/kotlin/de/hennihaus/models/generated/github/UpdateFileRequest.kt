@@ -1,8 +1,5 @@
 package de.hennihaus.models.generated.github
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class UpdateFileRequest(
     val message: String,
     val committer: UpdateFileCommitter,
@@ -11,7 +8,6 @@ data class UpdateFileRequest(
     val branch: String,
 )
 
-@Serializable
 data class UpdateFileCommitter(
     val name: String,
     val email: String,
