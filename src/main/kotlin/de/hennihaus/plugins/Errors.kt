@@ -61,17 +61,17 @@ private fun Throwable.toErrorsDTO(dateTime: ZonedDateTime) = ErrorsDTO(
     reasons = listOf(
         ReasonDTO(
             exception = this::class.simpleName ?: ANONYMOUS_OBJECT,
-            message = "$message",
+            message = "$message".replaceFirstChar { it.lowercase() },
         ),
     ),
     dateTime = "$dateTime",
 )
 
 private fun RequestValidationException.toErrorsDTO(dateTime: ZonedDateTime) = ErrorsDTO(
-    reasons = this.reasons.map {
+    reasons = this.reasons.map { reason ->
         ReasonDTO(
             exception = this::class.simpleName ?: ANONYMOUS_OBJECT,
-            message = it,
+            message = reason.replaceFirstChar { it.lowercase() },
         )
     },
     dateTime = "$dateTime",
