@@ -76,8 +76,10 @@ data class BankSchemas(
     val ratingLevel: BankRatingLevel,
     @JsonProperty("Credit")
     val credit: BankCredit,
-    @JsonProperty("Error")
-    val error: BankError,
+    @JsonProperty("Errors")
+    val errors: BankErrors,
+    @JsonProperty("Reason")
+    val reason: BankReason,
 )
 
 data class BankParameter(
@@ -95,6 +97,8 @@ data class BankSchema(
     @JsonProperty("\$ref")
     val ref: String?,
     val format: String?,
+    val minLength: Int?,
+    val maxLength: Int?,
     val minimum: Int?,
     val maximum: Int?,
 )
@@ -111,8 +115,13 @@ data class BankMediaType(
 
 data class BankExample(
     val lendingRateInPercent: Double?,
-    val message: String?,
+    val reasons: List<BankExampleReason>?,
     val dateTime: String?,
+)
+
+data class BankExampleReason(
+    val exception: String,
+    val message: String,
 )
 
 data class BankRatingLevel(
@@ -126,10 +135,16 @@ data class BankCredit(
     val properties: BankCreditProperties,
 )
 
-data class BankError(
+data class BankErrors(
     val type: String,
     val required: List<String>,
     val properties: BankErrorProperties,
+)
+
+data class BankReason(
+    val type: String,
+    val required: List<String>,
+    val properties: BankReasonProperties,
 )
 
 data class BankCreditProperties(
@@ -144,12 +159,30 @@ data class BankLendingRateInPercent(
 )
 
 data class BankErrorProperties(
-    val message: BankMessage,
+    val reasons: BankReasons,
     val dateTime: BankDateTime,
+)
+
+data class BankReasons(
+    val type: String,
+    val items: BankRef,
+    val minItems: Int,
+    val uniqueItems: Boolean,
+)
+
+data class BankReasonProperties(
+    val exception: BankException,
+    val message: BankMessage,
+)
+
+data class BankException(
+    val type: String,
+    val minLength: Int,
 )
 
 data class BankMessage(
     val type: String,
+    val minLength: Int,
 )
 
 data class BankDateTime(
