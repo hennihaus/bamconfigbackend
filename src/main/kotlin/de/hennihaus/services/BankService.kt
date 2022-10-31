@@ -10,7 +10,13 @@ import org.koin.core.annotation.Single
 @Single
 class BankService(private val repository: BankRepository) {
 
-    suspend fun getAllBanks(): List<Bank> = repository.getAll()
+    suspend fun getAllBanks(): List<Bank> = repository.getAll().sortedBy { it.isAsync }.sortedWith { first, second ->
+        when {
+            first.creditConfiguration == null -> -1
+            second.creditConfiguration == null -> 1
+            else -> 0
+        }
+    }
 
     suspend fun getBankById(id: String): Bank = id.toUUID {
         repository.getById(id = it)
