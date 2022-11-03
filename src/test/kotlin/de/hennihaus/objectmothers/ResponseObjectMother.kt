@@ -17,17 +17,17 @@ object ResponseObjectMother {
     const val BAD_REQUEST_UUID = "a4133bba-824a-4063-abdf-29399ccf685f"
     const val BAD_REQUEST_CODE = "400"
     const val BAD_REQUEST_DESCRIPTION = "Ungültige Parameter"
-    const val BAD_REQUEST_EXAMPLE = "{\"message\": \"[username is required, password is required]\", \"dateTime\": \"2022-01-31T07:43:30\"}"
+    const val BAD_REQUEST_EXAMPLE = "{\"reasons\": [{\"message\": \"password is required\", \"exception\": \"RequestValidationException\"}], \"dateTime\": \"2022-01-31T07:43:30\"}"
 
     const val NOT_FOUND_UUID = "7736d7b7-9f55-4a2c-8e6a-7f7fb1bf6ce5"
     const val NOT_FOUND_CODE = "404"
     const val NOT_FOUND_DESCRIPTION = "Team wurde nicht gefunden"
-    const val NOT_FOUND_EXAMPLE = "{\"message\": \"[team not found by username and password]\", \"dateTime\": \"2022-01-31T07:43:30\"}"
+    const val NOT_FOUND_EXAMPLE = "{\"reasons\": [{\"message\": \"team not found by username and password\", \"exception\": \"NotFoundException\"}], \"dateTime\": \"2022-01-31T07:43:30\"}"
 
     const val INTERNAL_SERVER_ERROR_UUID = "52c2b022-7b0b-4017-baba-3dae02f938b0"
     const val INTERNAL_SERVER_ERROR_CODE = "500"
     const val INTERNAL_SERVER_ERROR_DESCRIPTION = "Interner Server Fehler"
-    const val INTERNAL_SERVER_ERROR_EXAMPLE = "{\"message\": \"[kotlin.Exception: Internal server error]\", \"dateTime\": \"2022-01-31T07:43:30\"}"
+    const val INTERNAL_SERVER_ERROR_EXAMPLE = "{\"reasons\": [{\"message\": \"internal server error\", \"exception\": \"Exception\"}], \"dateTime\": \"2022-01-31T07:43:30\"}"
 
     const val JMS_UUID = "45d2b3fd-f87f-4dde-a8cd-36c02612cd50"
     const val JMS_CODE = "-1"
