@@ -41,11 +41,11 @@ class BankServiceTest {
     @Nested
     inner class GetAllBanks {
         @Test
-        fun `should return a list of banks`() = runBlocking {
+        fun `should return a list of banks sorted by isAsync true to false`() = runBlocking {
             coEvery { repository.getAll() } returns listOf(
-                getSchufaBank(),
-                getSyncBank(),
                 getAsyncBank(),
+                getSyncBank(),
+                getSchufaBank(),
             )
 
             val response: List<Bank> = classUnderTest.getAllBanks()
