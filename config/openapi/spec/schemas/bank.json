@@ -121,7 +121,7 @@
                 "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
                 "username": "Beispielteam",
                 "password": "OOfKqWksmA",
-                "jmsQueue": "ResponseLoanBrokerBeispielteam",
+                "jmsQueue": "ResponseQueueBeispielteam",
                 "students": [
                   {
                     "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
@@ -172,7 +172,7 @@
                 "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
                 "username": "Beispielteam",
                 "password": "OOfKqWksmA",
-                "jmsQueue": "ResponseLoanBrokerBeispielteam",
+                "jmsQueue": "ResponseQueueBeispielteam",
                 "students": [
                   {
                     "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
@@ -223,7 +223,7 @@
                 "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
                 "username": "Beispielteam",
                 "password": "OOfKqWksmA",
-                "jmsQueue": "ResponseLoanBrokerBeispielteam",
+                "jmsQueue": "ResponseQueueBeispielteam",
                 "students": [
                   {
                     "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
@@ -270,7 +270,7 @@
               "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
               "username": "Beispielteam",
               "password": "OOfKqWksmA",
-              "jmsQueue": "ResponseLoanBrokerBeispielteam",
+              "jmsQueue": "ResponseQueueBeispielteam",
               "students": [
                 {
                   "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
@@ -323,7 +323,7 @@
               "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
               "username": "Beispielteam",
               "password": "OOfKqWksmA",
-              "jmsQueue": "ResponseLoanBrokerBeispielteam",
+              "jmsQueue": "ResponseQueueBeispielteam",
               "students": [
                 {
                   "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
@@ -376,7 +376,7 @@
               "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
               "username": "Beispielteam",
               "password": "OOfKqWksmA",
-              "jmsQueue": "ResponseLoanBrokerBeispielteam",
+              "jmsQueue": "ResponseQueueBeispielteam",
               "students": [
                 {
                   "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",

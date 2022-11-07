@@ -9,7 +9,7 @@
       "objectName": "org.apache.activemq:brokerName=localhost,destinationName=jmsBankA,destinationType=Queue,type=Broker"
     },
     {
-      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ResponseLoanBrokerTeam01,destinationType=Queue,type=Broker"
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ResponseQueueTeam01,destinationType=Queue,type=Broker"
     },
     {
       "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.DLQ,destinationType=Queue,type=Broker"

@@ -12,7 +12,7 @@ object ExposedContainerObjectMother {
 
     const val TEAM_USERNAME = "Team01"
     const val TEAM_PASSWORD = "lkhNqstcxs"
-    const val TEAM_JMS_QUEUE = "ResponseLoanBrokerTeam01"
+    const val TEAM_JMS_QUEUE = "ResponseQueueTeam01"
 
     const val PSD_BANK_NAME = "PSD Bank"
 

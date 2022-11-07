@@ -547,7 +547,7 @@
             "type" : "string"
           }
         }, {
-          "example" : "ResponseLoanBrokerBeispielteam",
+          "example" : "ResponseQueueBeispielteam",
           "in" : "path",
           "name" : "jmsQueue",
           "required" : true,
@@ -1264,7 +1264,7 @@
       "delete" : {
         "operationId" : "deleteQueueByName",
         "parameters" : [ {
-          "example" : "ResponseLoanBrokerBeispielteam",
+          "example" : "ResponseQueueBeispielteam",
           "in" : "path",
           "name" : "name",
           "required" : true,
@@ -1319,7 +1319,7 @@
             "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
             "username" : "Beispielteam",
             "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "jmsQueue" : "ResponseQueueBeispielteam",
             "students" : [ {
               "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
               "firstname" : "Max",
@@ -1363,7 +1363,7 @@
             "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
             "username" : "Beispielteam",
             "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "jmsQueue" : "ResponseQueueBeispielteam",
             "students" : [ {
               "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
               "firstname" : "Max",
@@ -1407,7 +1407,7 @@
             "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
             "username" : "Beispielteam",
             "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "jmsQueue" : "ResponseQueueBeispielteam",
             "students" : [ {
               "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
               "firstname" : "Max",
@@ -1447,7 +1447,7 @@
             "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
             "username" : "Beispielteam",
             "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "jmsQueue" : "ResponseQueueBeispielteam",
             "students" : [ {
               "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
               "firstname" : "Max",
@@ -1494,7 +1494,7 @@
             "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
             "username" : "Beispielteam",
             "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "jmsQueue" : "ResponseQueueBeispielteam",
             "students" : [ {
               "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
               "firstname" : "Max",
@@ -1541,7 +1541,7 @@
             "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
             "username" : "Beispielteam",
             "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+            "jmsQueue" : "ResponseQueueBeispielteam",
             "students" : [ {
               "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
               "firstname" : "Max",
@@ -1730,7 +1730,7 @@
           "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
           "username" : "Beispielteam",
           "password" : "OOfKqWksmA",
-          "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+          "jmsQueue" : "ResponseQueueBeispielteam",
           "students" : [ {
             "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
             "firstname" : "Max",
@@ -1974,7 +1974,7 @@
         "example" : {
           "uuid" : "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
           "title" : "Asynchrone Banken",
-          "description" : "<p>Es existieren eine Reihe bereits vorgegebener asynchroner Banken, welche per JMS erreichbar sind. Um die Banken zu erreichen, müssen Sie im VPN der Hochschule sein und den Port in der URL mit angeben. Sie kommunizieren nicht direkt mit den Banken, sondern mit einem ActiveMQ-Broker als Middleware. Die Messages an den Broker sind Textnachrichten, die als JSON strukturiert sind. Die Message entspricht also einem JSON-Objekt mit den Parametern als einzelne Key-Value-Pairs (siehe unten). Ein Error-Handling wie in den synchronen Services gibt es nicht. Sie übernehmen daher die Anfragegrenzen aus der internen Konfiguration der Banken. Die Rückgabewert der Banken enthält neben einem Zinsatz für den gewünschten Kredit zwischen 0 und 10% vom Datentyp Double die Request ID der Anfrage. Eine Bank hört auf einer Queue des Broker nach Nachrichten für diese Bank (Bei der Sparkasse z.B. „sparkasse“). Sie entnehmen die Antworten der Banken auf ihrer Team-Queue, z.B. ResponseLoanBrokerTeam01.</p><p>Beispiel Textnachricht Request: {\\\"requestId\\\": \\\"123\\\",\\\"amountInEuros\\\": 20000,\\\"termInMonths\\\": 12,\\\"ratingLevel\\\": \\\"B\\\",\\\"delayInMilliseconds\\\": 0,\\\"username\\\": \\\"Team01\\\",\\\"password\\\": \\\"123456\\\"}</p><p>Beispiel Textnachricht Response: {\\\"requestId\\\":\\\"123\\\",\\\"lendingRate\\\":2.738343644690228}</p>",
+          "description" : "<p>Es existieren eine Reihe bereits vorgegebener asynchroner Banken, welche per JMS erreichbar sind. Um die Banken zu erreichen, müssen Sie im VPN der Hochschule sein und den Port in der URL mit angeben. Sie kommunizieren nicht direkt mit den Banken, sondern mit einem ActiveMQ-Broker als Middleware. Die Messages an den Broker sind Textnachrichten, die als JSON strukturiert sind. Die Message entspricht also einem JSON-Objekt mit den Parametern als einzelne Key-Value-Pairs (siehe unten). Ein Error-Handling wie in den synchronen Services gibt es nicht. Sie übernehmen daher die Anfragegrenzen aus der internen Konfiguration der Banken. Die Rückgabewert der Banken enthält neben einem Zinsatz für den gewünschten Kredit zwischen 0 und 10% vom Datentyp Double die Request ID der Anfrage. Eine Bank hört auf einer Queue des Broker nach Nachrichten für diese Bank (Bei der Sparkasse z.B. „sparkasse“). Sie entnehmen die Antworten der Banken auf ihrer Team-Queue, z.B. ResponseQueueTeam01.</p><p>Beispiel Textnachricht Request: {\\\"requestId\\\": \\\"123\\\",\\\"amountInEuros\\\": 20000,\\\"termInMonths\\\": 12,\\\"ratingLevel\\\": \\\"B\\\",\\\"delayInMilliseconds\\\": 0,\\\"username\\\": \\\"Team01\\\",\\\"password\\\": \\\"123456\\\"}</p><p>Beispiel Textnachricht Response: {\\\"requestId\\\":\\\"123\\\",\\\"lendingRate\\\":2.738343644690228}</p>",
           "integrationStep" : "3",
           "isOpenApiVerbose" : false,
           "contact" : {
@@ -2022,7 +2022,7 @@
               "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
               "username" : "Beispielteam",
               "password" : "OOfKqWksmA",
-              "jmsQueue" : "ResponseLoanBrokerBeispielteam",
+              "jmsQueue" : "ResponseQueueBeispielteam",
               "students" : [ {
                 "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
                 "firstname" : "Max",

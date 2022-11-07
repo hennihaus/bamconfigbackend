@@ -19,7 +19,7 @@ fun Application.configureDependencyInjection(
 ) = install(plugin = Koin) {
     initKoin(
         configFilePath = configFilePath,
-        modules = koinModules
+        modules = koinModules,
     )
 }
 
