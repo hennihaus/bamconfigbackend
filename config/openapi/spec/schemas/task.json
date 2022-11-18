@@ -140,41 +140,7 @@
                 "minSchufaRating": "A",
                 "maxSchufaRating": "P"
               },
-              "teams": [
-                {
-                  "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-                  "username": "Beispielteam",
-                  "password": "OOfKqWksmA",
-                  "jmsQueue": "ResponseQueueBeispielteam",
-                  "students": [
-                    {
-                      "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
-                      "firstname": "Max",
-                      "lastname": "Mustermann"
-                    },
-                    {
-                      "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
-                      "firstname": "Angela",
-                      "lastname": "Merkel"
-                    },
-                    {
-                      "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
-                      "firstname": "Thomas",
-                      "lastname": "Müller"
-                    }
-                  ],
-                  "statistics": {
-                    "Schufa": 0,
-                    "Deutsche Bank": 0,
-                    "Sparkasse": 0,
-                    "PSD Bank": 0,
-                    "Raiffeisen": 0,
-                    "Volksbank": 0,
-                    "Commerzbank": 0
-                  },
-                  "hasPassed": false
-                }
-              ]
+              "teamsCount": 100000
             }
           ]
         }

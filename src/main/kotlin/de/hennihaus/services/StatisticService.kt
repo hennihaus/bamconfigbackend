@@ -14,8 +14,6 @@ class StatisticService(private val repository: StatisticRepository) {
     }
 
     companion object {
-        const val ZERO_REQUESTS = 0L
-
         const val STATISTIC_NOT_FOUND_MESSAGE = "statistic not found by bankId and teamId"
     }
 }

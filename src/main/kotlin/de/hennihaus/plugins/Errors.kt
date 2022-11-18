@@ -5,7 +5,6 @@ import de.hennihaus.models.generated.rest.ReasonDTO
 import de.hennihaus.plugins.ErrorMessage.ANONYMOUS_OBJECT
 import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.EXPOSED_TRANSACTION_EXCEPTION
-import de.hennihaus.plugins.ErrorMessage.MISSING_PROPERTY_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.UUID_EXCEPTION_MESSAGE
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -92,5 +91,3 @@ class UUIDException(override val message: String = UUID_EXCEPTION_MESSAGE) : Run
 class BrokerException(message: String?) : RuntimeException(message ?: BROKER_EXCEPTION_MESSAGE)
 
 class TransactionException(message: String? = null) : RuntimeException(message ?: EXPOSED_TRANSACTION_EXCEPTION)
-
-class PropertyNotFoundException(key: String) : IllegalStateException("$MISSING_PROPERTY_MESSAGE $key")

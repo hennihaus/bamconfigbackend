@@ -7,10 +7,99 @@
   "paths": {},
   "components": {
     "schemas": {
+      "Teams": {
+        "type": "object",
+        "required": [
+          "pagination",
+          "query",
+          "items"
+        ],
+        "properties": {
+          "pagination": {
+            "$ref": "../commons/commons.json#/components/schemas/Pagination"
+          },
+          "query": {
+            "$ref": "#/components/schemas/Query"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Team"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          }
+        },
+        "example": {
+          "pagination": {
+            "first": "eyJwb3NpdGlvbiI6IiIsImRpcmVjdGlvbiI6IkFTQ0VORElORyIsInF1ZXJ5SGFzaCI6LTc4OTY0NDQwNiwicXVlcnkiOnsibGltaXQiOjEwLCJ0eXBlIjpudWxsLCJ1c2VybmFtZSI6bnVsbCwicGFzc3dvcmQiOm51bGwsImptc1F1ZXVlIjpudWxsLCJoYXNQYXNzZWQiOm51bGwsIm1pblJlcXVlc3RzIjpudWxsLCJtYXhSZXF1ZXN0cyI6bnVsbCwic3R1ZGVudEZpcnN0bmFtZSI6bnVsbCwic3R1ZGVudExhc3RuYW1lIjpudWxsLCJiYW5rcyI6bnVsbH19",
+            "prev": "eyJwb3NpdGlvbiI6IlRlYW0wMDAwMTAiLCJkaXJlY3Rpb24iOiJERVNDRU5ESU5HIiwicXVlcnlIYXNoIjotNzg5NjQ0NDA2LCJxdWVyeSI6eyJsaW1pdCI6MTAsInR5cGUiOm51bGwsInVzZXJuYW1lIjpudWxsLCJwYXNzd29yZCI6bnVsbCwiam1zUXVldWUiOm51bGwsImhhc1Bhc3NlZCI6bnVsbCwibWluUmVxdWVzdHMiOm51bGwsIm1heFJlcXVlc3RzIjpudWxsLCJzdHVkZW50Rmlyc3RuYW1lIjpudWxsLCJzdHVkZW50TGFzdG5hbWUiOm51bGwsImJhbmtzIjpudWxsfX0=",
+            "next": "eyJwb3NpdGlvbiI6IlRlYW0wMDAwMDkiLCJkaXJlY3Rpb24iOiJBU0NFTkRJTkciLCJxdWVyeUhhc2giOi03ODk2NDQ0MDYsInF1ZXJ5Ijp7ImxpbWl0IjoxMCwidHlwZSI6bnVsbCwidXNlcm5hbWUiOm51bGwsInBhc3N3b3JkIjpudWxsLCJqbXNRdWV1ZSI6bnVsbCwiaGFzUGFzc2VkIjpudWxsLCJtaW5SZXF1ZXN0cyI6bnVsbCwibWF4UmVxdWVzdHMiOm51bGwsInN0dWRlbnRGaXJzdG5hbWUiOm51bGwsInN0dWRlbnRMYXN0bmFtZSI6bnVsbCwiYmFua3MiOm51bGx9fQ==",
+            "last": "eyJwb3NpdGlvbiI6IiIsImRpcmVjdGlvbiI6IkRFU0NFTkRJTkciLCJxdWVyeUhhc2giOi03ODk2NDQ0MDYsInF1ZXJ5Ijp7ImxpbWl0IjoxMCwidHlwZSI6bnVsbCwidXNlcm5hbWUiOm51bGwsInBhc3N3b3JkIjpudWxsLCJqbXNRdWV1ZSI6bnVsbCwiaGFzUGFzc2VkIjpudWxsLCJtaW5SZXF1ZXN0cyI6bnVsbCwibWF4UmVxdWVzdHMiOm51bGwsInN0dWRlbnRGaXJzdG5hbWUiOm51bGwsInN0dWRlbnRMYXN0bmFtZSI6bnVsbCwiYmFua3MiOm51bGx9fQ=="
+          },
+          "query": {
+            "type": "REGULAR",
+            "username": "Beispielteam",
+            "password": "OOfKqWksmA",
+            "jmsQueue": "ResponseQueueBeispielteam",
+            "hasPassed": false,
+            "minRequests": 0,
+            "maxRequests": 9223372036854775807,
+            "studentFirstname": "Max",
+            "studentLastname": "Mustermann",
+            "banks": [
+              "Schufa",
+              "Deutsche Bank",
+              "Sparkasse",
+              "PSD Bank",
+              "Raiffeisen",
+              "Volksbank",
+              "Commerzbank"
+            ]
+          },
+          "items": [
+            {
+              "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+              "type": "EXAMPLE",
+              "username": "Beispielteam",
+              "password": "OOfKqWksmA",
+              "jmsQueue": "ResponseQueueBeispielteam",
+              "students": [
+                {
+                  "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
+                  "firstname": "Max",
+                  "lastname": "Mustermann"
+                },
+                {
+                  "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
+                  "firstname": "Angela",
+                  "lastname": "Merkel"
+                },
+                {
+                  "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
+                  "firstname": "Thomas",
+                  "lastname": "Müller"
+                }
+              ],
+              "statistics": {
+                "Schufa": 0,
+                "Deutsche Bank": 0,
+                "Sparkasse": 0,
+                "PSD Bank": 0,
+                "Raiffeisen": 0,
+                "Volksbank": 0,
+                "Commerzbank": 0
+              },
+              "hasPassed": false
+            }
+          ]
+        }
+      },
       "Team": {
         "type": "object",
         "required": [
           "uuid",
+          "type",
           "username",
           "password",
           "jmsQueue",
@@ -23,6 +112,10 @@
             "type": "string",
             "format": "uuid",
             "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "type": {
+            "type": "string",
+            "format": "enum"
           },
           "username": {
             "type": "string",
@@ -63,6 +156,7 @@
         },
         "example": {
           "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "type": "EXAMPLE",
           "username": "Beispielteam",
           "password": "OOfKqWksmA",
           "jmsQueue": "ResponseQueueBeispielteam",
@@ -117,6 +211,69 @@
             "type": "string",
             "minLength": 2,
             "maxLength": 50
+          }
+        }
+      },
+      "Query": {
+        "type": "object",
+        "required": [
+          "limit"
+        ],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "type": {
+            "type": "string",
+            "format": "enum"
+          },
+          "username": {
+            "type": "string",
+            "minLength": 0,
+            "default": ""
+          },
+          "password": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 50
+          },
+          "jmsQueue": {
+            "type": "string",
+            "minLength": 0,
+            "default": ""
+          },
+          "hasPassed": {
+            "type": "boolean"
+          },
+          "minRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "maxRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "studentFirstname": {
+            "type": "string",
+            "minLength": 0
+          },
+          "studentLastname": {
+            "type": "string",
+            "minLength": 0
+          },
+          "banks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 6,
+              "maxLength": 50
+            },
+            "minItems": 1,
+            "uniqueItems": true
           }
         }
       }

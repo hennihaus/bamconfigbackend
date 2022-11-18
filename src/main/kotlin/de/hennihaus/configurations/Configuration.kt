@@ -23,3 +23,10 @@ object Configuration {
     const val API_VERSION = "ktor.application.apiVersion"
     const val JAVA_UTIL_LOGGING_CONFIGURATION_FILE = "logging.properties"
 }
+
+object RoutesConfiguration {
+    const val CURSOR_QUERY_PARAMETER = "cursor"
+    const val LIMIT_QUERY_PARAMETER = "limit"
+
+    const val DEFAULT_LIMIT_PARAMETER = 10
+}

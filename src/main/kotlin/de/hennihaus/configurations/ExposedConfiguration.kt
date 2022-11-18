@@ -81,8 +81,6 @@ object ExposedConfiguration {
     const val DATABASE_DRIVER = "exposed.driver"
     const val DATABASE_TIMEOUT_IN_MILLISECONDS = "exposed.timeoutInMilliseconds"
     const val DATABASE_TIMEOUT_WARNING_IN_MILLISECONDS = "exposed.timeoutWarningInMilliseconds"
-    const val DATABASE_AES_256_BIT_SALT = "exposed.aes256BitSalt"
-    const val DATABASE_AES_PASSWORD = "exposed.aesPassword"
     const val DATABASE_DEFAULT_FETCH_SIZE = "exposed.defaultFetchSize"
     const val DATABASE_DEFAULT_REPETITION_ATTEMPTS = "exposed.defaultRepetitionAttempts"
     const val DATABASE_DEFAULT_ISOLATION_LEVEL = "exposed.defaultIsolationLevel"

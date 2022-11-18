@@ -16,7 +16,7 @@
           "thumbnailUrl",
           "isAsync",
           "isActive",
-          "teams"
+          "teamsCount"
         ],
         "properties": {
           "uuid": {
@@ -48,14 +48,10 @@
           "creditConfiguration": {
             "$ref": "#/components/schemas/CreditConfiguration"
           },
-          "teams": {
-            "type": "array",
-            "title": "Teams",
-            "items": {
-              "$ref": "./team.json#/components/schemas/Team"
-            },
-            "minItems": 0,
-            "uniqueItems": true
+          "teamsCount": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
           }
         }
       },
@@ -116,41 +112,7 @@
             "isAsync": false,
             "isActive": true,
             "creditConfiguration": null,
-            "teams": [
-              {
-                "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-                "username": "Beispielteam",
-                "password": "OOfKqWksmA",
-                "jmsQueue": "ResponseQueueBeispielteam",
-                "students": [
-                  {
-                    "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
-                    "firstname": "Max",
-                    "lastname": "Mustermann"
-                  },
-                  {
-                    "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
-                    "firstname": "Angela",
-                    "lastname": "Merkel"
-                  },
-                  {
-                    "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
-                    "firstname": "Thomas",
-                    "lastname": "Müller"
-                  }
-                ],
-                "statistics": {
-                  "Schufa": 0,
-                  "Deutsche Bank": 0,
-                  "Sparkasse": 0,
-                  "PSD Bank": 0,
-                  "Raiffeisen": 0,
-                  "Volksbank": 0,
-                  "Commerzbank": 0
-                },
-                "hasPassed": false
-              }
-            ]
+            "teamsCount": 100000
           },
           {
             "uuid": "bf6981d4-0413-4767-8232-c7179b169bc7",
@@ -167,41 +129,7 @@
               "minSchufaRating": "A",
               "maxSchufaRating": "P"
             },
-            "teams": [
-              {
-                "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-                "username": "Beispielteam",
-                "password": "OOfKqWksmA",
-                "jmsQueue": "ResponseQueueBeispielteam",
-                "students": [
-                  {
-                    "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
-                    "firstname": "Max",
-                    "lastname": "Mustermann"
-                  },
-                  {
-                    "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
-                    "firstname": "Angela",
-                    "lastname": "Merkel"
-                  },
-                  {
-                    "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
-                    "firstname": "Thomas",
-                    "lastname": "Müller"
-                  }
-                ],
-                "statistics": {
-                  "Schufa": 0,
-                  "Deutsche Bank": 0,
-                  "Sparkasse": 0,
-                  "PSD Bank": 0,
-                  "Raiffeisen": 0,
-                  "Volksbank": 0,
-                  "Commerzbank": 0
-                },
-                "hasPassed": false
-              }
-            ]
+            "teamsCount": 100000
           },
           {
             "uuid": "78eefcd4-2459-412e-857f-60f7c5d531c9",
@@ -218,41 +146,7 @@
               "minSchufaRating": "A",
               "maxSchufaRating": "P"
             },
-            "teams": [
-              {
-                "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-                "username": "Beispielteam",
-                "password": "OOfKqWksmA",
-                "jmsQueue": "ResponseQueueBeispielteam",
-                "students": [
-                  {
-                    "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
-                    "firstname": "Max",
-                    "lastname": "Mustermann"
-                  },
-                  {
-                    "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
-                    "firstname": "Angela",
-                    "lastname": "Merkel"
-                  },
-                  {
-                    "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
-                    "firstname": "Thomas",
-                    "lastname": "Müller"
-                  }
-                ],
-                "statistics": {
-                  "Schufa": 0,
-                  "Deutsche Bank": 0,
-                  "Sparkasse": 0,
-                  "PSD Bank": 0,
-                  "Raiffeisen": 0,
-                  "Volksbank": 0,
-                  "Commerzbank": 0
-                },
-                "hasPassed": false
-              }
-            ]
+            "teamsCount": 100000
           }
         ]
       },
@@ -265,41 +159,7 @@
           "isAsync": false,
           "isActive": true,
           "creditConfiguration": null,
-          "teams": [
-            {
-              "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-              "username": "Beispielteam",
-              "password": "OOfKqWksmA",
-              "jmsQueue": "ResponseQueueBeispielteam",
-              "students": [
-                {
-                  "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
-                  "firstname": "Max",
-                  "lastname": "Mustermann"
-                },
-                {
-                  "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
-                  "firstname": "Angela",
-                  "lastname": "Merkel"
-                },
-                {
-                  "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
-                  "firstname": "Thomas",
-                  "lastname": "Müller"
-                }
-              ],
-              "statistics": {
-                "Schufa": 0,
-                "Deutsche Bank": 0,
-                "Sparkasse": 0,
-                "PSD Bank": 0,
-                "Raiffeisen": 0,
-                "Volksbank": 0,
-                "Commerzbank": 0
-              },
-              "hasPassed": false
-            }
-          ]
+          "teamsCount": 100000
         }
       },
       "SyncBank": {
@@ -318,41 +178,7 @@
             "minSchufaRating": "A",
             "maxSchufaRating": "P"
           },
-          "teams": [
-            {
-              "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-              "username": "Beispielteam",
-              "password": "OOfKqWksmA",
-              "jmsQueue": "ResponseQueueBeispielteam",
-              "students": [
-                {
-                  "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
-                  "firstname": "Max",
-                  "lastname": "Mustermann"
-                },
-                {
-                  "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
-                  "firstname": "Angela",
-                  "lastname": "Merkel"
-                },
-                {
-                  "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
-                  "firstname": "Thomas",
-                  "lastname": "Müller"
-                }
-              ],
-              "statistics": {
-                "Schufa": 0,
-                "Deutsche Bank": 0,
-                "Sparkasse": 0,
-                "PSD Bank": 0,
-                "Raiffeisen": 0,
-                "Volksbank": 0,
-                "Commerzbank": 0
-              },
-              "hasPassed": false
-            }
-          ]
+          "teamsCount": 100000
         }
       },
       "AsyncBank": {
@@ -371,41 +197,7 @@
             "minSchufaRating": "A",
             "maxSchufaRating": "P"
           },
-          "teams": [
-            {
-              "uuid": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-              "username": "Beispielteam",
-              "password": "OOfKqWksmA",
-              "jmsQueue": "ResponseQueueBeispielteam",
-              "students": [
-                {
-                  "uuid": "31b1631b-66c9-4720-94fc-95891a38f964",
-                  "firstname": "Max",
-                  "lastname": "Mustermann"
-                },
-                {
-                  "uuid": "474e90cb-de6e-47f2-844a-44ea7dc09516",
-                  "firstname": "Angela",
-                  "lastname": "Merkel"
-                },
-                {
-                  "uuid": "f334a0c0-0c26-4499-aa95-061546839a75",
-                  "firstname": "Thomas",
-                  "lastname": "Müller"
-                }
-              ],
-              "statistics": {
-                "Schufa": 0,
-                "Deutsche Bank": 0,
-                "Sparkasse": 0,
-                "PSD Bank": 0,
-                "Raiffeisen": 0,
-                "Volksbank": 0,
-                "Commerzbank": 0
-              },
-              "hasPassed": false
-            }
-          ]
+          "teamsCount": 100000
         }
       }
     }

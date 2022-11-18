@@ -20,18 +20,162 @@
     "/teams" : {
       "get" : {
         "operationId" : "getAllTeams",
+        "parameters" : [ {
+          "allowReserved" : false,
+          "explode" : false,
+          "in" : "query",
+          "name" : "cursor",
+          "required" : false,
+          "schema" : {
+            "format" : "byte",
+            "minLength" : 3,
+            "type" : "string"
+          },
+          "style" : "form"
+        }, {
+          "allowReserved" : false,
+          "example" : "10",
+          "explode" : false,
+          "in" : "query",
+          "name" : "limit",
+          "required" : false,
+          "schema" : {
+            "format" : "int64",
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "style" : "form"
+        }, {
+          "allowReserved" : false,
+          "example" : "REGULAR",
+          "explode" : false,
+          "in" : "query",
+          "name" : "type",
+          "required" : false,
+          "schema" : {
+            "format" : "enum",
+            "type" : "string"
+          },
+          "style" : "form"
+        }, {
+          "allowReserved" : false,
+          "example" : "Team",
+          "explode" : false,
+          "in" : "query",
+          "name" : "username",
+          "required" : false,
+          "schema" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "style" : "form"
+        }, {
+          "allowReserved" : false,
+          "explode" : false,
+          "in" : "query",
+          "name" : "password",
+          "required" : false,
+          "schema" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "style" : "form"
+        }, {
+          "allowReserved" : false,
+          "example" : "ResponseQueueTeam",
+          "explode" : false,
+          "in" : "query",
+          "name" : "jmsQueue",
+          "required" : false,
+          "schema" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "style" : "form"
+        }, {
+          "allowReserved" : false,
+          "example" : false,
+          "explode" : false,
+          "in" : "query",
+          "name" : "hasPassed",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean"
+          },
+          "style" : "form"
+        }, {
+          "allowReserved" : false,
+          "example" : 0,
+          "explode" : false,
+          "in" : "query",
+          "name" : "minRequests",
+          "required" : false,
+          "schema" : {
+            "format" : "int64",
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "style" : "form"
+        }, {
+          "allowReserved" : false,
+          "example" : 9223372036854775807,
+          "explode" : false,
+          "in" : "query",
+          "name" : "maxRequests",
+          "required" : false,
+          "schema" : {
+            "format" : "int64",
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "style" : "form"
+        }, {
+          "allowReserved" : false,
+          "explode" : false,
+          "in" : "query",
+          "name" : "studentFirstname",
+          "required" : false,
+          "schema" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "style" : "form"
+        }, {
+          "allowReserved" : false,
+          "explode" : false,
+          "in" : "query",
+          "name" : "studentLastname",
+          "required" : false,
+          "schema" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "style" : "form"
+        }, {
+          "allowReserved" : false,
+          "example" : [ "Schufa", "Deutsche Bank", "Sparkasse", "PSD Bank", "Raiffeisen", "Volksbank", "Commerzbank" ],
+          "explode" : true,
+          "in" : "query",
+          "name" : "banks",
+          "required" : false,
+          "schema" : {
+            "items" : {
+              "maxLength" : 50,
+              "minLength" : 6,
+              "type" : "string"
+            },
+            "minItems" : 1,
+            "type" : "array",
+            "uniqueItems" : true
+          },
+          "style" : "form"
+        } ],
         "responses" : {
           "200" : {
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "items" : {
-                    "$ref" : "#/components/schemas/Team"
-                  },
-                  "minItems" : 0,
-                  "title" : "Teams",
-                  "type" : "array",
-                  "uniqueItems" : true
+                  "$ref" : "#/components/schemas/Teams"
                 }
               }
             },
@@ -63,7 +207,9 @@
       "delete" : {
         "operationId" : "deleteTeamById",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -71,7 +217,8 @@
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "responses" : {
           "204" : {
@@ -121,7 +268,9 @@
       "get" : {
         "operationId" : "getTeamById",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -129,7 +278,8 @@
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "responses" : {
           "200" : {
@@ -200,7 +350,9 @@
       "put" : {
         "operationId" : "saveTeam",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -208,7 +360,8 @@
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "requestBody" : {
           "$ref" : "#/components/requestBodies/Team"
@@ -284,7 +437,9 @@
       "delete" : {
         "operationId" : "resetStatistics",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -292,7 +447,8 @@
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "responses" : {
           "200" : {
@@ -382,7 +538,9 @@
       "get" : {
         "operationId" : "isUsernameUnique",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -390,9 +548,12 @@
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         }, {
+          "allowReserved" : false,
           "example" : "Beispielteam",
+          "explode" : false,
           "in" : "path",
           "name" : "username",
           "required" : true,
@@ -400,7 +561,8 @@
             "maxLength" : 50,
             "minLength" : 6,
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "responses" : {
           "200" : {
@@ -459,7 +621,9 @@
       "get" : {
         "operationId" : "isPasswordUnique",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -467,9 +631,12 @@
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         }, {
+          "allowReserved" : false,
           "example" : "OOfKqWksmA",
+          "explode" : false,
           "in" : "path",
           "name" : "password",
           "required" : true,
@@ -478,7 +645,8 @@
             "maxLength" : 50,
             "minLength" : 8,
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "responses" : {
           "200" : {
@@ -537,7 +705,9 @@
       "get" : {
         "operationId" : "isJmsQueueUnique",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -545,9 +715,12 @@
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         }, {
+          "allowReserved" : false,
           "example" : "ResponseQueueBeispielteam",
+          "explode" : false,
           "in" : "path",
           "name" : "jmsQueue",
           "required" : true,
@@ -555,7 +728,8 @@
             "maxLength" : 50,
             "minLength" : 6,
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "responses" : {
           "200" : {
@@ -734,7 +908,9 @@
       "get" : {
         "operationId" : "getBankById",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -742,7 +918,8 @@
             "maxLength" : 50,
             "minLength" : 6,
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "responses" : {
           "200" : {
@@ -807,7 +984,9 @@
       "patch" : {
         "operationId" : "patchBank",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -815,7 +994,8 @@
             "maxLength" : 50,
             "minLength" : 6,
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "requestBody" : {
           "$ref" : "#/components/requestBodies/Bank"
@@ -961,7 +1141,9 @@
       "get" : {
         "operationId" : "getTaskById",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -969,7 +1151,8 @@
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "responses" : {
           "200" : {
@@ -1040,7 +1223,9 @@
       "patch" : {
         "operationId" : "patchTask",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -1048,7 +1233,8 @@
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "requestBody" : {
           "$ref" : "#/components/requestBodies/Task"
@@ -1141,7 +1327,9 @@
       "get" : {
         "operationId" : "isTitleUnique",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
+          "explode" : false,
           "in" : "path",
           "name" : "uuid",
           "required" : true,
@@ -1149,9 +1337,12 @@
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         }, {
+          "allowReserved" : false,
           "example" : "Asynchrone Banken",
+          "explode" : false,
           "in" : "path",
           "name" : "title",
           "required" : true,
@@ -1159,7 +1350,8 @@
             "maxLength" : 50,
             "minLength" : 6,
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "responses" : {
           "200" : {
@@ -1264,7 +1456,9 @@
       "delete" : {
         "operationId" : "deleteQueueByName",
         "parameters" : [ {
+          "allowReserved" : false,
           "example" : "ResponseQueueBeispielteam",
+          "explode" : false,
           "in" : "path",
           "name" : "name",
           "required" : true,
@@ -1272,7 +1466,8 @@
             "maxLength" : 50,
             "minLength" : 6,
             "type" : "string"
-          }
+          },
+          "style" : "simple"
         } ],
         "responses" : {
           "204" : {
@@ -1315,35 +1510,7 @@
           "isAsync" : false,
           "isActive" : true,
           "creditConfiguration" : null,
-          "teams" : [ {
-            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-            "username" : "Beispielteam",
-            "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseQueueBeispielteam",
-            "students" : [ {
-              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
-              "firstname" : "Max",
-              "lastname" : "Mustermann"
-            }, {
-              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
-              "firstname" : "Angela",
-              "lastname" : "Merkel"
-            }, {
-              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
-              "firstname" : "Thomas",
-              "lastname" : "Müller"
-            } ],
-            "statistics" : {
-              "Schufa" : 0,
-              "Deutsche Bank" : 0,
-              "Sparkasse" : 0,
-              "PSD Bank" : 0,
-              "Raiffeisen" : 0,
-              "Volksbank" : 0,
-              "Commerzbank" : 0
-            },
-            "hasPassed" : false
-          } ]
+          "teamsCount" : 100000
         }, {
           "uuid" : "bf6981d4-0413-4767-8232-c7179b169bc7",
           "name" : "Deutsche Bank",
@@ -1359,35 +1526,7 @@
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
           },
-          "teams" : [ {
-            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-            "username" : "Beispielteam",
-            "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseQueueBeispielteam",
-            "students" : [ {
-              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
-              "firstname" : "Max",
-              "lastname" : "Mustermann"
-            }, {
-              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
-              "firstname" : "Angela",
-              "lastname" : "Merkel"
-            }, {
-              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
-              "firstname" : "Thomas",
-              "lastname" : "Müller"
-            } ],
-            "statistics" : {
-              "Schufa" : 0,
-              "Deutsche Bank" : 0,
-              "Sparkasse" : 0,
-              "PSD Bank" : 0,
-              "Raiffeisen" : 0,
-              "Volksbank" : 0,
-              "Commerzbank" : 0
-            },
-            "hasPassed" : false
-          } ]
+          "teamsCount" : 100000
         }, {
           "uuid" : "78eefcd4-2459-412e-857f-60f7c5d531c9",
           "name" : "Sparkasse",
@@ -1403,35 +1542,7 @@
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
           },
-          "teams" : [ {
-            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-            "username" : "Beispielteam",
-            "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseQueueBeispielteam",
-            "students" : [ {
-              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
-              "firstname" : "Max",
-              "lastname" : "Mustermann"
-            }, {
-              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
-              "firstname" : "Angela",
-              "lastname" : "Merkel"
-            }, {
-              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
-              "firstname" : "Thomas",
-              "lastname" : "Müller"
-            } ],
-            "statistics" : {
-              "Schufa" : 0,
-              "Deutsche Bank" : 0,
-              "Sparkasse" : 0,
-              "PSD Bank" : 0,
-              "Raiffeisen" : 0,
-              "Volksbank" : 0,
-              "Commerzbank" : 0
-            },
-            "hasPassed" : false
-          } ]
+          "teamsCount" : 100000
         } ]
       },
       "Schufa" : {
@@ -1443,35 +1554,7 @@
           "isAsync" : false,
           "isActive" : true,
           "creditConfiguration" : null,
-          "teams" : [ {
-            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-            "username" : "Beispielteam",
-            "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseQueueBeispielteam",
-            "students" : [ {
-              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
-              "firstname" : "Max",
-              "lastname" : "Mustermann"
-            }, {
-              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
-              "firstname" : "Angela",
-              "lastname" : "Merkel"
-            }, {
-              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
-              "firstname" : "Thomas",
-              "lastname" : "Müller"
-            } ],
-            "statistics" : {
-              "Schufa" : 0,
-              "Deutsche Bank" : 0,
-              "Sparkasse" : 0,
-              "PSD Bank" : 0,
-              "Raiffeisen" : 0,
-              "Volksbank" : 0,
-              "Commerzbank" : 0
-            },
-            "hasPassed" : false
-          } ]
+          "teamsCount" : 100000
         }
       },
       "SyncBank" : {
@@ -1490,35 +1573,7 @@
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
           },
-          "teams" : [ {
-            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-            "username" : "Beispielteam",
-            "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseQueueBeispielteam",
-            "students" : [ {
-              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
-              "firstname" : "Max",
-              "lastname" : "Mustermann"
-            }, {
-              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
-              "firstname" : "Angela",
-              "lastname" : "Merkel"
-            }, {
-              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
-              "firstname" : "Thomas",
-              "lastname" : "Müller"
-            } ],
-            "statistics" : {
-              "Schufa" : 0,
-              "Deutsche Bank" : 0,
-              "Sparkasse" : 0,
-              "PSD Bank" : 0,
-              "Raiffeisen" : 0,
-              "Volksbank" : 0,
-              "Commerzbank" : 0
-            },
-            "hasPassed" : false
-          } ]
+          "teamsCount" : 100000
         }
       },
       "AsyncBank" : {
@@ -1537,35 +1592,7 @@
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
           },
-          "teams" : [ {
-            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-            "username" : "Beispielteam",
-            "password" : "OOfKqWksmA",
-            "jmsQueue" : "ResponseQueueBeispielteam",
-            "students" : [ {
-              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
-              "firstname" : "Max",
-              "lastname" : "Mustermann"
-            }, {
-              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
-              "firstname" : "Angela",
-              "lastname" : "Merkel"
-            }, {
-              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
-              "firstname" : "Thomas",
-              "lastname" : "Müller"
-            } ],
-            "statistics" : {
-              "Schufa" : 0,
-              "Deutsche Bank" : 0,
-              "Sparkasse" : 0,
-              "PSD Bank" : 0,
-              "Raiffeisen" : 0,
-              "Volksbank" : 0,
-              "Commerzbank" : 0
-            },
-            "hasPassed" : false
-          } ]
+          "teamsCount" : 100000
         }
       }
     },
@@ -1725,9 +1752,141 @@
       }
     },
     "schemas" : {
+      "Teams" : {
+        "example" : {
+          "pagination" : {
+            "first" : "eyJwb3NpdGlvbiI6IiIsImRpcmVjdGlvbiI6IkFTQ0VORElORyIsInF1ZXJ5SGFzaCI6LTc4OTY0NDQwNiwicXVlcnkiOnsibGltaXQiOjEwLCJ0eXBlIjpudWxsLCJ1c2VybmFtZSI6bnVsbCwicGFzc3dvcmQiOm51bGwsImptc1F1ZXVlIjpudWxsLCJoYXNQYXNzZWQiOm51bGwsIm1pblJlcXVlc3RzIjpudWxsLCJtYXhSZXF1ZXN0cyI6bnVsbCwic3R1ZGVudEZpcnN0bmFtZSI6bnVsbCwic3R1ZGVudExhc3RuYW1lIjpudWxsLCJiYW5rcyI6bnVsbH19",
+            "prev" : "eyJwb3NpdGlvbiI6IlRlYW0wMDAwMTAiLCJkaXJlY3Rpb24iOiJERVNDRU5ESU5HIiwicXVlcnlIYXNoIjotNzg5NjQ0NDA2LCJxdWVyeSI6eyJsaW1pdCI6MTAsInR5cGUiOm51bGwsInVzZXJuYW1lIjpudWxsLCJwYXNzd29yZCI6bnVsbCwiam1zUXVldWUiOm51bGwsImhhc1Bhc3NlZCI6bnVsbCwibWluUmVxdWVzdHMiOm51bGwsIm1heFJlcXVlc3RzIjpudWxsLCJzdHVkZW50Rmlyc3RuYW1lIjpudWxsLCJzdHVkZW50TGFzdG5hbWUiOm51bGwsImJhbmtzIjpudWxsfX0=",
+            "next" : "eyJwb3NpdGlvbiI6IlRlYW0wMDAwMDkiLCJkaXJlY3Rpb24iOiJBU0NFTkRJTkciLCJxdWVyeUhhc2giOi03ODk2NDQ0MDYsInF1ZXJ5Ijp7ImxpbWl0IjoxMCwidHlwZSI6bnVsbCwidXNlcm5hbWUiOm51bGwsInBhc3N3b3JkIjpudWxsLCJqbXNRdWV1ZSI6bnVsbCwiaGFzUGFzc2VkIjpudWxsLCJtaW5SZXF1ZXN0cyI6bnVsbCwibWF4UmVxdWVzdHMiOm51bGwsInN0dWRlbnRGaXJzdG5hbWUiOm51bGwsInN0dWRlbnRMYXN0bmFtZSI6bnVsbCwiYmFua3MiOm51bGx9fQ==",
+            "last" : "eyJwb3NpdGlvbiI6IiIsImRpcmVjdGlvbiI6IkRFU0NFTkRJTkciLCJxdWVyeUhhc2giOi03ODk2NDQ0MDYsInF1ZXJ5Ijp7ImxpbWl0IjoxMCwidHlwZSI6bnVsbCwidXNlcm5hbWUiOm51bGwsInBhc3N3b3JkIjpudWxsLCJqbXNRdWV1ZSI6bnVsbCwiaGFzUGFzc2VkIjpudWxsLCJtaW5SZXF1ZXN0cyI6bnVsbCwibWF4UmVxdWVzdHMiOm51bGwsInN0dWRlbnRGaXJzdG5hbWUiOm51bGwsInN0dWRlbnRMYXN0bmFtZSI6bnVsbCwiYmFua3MiOm51bGx9fQ=="
+          },
+          "query" : {
+            "type" : "REGULAR",
+            "username" : "Beispielteam",
+            "password" : "OOfKqWksmA",
+            "jmsQueue" : "ResponseQueueBeispielteam",
+            "hasPassed" : false,
+            "minRequests" : 0,
+            "maxRequests" : 9223372036854775807,
+            "studentFirstname" : "Max",
+            "studentLastname" : "Mustermann",
+            "banks" : [ "Schufa", "Deutsche Bank", "Sparkasse", "PSD Bank", "Raiffeisen", "Volksbank", "Commerzbank" ]
+          },
+          "items" : [ {
+            "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+            "type" : "EXAMPLE",
+            "username" : "Beispielteam",
+            "password" : "OOfKqWksmA",
+            "jmsQueue" : "ResponseQueueBeispielteam",
+            "students" : [ {
+              "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
+              "firstname" : "Max",
+              "lastname" : "Mustermann"
+            }, {
+              "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
+              "firstname" : "Angela",
+              "lastname" : "Merkel"
+            }, {
+              "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
+              "firstname" : "Thomas",
+              "lastname" : "Müller"
+            } ],
+            "statistics" : {
+              "Schufa" : 0,
+              "Deutsche Bank" : 0,
+              "Sparkasse" : 0,
+              "PSD Bank" : 0,
+              "Raiffeisen" : 0,
+              "Volksbank" : 0,
+              "Commerzbank" : 0
+            },
+            "hasPassed" : false
+          } ]
+        },
+        "properties" : {
+          "pagination" : {
+            "$ref" : "#/components/schemas/Pagination"
+          },
+          "query" : {
+            "$ref" : "#/components/schemas/Query"
+          },
+          "items" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Team"
+            },
+            "minItems" : 0,
+            "type" : "array",
+            "uniqueItems" : true
+          }
+        },
+        "required" : [ "items", "pagination", "query" ],
+        "type" : "object"
+      },
+      "Query" : {
+        "properties" : {
+          "limit" : {
+            "maximum" : 1000,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "type" : {
+            "format" : "enum",
+            "type" : "string"
+          },
+          "username" : {
+            "default" : "",
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "password" : {
+            "maxLength" : 50,
+            "minLength" : 10,
+            "type" : "string"
+          },
+          "jmsQueue" : {
+            "default" : "",
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "hasPassed" : {
+            "type" : "boolean"
+          },
+          "minRequests" : {
+            "format" : "int64",
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "maxRequests" : {
+            "format" : "int64",
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "studentFirstname" : {
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "studentLastname" : {
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "banks" : {
+            "items" : {
+              "maxLength" : 50,
+              "minLength" : 6,
+              "type" : "string"
+            },
+            "minItems" : 1,
+            "type" : "array",
+            "uniqueItems" : true
+          }
+        },
+        "required" : [ "limit" ],
+        "type" : "object"
+      },
       "Team" : {
         "example" : {
           "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
+          "type" : "EXAMPLE",
           "username" : "Beispielteam",
           "password" : "OOfKqWksmA",
           "jmsQueue" : "ResponseQueueBeispielteam",
@@ -1759,6 +1918,10 @@
           "uuid" : {
             "format" : "uuid",
             "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
+          "type" : {
+            "format" : "enum",
             "type" : "string"
           },
           "username" : {
@@ -1798,7 +1961,7 @@
             "type" : "boolean"
           }
         },
-        "required" : [ "hasPassed", "jmsQueue", "password", "statistics", "students", "username", "uuid" ],
+        "required" : [ "hasPassed", "jmsQueue", "password", "statistics", "students", "type", "username", "uuid" ],
         "type" : "object"
       },
       "Student" : {
@@ -1919,17 +2082,13 @@
           "creditConfiguration" : {
             "$ref" : "#/components/schemas/CreditConfiguration"
           },
-          "teams" : {
-            "items" : {
-              "$ref" : "#/components/schemas/Team"
-            },
-            "minItems" : 0,
-            "title" : "Teams",
-            "type" : "array",
-            "uniqueItems" : true
+          "teamsCount" : {
+            "format" : "int64",
+            "minimum" : 0,
+            "type" : "integer"
           }
         },
-        "required" : [ "isActive", "isAsync", "jmsQueue", "name", "teams", "thumbnailUrl", "uuid" ],
+        "required" : [ "isActive", "isAsync", "jmsQueue", "name", "teamsCount", "thumbnailUrl", "uuid" ],
         "type" : "object"
       },
       "CreditConfiguration" : {
@@ -2018,35 +2177,7 @@
               "minSchufaRating" : "A",
               "maxSchufaRating" : "P"
             },
-            "teams" : [ {
-              "uuid" : "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
-              "username" : "Beispielteam",
-              "password" : "OOfKqWksmA",
-              "jmsQueue" : "ResponseQueueBeispielteam",
-              "students" : [ {
-                "uuid" : "31b1631b-66c9-4720-94fc-95891a38f964",
-                "firstname" : "Max",
-                "lastname" : "Mustermann"
-              }, {
-                "uuid" : "474e90cb-de6e-47f2-844a-44ea7dc09516",
-                "firstname" : "Angela",
-                "lastname" : "Merkel"
-              }, {
-                "uuid" : "f334a0c0-0c26-4499-aa95-061546839a75",
-                "firstname" : "Thomas",
-                "lastname" : "Müller"
-              } ],
-              "statistics" : {
-                "Schufa" : 0,
-                "Deutsche Bank" : 0,
-                "Sparkasse" : 0,
-                "PSD Bank" : 0,
-                "Raiffeisen" : 0,
-                "Volksbank" : 0,
-                "Commerzbank" : 0
-              },
-              "hasPassed" : false
-            } ]
+            "teamsCount" : 100000
           } ]
         },
         "properties" : {
@@ -2227,6 +2358,32 @@
           }
         },
         "required" : [ "contentType", "description", "example", "httpStatusCode", "uuid" ],
+        "type" : "object"
+      },
+      "Pagination" : {
+        "properties" : {
+          "first" : {
+            "format" : "byte",
+            "minLength" : 3,
+            "type" : "string"
+          },
+          "prev" : {
+            "format" : "byte",
+            "minLength" : 3,
+            "type" : "string"
+          },
+          "next" : {
+            "format" : "byte",
+            "minLength" : 3,
+            "type" : "string"
+          },
+          "last" : {
+            "format" : "byte",
+            "minLength" : 3,
+            "type" : "string"
+          }
+        },
+        "required" : [ "first", "last" ],
         "type" : "object"
       }
     }
