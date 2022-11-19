@@ -3,19 +3,17 @@ package de.hennihaus.repositories
 import de.hennihaus.bamdatamodel.Bank
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
 import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.getCreditConfigurationWithNoEmptyFields
-import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
-import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getSecondTeam
-import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getThirdTeam
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
+import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.testutils.containers.ExposedContainer
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
+import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import kotlinx.coroutines.runBlocking
@@ -65,7 +63,6 @@ class BankRepositoryIntegrationTest : KoinTest {
 
             result.shouldNotBeNull()
             result.creditConfiguration.shouldNotBeNull()
-            result.teams.shouldNotBeEmpty()
         }
 
         @Test
@@ -119,20 +116,18 @@ class BankRepositoryIntegrationTest : KoinTest {
                 creditConfiguration = getCreditConfigurationWithNoEmptyFields(
                     minAmountInEuros = 0,
                 ),
-                teams = listOf(
-                    getFirstTeam(),
-                    getSecondTeam(),
-                    getThirdTeam(),
-                ),
             )
 
-            val result: Bank = classUnderTest.save(entry = bank)
+            val result: Bank = classUnderTest.save(
+                entry = bank,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
 
             result.shouldBeEqualToIgnoringFields(
                 other = bank,
-                property = Bank::teams,
+                property = Bank::teamsCount,
             )
-            result.teams shouldHaveSize bank.teams.size
+            result.teamsCount shouldBeGreaterThan 0L
         }
 
         @Test
@@ -143,13 +138,16 @@ class BankRepositoryIntegrationTest : KoinTest {
                 creditConfiguration = null,
             )
 
-            val result: Bank = classUnderTest.save(entry = bank)
+            val result: Bank = classUnderTest.save(
+                entry = bank,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
 
             result.shouldBeEqualToIgnoringFields(
                 other = bank,
-                property = Bank::teams,
+                property = Bank::teamsCount,
             )
-            result.teams shouldHaveSize bank.teams.size
+            result.teamsCount shouldBeGreaterThan 0L
         }
     }
 

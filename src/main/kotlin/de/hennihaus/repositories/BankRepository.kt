@@ -2,18 +2,13 @@ package de.hennihaus.repositories
 
 import de.hennihaus.bamdatamodel.Bank
 import de.hennihaus.repositories.entities.BankEntity
-import de.hennihaus.repositories.entities.StatisticEntity
-import de.hennihaus.repositories.entities.TeamEntity
 import de.hennihaus.repositories.mappers.toBank
 import de.hennihaus.repositories.tables.BankTable
 import de.hennihaus.repositories.tables.CreditConfigurationTable
-import de.hennihaus.repositories.tables.StatisticTable
-import de.hennihaus.utils.batchUpsert
 import de.hennihaus.utils.inTransaction
 import de.hennihaus.utils.upsert
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
@@ -23,15 +18,15 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 @Single
-class BankRepository : Repository<Bank, UUID> {
+class BankRepository {
 
-    override suspend fun getById(id: UUID): Bank? = inTransaction {
+    suspend fun getById(id: UUID): Bank? = inTransaction {
         BankEntity.findById(id = id)
             ?.load(relations = getBankRelations())
             ?.toBank()
     }
 
-    override suspend fun getAll(): List<Bank> = inTransaction {
+    suspend fun getAll(): List<Bank> = inTransaction {
         BankEntity.all()
             .with(relations = getBankRelations())
             .map {
@@ -39,7 +34,7 @@ class BankRepository : Repository<Bank, UUID> {
             }
     }
 
-    override suspend fun deleteById(id: UUID): Boolean = inTransaction {
+    suspend fun deleteById(id: UUID): Boolean = inTransaction {
         BankEntity.findById(id = id)
             ?.delete()
             ?.let { true }
@@ -49,14 +44,13 @@ class BankRepository : Repository<Bank, UUID> {
     /**
      * Only changing rather than adding banks since there is no logic to connect a bank with a related task.
      */
-    override suspend fun save(entry: Bank, repetitionAttempts: Int): Bank = inTransaction(
+    suspend fun save(entry: Bank, repetitionAttempts: Int): Bank = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {
         val now = ZonedDateTime.now().toInstant()
 
         entry.saveBank(now = now)
         entry.saveCreditConfiguration()
-        entry.saveStatistics(now = now)
 
         BankEntity.findById(id = entry.uuid)
             ?.load(relations = getBankRelations())
@@ -104,32 +98,12 @@ class BankRepository : Repository<Bank, UUID> {
         }
     }
 
-    private fun Bank.saveStatistics(now: Instant) {
-        StatisticTable.batchUpsert(
-            data = teams,
-            conflictColumns = listOf(StatisticTable.bankId, StatisticTable.teamId),
-            excludedColumnsFromUpdate = listOf(StatisticTable.requestsCount),
-        ) { statisticTable, team ->
-            statisticTable[bankId] = uuid
-            statisticTable[teamId] = team.uuid
-            statisticTable[requestsCount] = ZERO_REQUESTS
-            statisticTable[lastUpdated] = now
-        }
-        StatisticTable.deleteWhere {
-            StatisticTable.bankId eq uuid and (StatisticTable.teamId notInList teams.map { it.uuid })
-        }
-    }
-
     private fun getBankRelations() = arrayOf(
         BankEntity::creditConfiguration,
-        BankEntity::teams,
-        TeamEntity::students,
-        TeamEntity::statistics,
-        StatisticEntity::bank,
+        BankEntity::statistics,
     )
 
     companion object {
         private const val BANK_NOT_FOUND_MESSAGE = "Bank not found in database"
-        private const val ZERO_REQUESTS = 0L
     }
 }
