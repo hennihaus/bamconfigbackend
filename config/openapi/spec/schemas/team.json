@@ -272,8 +272,7 @@
               "minLength": 6,
               "maxLength": 50
             },
-            "minItems": 1,
-            "uniqueItems": true
+            "minItems": 0
           }
         }
       }
