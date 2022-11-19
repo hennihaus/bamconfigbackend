@@ -132,8 +132,7 @@ class BankServiceTest {
                 repository.getById(id = testBank.uuid)
                 repository.save(entry = getSchufaBank(), repetitionAttempts = ONE_REPETITION_ATTEMPT)
             }
-            coVerify { task wasNot Called }
-            coVerify { github wasNot Called }
+            coVerify { listOf(task, github) wasNot Called }
         }
 
         @Test
