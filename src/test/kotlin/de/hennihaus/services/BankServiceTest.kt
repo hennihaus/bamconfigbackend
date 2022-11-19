@@ -16,12 +16,14 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import io.kotest.matchers.types.beInstanceOf
 import io.ktor.server.plugins.NotFoundException
+import io.mockk.Called
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.DEFAULT_REPETITION_ATTEMPTS
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -30,9 +32,13 @@ import java.util.UUID
 class BankServiceTest {
 
     private val repository = mockk<BankRepository>()
+    private val task = mockk<TaskService>()
+    private val github = mockk<GithubService>()
 
     private val classUnderTest = BankService(
         repository = repository,
+        task = task,
+        github = github,
     )
 
     @BeforeEach
@@ -103,20 +109,55 @@ class BankServiceTest {
     @Nested
     inner class PatchBank {
         @Test
-        fun `should just update for fields from a bank`() = runBlocking {
-            val testBank: Bank = getSchufaBank(
-                thumbnailUrl = getSyncBank().thumbnailUrl,
-                isActive = getSyncBank().isActive,
-                creditConfiguration = getSyncBank().creditConfiguration,
-                teams = getSyncBank().teams,
-            )
-            coEvery { repository.getById(id = any()) } returns getSyncBank(
+        fun `should just update special fields in db when bank has no creditConfiguration`() = runBlocking {
+            val testBank = getAsyncBank(
                 thumbnailUrl = getSchufaBank().thumbnailUrl,
                 isActive = getSchufaBank().isActive,
                 creditConfiguration = getSchufaBank().creditConfiguration,
-                teams = getSchufaBank().teams,
+            )
+            coEvery { repository.getById(id = any()) } returns getSchufaBank(
+                thumbnailUrl = getAsyncBank().thumbnailUrl,
+                isActive = getAsyncBank().isActive,
+                creditConfiguration = getAsyncBank().creditConfiguration,
+            )
+            coEvery { repository.save(entry = any(), repetitionAttempts = any()) } returns getSchufaBank()
+
+            val result: Bank = classUnderTest.patchBank(
+                id = "${testBank.uuid}",
+                bank = testBank,
+            )
+
+            result shouldBe getSchufaBank()
+            coVerifySequence {
+                repository.getById(id = testBank.uuid)
+                repository.save(entry = getSchufaBank(), repetitionAttempts = ONE_REPETITION_ATTEMPT)
+            }
+            coVerify { task wasNot Called }
+            coVerify { github wasNot Called }
+        }
+
+        @Test
+        fun `should just update special fields in db, parameter and api when bank is sync`() = runBlocking {
+            val testBank = getAsyncBank(
+                thumbnailUrl = getSyncBank().thumbnailUrl,
+                isActive = getSyncBank().isActive,
+                creditConfiguration = getSyncBank().creditConfiguration,
+            )
+            coEvery { repository.getById(id = any()) } returns getSyncBank(
+                thumbnailUrl = getAsyncBank().thumbnailUrl,
+                isActive = getAsyncBank().isActive,
+                creditConfiguration = getAsyncBank().creditConfiguration,
             )
             coEvery { repository.save(entry = any(), repetitionAttempts = any()) } returns getSyncBank()
+            coEvery {
+                task.patchParameters(
+                    minAmountInEuros = any(),
+                    maxAmountInEuros = any(),
+                    minTermInMonths = any(),
+                    maxTermInMonths = any()
+                )
+            } returns Unit
+            coEvery { github.updateOpenApi(creditConfiguration = any()) } returns Unit
 
             val result: Bank = classUnderTest.patchBank(
                 id = "${testBank.uuid}",
@@ -126,7 +167,17 @@ class BankServiceTest {
             result shouldBe getSyncBank()
             coVerifySequence {
                 repository.getById(id = testBank.uuid)
-                repository.save(entry = getSyncBank(), repetitionAttempts = ONE_REPETITION_ATTEMPT)
+                repository.save(
+                    entry = getSyncBank(),
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+                task.patchParameters(
+                    minAmountInEuros = getSyncBank().creditConfiguration!!.minAmountInEuros,
+                    maxAmountInEuros = getSyncBank().creditConfiguration!!.maxAmountInEuros,
+                    minTermInMonths = getSyncBank().creditConfiguration!!.minTermInMonths,
+                    maxTermInMonths = getSyncBank().creditConfiguration!!.maxTermInMonths,
+                )
+                github.updateOpenApi(creditConfiguration = getSyncBank().creditConfiguration!!)
             }
         }
 
@@ -136,7 +187,6 @@ class BankServiceTest {
                 thumbnailUrl = getSyncBank().thumbnailUrl,
                 isActive = getSyncBank().isActive,
                 creditConfiguration = getSyncBank().creditConfiguration,
-                teams = getSyncBank().teams,
             )
             coEvery { repository.getById(id = any()) } returns null
 
@@ -146,7 +196,7 @@ class BankServiceTest {
 
             result shouldHaveMessage BankService.BANK_NOT_FOUND_MESSAGE
             coVerify(exactly = 1) { repository.getById(id = testBank.uuid) }
-            coVerify(exactly = 0) { repository.save(entry = any()) }
+            coVerify(exactly = 0) { repository.save(entry = any(), repetitionAttempts = DEFAULT_REPETITION_ATTEMPTS) }
         }
     }
 
