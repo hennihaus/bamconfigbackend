@@ -3,7 +3,6 @@ package de.hennihaus.routes.validations
 import de.hennihaus.models.EndpointType
 import de.hennihaus.models.IntegrationStep
 import de.hennihaus.models.ParameterType
-import de.hennihaus.models.cursors.Query
 import de.hennihaus.models.generated.rest.ContactDTO
 import de.hennihaus.models.generated.rest.EndpointDTO
 import de.hennihaus.models.generated.rest.ParameterDTO
@@ -32,7 +31,7 @@ import kotlinx.coroutines.coroutineScope
 import org.koin.core.annotation.Single
 
 @Single
-class TaskValidationService(private val task: TaskService) : ValidationService<TaskDTO, Query> {
+class TaskValidationService(private val task: TaskService) : ValidationService<TaskDTO, Any> {
 
     override suspend fun bodyValidation(body: TaskDTO): Validation<TaskDTO> = coroutineScope {
         val asyncValidations = listOf(

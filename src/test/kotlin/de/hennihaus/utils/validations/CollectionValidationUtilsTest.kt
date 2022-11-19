@@ -1,6 +1,5 @@
 package de.hennihaus.utils.validations
 
-import de.hennihaus.models.cursors.Query
 import de.hennihaus.routes.validations.ValidationService
 import io.konform.validation.Validation
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -16,7 +15,7 @@ class CollectionValidationUtilsTest {
     @Nested
     inner class OneOf {
 
-        private val classUnderTest = object : ValidationService<OneOfTestResource, Query> {
+        private val classUnderTest = object : ValidationService<OneOfTestResource, Any> {
             override suspend fun bodyValidation(body: OneOfTestResource): Validation<OneOfTestResource> {
                 return Validation {
                     OneOfTestResource::value {

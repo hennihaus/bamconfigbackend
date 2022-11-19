@@ -34,7 +34,7 @@ class RequestValidationUtilsTest {
     @Nested
     inner class UUID {
 
-        private val classUnderTest = object : ValidationService<UUIDTestResource> {
+        private val classUnderTest = object : ValidationService<UUIDTestResource, Any> {
             override suspend fun bodyValidation(body: UUIDTestResource): Validation<UUIDTestResource> = Validation {
                 UUIDTestResource::value {
                     uuid()
@@ -87,7 +87,7 @@ class RequestValidationUtilsTest {
     @Nested
     inner class URL {
 
-        private val classUnderTest = object : ValidationService<URLTestResource> {
+        private val classUnderTest = object : ValidationService<URLTestResource, Any> {
             override suspend fun bodyValidation(body: URLTestResource): Validation<URLTestResource> = Validation {
                 URLTestResource::value {
                     url()
@@ -164,7 +164,7 @@ class RequestValidationUtilsTest {
     @Nested
     inner class Email {
 
-        private val classUnderTest = object : ValidationService<EmailTestResource> {
+        private val classUnderTest = object : ValidationService<EmailTestResource, Any> {
             override suspend fun bodyValidation(body: EmailTestResource): Validation<EmailTestResource> = Validation {
                 EmailTestResource::value {
                     email()
@@ -204,7 +204,7 @@ class RequestValidationUtilsTest {
     @Nested
     inner class HttpStatusCode {
 
-        private val classUnderTest = object : ValidationService<HttpStatusCodeTestResource> {
+        private val classUnderTest = object : ValidationService<HttpStatusCodeTestResource, Any> {
             override suspend fun bodyValidation(body: HttpStatusCodeTestResource) = Validation {
                 HttpStatusCodeTestResource::value {
                     httpStatusCode()
@@ -259,7 +259,7 @@ class RequestValidationUtilsTest {
     @Nested
     inner class ContentType {
 
-        private val classUnderTest = object : ValidationService<ContentTypeTestResource> {
+        private val classUnderTest = object : ValidationService<ContentTypeTestResource, Any> {
             override suspend fun bodyValidation(body: ContentTypeTestResource) = Validation {
                 ContentTypeTestResource::value {
                     contentType()
@@ -297,7 +297,7 @@ class RequestValidationUtilsTest {
     @Nested
     inner class Json {
 
-        private val classUnderTest = object : ValidationService<JsonTestResource> {
+        private val classUnderTest = object : ValidationService<JsonTestResource, Any> {
             override suspend fun bodyValidation(body: JsonTestResource) = Validation {
                 JsonTestResource::value {
                     json()

@@ -1,7 +1,6 @@
 package de.hennihaus.routes.validations
 
 import de.hennihaus.bamdatamodel.RatingLevel
-import de.hennihaus.models.cursors.Query
 import de.hennihaus.models.generated.rest.BankDTO
 import de.hennihaus.models.generated.rest.CreditConfigurationDTO
 import de.hennihaus.utils.validations.url
@@ -16,7 +15,7 @@ import kotlinx.coroutines.coroutineScope
 import org.koin.core.annotation.Single
 
 @Single
-class BankValidationService : ValidationService<BankDTO, Query> {
+class BankValidationService : ValidationService<BankDTO, Any> {
 
     override suspend fun bodyValidation(body: BankDTO): Validation<BankDTO> = coroutineScope {
         val validations = listOf(
