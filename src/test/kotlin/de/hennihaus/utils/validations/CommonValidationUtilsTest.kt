@@ -1,5 +1,6 @@
 package de.hennihaus.utils.validations
 
+import de.hennihaus.models.cursors.Query
 import de.hennihaus.routes.validations.ValidationService
 import io.konform.validation.Validation
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -17,11 +18,11 @@ class CommonValidationUtilsTest {
     @Nested
     inner class NotConst {
 
-        private lateinit var classUnderTest: ValidationService<NotConstTestResource>
+        private lateinit var classUnderTest: ValidationService<NotConstTestResource, Query>
 
         @Test
         fun `should return an empty list when both values are not equal`() = runBlocking<Unit> {
-            classUnderTest = object : ValidationService<NotConstTestResource> {
+            classUnderTest = object : ValidationService<NotConstTestResource, Query> {
                 override suspend fun bodyValidation(body: NotConstTestResource): Validation<NotConstTestResource> {
                     return Validation {
                         NotConstTestResource::value {
@@ -43,7 +44,7 @@ class CommonValidationUtilsTest {
 
         @Test
         fun `should return a list with one error when both values are equal`() = runBlocking {
-            classUnderTest = object : ValidationService<NotConstTestResource> {
+            classUnderTest = object : ValidationService<NotConstTestResource, Query> {
                 override suspend fun bodyValidation(body: NotConstTestResource): Validation<NotConstTestResource> {
                     return Validation {
                         NotConstTestResource::value {
@@ -65,7 +66,7 @@ class CommonValidationUtilsTest {
 
         @Test
         fun `should return a list with one error when both values are equal with whitespace`() = runBlocking {
-            classUnderTest = object : ValidationService<NotConstTestResource> {
+            classUnderTest = object : ValidationService<NotConstTestResource, Query> {
                 override suspend fun bodyValidation(body: NotConstTestResource): Validation<NotConstTestResource> {
                     return Validation {
                         NotConstTestResource::value {
@@ -93,11 +94,11 @@ class CommonValidationUtilsTest {
     @Nested
     inner class Unique {
 
-        private lateinit var classUnderTest: ValidationService<UniqueTestResource>
+        private lateinit var classUnderTest: ValidationService<UniqueTestResource, Query>
 
         @Test
         fun `should return an empty list when isUnique = true`() = runBlocking<Unit> {
-            classUnderTest = object : ValidationService<UniqueTestResource> {
+            classUnderTest = object : ValidationService<UniqueTestResource, Query> {
                 override suspend fun bodyValidation(body: UniqueTestResource): Validation<UniqueTestResource> {
                     return Validation {
                         UniqueTestResource::value {
@@ -119,7 +120,7 @@ class CommonValidationUtilsTest {
 
         @Test
         fun `should return a list with one error when isUnique = false`() = runBlocking {
-            classUnderTest = object : ValidationService<UniqueTestResource> {
+            classUnderTest = object : ValidationService<UniqueTestResource, Query> {
                 override suspend fun bodyValidation(body: UniqueTestResource): Validation<UniqueTestResource> {
                     return Validation {
                         UniqueTestResource::value {
