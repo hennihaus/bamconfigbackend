@@ -1,5 +1,7 @@
 package de.hennihaus.services
 
+import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.getCreditConfigurationWithNoEmptyFields
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getExampleTeam
 import de.hennihaus.models.IntegrationStep
 import de.hennihaus.objectmothers.GithubObjectMother.getCreditFileResponse
 import de.hennihaus.objectmothers.GithubObjectMother.getCreditUpdateFileRequest
@@ -7,8 +9,11 @@ import de.hennihaus.objectmothers.GithubObjectMother.getGithubCommitConfiguratio
 import de.hennihaus.objectmothers.GithubObjectMother.getGithubFileConfiguration
 import de.hennihaus.objectmothers.GithubObjectMother.getRatingFileResponse
 import de.hennihaus.objectmothers.GithubObjectMother.getRatingUpdateFileRequest
-import de.hennihaus.objectmothers.OpenApiObjectMother.getUpdatedBankApi
-import de.hennihaus.objectmothers.OpenApiObjectMother.getUpdatedSchufaApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByCreditConfigurationUpdatedBankApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByTaskUpdatedBankApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByTaskUpdatedSchufaApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByTeamUpdatedBankApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByTeamUpdatedSchufaApi
 import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask
@@ -18,6 +23,7 @@ import io.mockk.Called
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerifySequence
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
@@ -50,7 +56,7 @@ class GithubServiceTest {
         fun `should correctly update schufa with schufa task`() = runBlocking {
             val task = getSchufaTask(integrationStep = IntegrationStep.SCHUFA_STEP)
             coEvery { githubCall.getFile(fileConfig = any()) } returns getRatingFileResponse()
-            coEvery { githubMapper.updateSchufaApi(api = any(), task = any()) } returns getUpdatedSchufaApi()
+            every { githubMapper.updateSchufaApi(api = any(), task = any()) } returns getByTaskUpdatedSchufaApi()
             coEvery { githubCall.updateFile(fileConfig = any(), file = any()) } returns mockk()
 
             classUnderTest.updateOpenApi(task = task)
@@ -60,7 +66,7 @@ class GithubServiceTest {
                     fileConfig = getGithubFileConfiguration(),
                 )
                 githubMapper.updateSchufaApi(
-                    api = getUpdatedSchufaApi(),
+                    api = getByTaskUpdatedSchufaApi(),
                     task = task,
                 )
                 githubCall.updateFile(
@@ -74,7 +80,7 @@ class GithubServiceTest {
         fun `should correctly update bank with sync bank task`() = runBlocking {
             val task = getSynchronousBankTask(integrationStep = IntegrationStep.SYNC_BANK_STEP)
             coEvery { githubCall.getFile(fileConfig = any()) } returns getCreditFileResponse()
-            coEvery { githubMapper.updateBankApi(api = any(), task = any()) } returns getUpdatedBankApi()
+            every { githubMapper.updateBankApi(api = any(), task = any()) } returns getByTaskUpdatedBankApi()
             coEvery { githubCall.updateFile(fileConfig = any(), file = any()) } returns mockk()
 
             classUnderTest.updateOpenApi(task = task)
@@ -84,7 +90,7 @@ class GithubServiceTest {
                     fileConfig = getGithubFileConfiguration(),
                 )
                 githubMapper.updateBankApi(
-                    api = getUpdatedBankApi(),
+                    api = getByTaskUpdatedBankApi(),
                     task = task,
                 )
                 githubCall.updateFile(
@@ -101,6 +107,72 @@ class GithubServiceTest {
             classUnderTest.updateOpenApi(task = task)
 
             verify { listOf(githubCall, githubMapper) wasNot Called }
+        }
+
+        @Test
+        fun `should correctly update bank with creditConfiguration`() = runBlocking {
+            val creditConfiguration = getCreditConfigurationWithNoEmptyFields()
+            coEvery { githubCall.getFile(fileConfig = any()) } returns getCreditFileResponse()
+            every { githubMapper.updateBankApi(api = any(), creditConfiguration = any()) } returns getByCreditConfigurationUpdatedBankApi()
+            coEvery { githubCall.updateFile(fileConfig = any(), file = any()) } returns mockk()
+
+            classUnderTest.updateOpenApi(creditConfiguration = creditConfiguration)
+
+            coVerifySequence {
+                githubCall.getFile(
+                    fileConfig = getGithubFileConfiguration(),
+                )
+                githubMapper.updateBankApi(
+                    api = getByCreditConfigurationUpdatedBankApi(),
+                    creditConfiguration = creditConfiguration,
+                )
+                githubCall.updateFile(
+                    fileConfig = getGithubFileConfiguration(),
+                    file = getCreditUpdateFileRequest(),
+                )
+            }
+        }
+
+        @Test
+        fun `should correctly update schufa and bank with team`() = runBlocking {
+            val team = getExampleTeam()
+            coEvery { githubCall.getFile(fileConfig = any()) } returnsMany listOf(
+                getRatingFileResponse(),
+                getCreditFileResponse(),
+            )
+            every { githubMapper.updateSchufaApi(api = any(), team = any()) } returns getByTeamUpdatedSchufaApi()
+            every { githubMapper.updateBankApi(api = any(), team = any()) } returns getByTeamUpdatedBankApi()
+            coEvery { githubCall.updateFile(fileConfig = any(), file = any()) } returnsMany listOf(
+                mockk(),
+                mockk(),
+            )
+
+            classUnderTest.updateOpenApi(team = team)
+
+            coVerifySequence {
+                githubCall.getFile(
+                    fileConfig = getGithubFileConfiguration(),
+                )
+                githubMapper.updateSchufaApi(
+                    api = getByTeamUpdatedSchufaApi(),
+                    team = team,
+                )
+                githubCall.updateFile(
+                    fileConfig = getGithubFileConfiguration(),
+                    file = getRatingUpdateFileRequest(),
+                )
+                githubCall.getFile(
+                    fileConfig = getGithubFileConfiguration(),
+                )
+                githubMapper.updateBankApi(
+                    api = getByTeamUpdatedBankApi(),
+                    team = team,
+                )
+                githubCall.updateFile(
+                    fileConfig = getGithubFileConfiguration(),
+                    file = getCreditUpdateFileRequest(),
+                )
+            }
         }
     }
 }

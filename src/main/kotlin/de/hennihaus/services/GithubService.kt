@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import de.hennihaus.bamdatamodel.CreditConfiguration
+import de.hennihaus.bamdatamodel.Team
 import de.hennihaus.configurations.GithubCommitConfiguration
 import de.hennihaus.configurations.GithubFileConfiguration
 import de.hennihaus.configurations.GithubFileConfiguration.Companion.BANK_FILE_CONFIG
@@ -54,6 +56,15 @@ class GithubService(
         IntegrationStep.ASYNC_BANK_STEP -> {}
     }
 
+    suspend fun updateOpenApi(creditConfiguration: CreditConfiguration) = updateBank(
+        creditConfiguration = creditConfiguration,
+    )
+
+    suspend fun updateOpenApi(team: Team) {
+        updateSchufa(team = team)
+        updateBank(team = team)
+    }
+
     private suspend fun updateSchufa(task: Task) {
         val (sha, api) = getGithubFileAsEntity<SchufaApi>(fileConfig = schufaFileConfig)
         githubMapper.updateSchufaApi(
@@ -68,11 +79,53 @@ class GithubService(
         }
     }
 
+    private suspend fun updateSchufa(team: Team) {
+        val (sha, api) = getGithubFileAsEntity<SchufaApi>(fileConfig = schufaFileConfig)
+        githubMapper.updateSchufaApi(
+            api = api,
+            team = team,
+        ).also {
+            updateGithubFileWithEntity(
+                fileConfig = schufaFileConfig,
+                sha = sha,
+                entity = it,
+            )
+        }
+    }
+
     private suspend fun updateBank(task: Task) {
         val (sha, api) = getGithubFileAsEntity<BankApi>(fileConfig = bankFileConfig)
         githubMapper.updateBankApi(
             api = api,
             task = task,
+        ).also {
+            updateGithubFileWithEntity(
+                fileConfig = bankFileConfig,
+                sha = sha,
+                entity = it,
+            )
+        }
+    }
+
+    private suspend fun updateBank(creditConfiguration: CreditConfiguration) {
+        val (sha, api) = getGithubFileAsEntity<BankApi>(fileConfig = bankFileConfig)
+        githubMapper.updateBankApi(
+            api = api,
+            creditConfiguration = creditConfiguration,
+        ).also {
+            updateGithubFileWithEntity(
+                fileConfig = bankFileConfig,
+                sha = sha,
+                entity = it,
+            )
+        }
+    }
+
+    private suspend fun updateBank(team: Team) {
+        val (sha, api) = getGithubFileAsEntity<BankApi>(fileConfig = bankFileConfig)
+        githubMapper.updateBankApi(
+            api = api,
+            team = team,
         ).also {
             updateGithubFileWithEntity(
                 fileConfig = bankFileConfig,

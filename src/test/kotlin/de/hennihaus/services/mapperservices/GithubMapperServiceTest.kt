@@ -1,28 +1,36 @@
 package de.hennihaus.services.mapperservices
 
-import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSyncBank
+import de.hennihaus.bamdatamodel.TeamType
+import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.getCreditConfigurationWithNoEmptyFields
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getExampleTeam
 import de.hennihaus.models.IntegrationStep
 import de.hennihaus.models.generated.openapi.BankApi
 import de.hennihaus.models.generated.openapi.SchufaApi
 import de.hennihaus.objectmothers.GithubObjectMother
-import de.hennihaus.objectmothers.OpenApiObjectMother.getNonUpdatedBankApi
-import de.hennihaus.objectmothers.OpenApiObjectMother.getNonUpdatedSchufaApi
-import de.hennihaus.objectmothers.OpenApiObjectMother.getUpdatedBankApi
-import de.hennihaus.objectmothers.OpenApiObjectMother.getUpdatedBankInfo
-import de.hennihaus.objectmothers.OpenApiObjectMother.getUpdatedSchufaApi
-import de.hennihaus.objectmothers.OpenApiObjectMother.getUpdatedSchufaInfo
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByCreditConfigurationUpdatedBankApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByTaskUpdatedBankApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByTaskUpdatedBankInfo
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByTaskUpdatedSchufaApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByTaskUpdatedSchufaInfo
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByTeamUpdatedBankApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getByTeamUpdatedSchufaApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getNonUpdatedByCreditConfigurationBankApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getNonUpdatedByTaskBankApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getNonUpdatedByTaskSchufaApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getNonUpdatedByTeamBankApi
+import de.hennihaus.objectmothers.OpenApiObjectMother.getNonUpdatedByTeamSchufaApi
+import de.hennihaus.objectmothers.ParameterObjectMother.AMOUNT_IN_EUROS_PARAMETER
+import de.hennihaus.objectmothers.ParameterObjectMother.PASSWORD_EXAMPLE
 import de.hennihaus.objectmothers.ParameterObjectMother.SOCIAL_SECURITY_NUMBER_PARAMETER
+import de.hennihaus.objectmothers.ParameterObjectMother.USERNAME_EXAMPLE
 import de.hennihaus.objectmothers.ResponseObjectMother.OK_CODE
 import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask
-import de.hennihaus.services.mapperservices.GithubMapperService.Companion.AMOUNT_IN_EUROS_PARAMETER
 import de.hennihaus.services.mapperservices.GithubMapperService.Companion.NO_BANK_STEP_MESSAGE
-import de.hennihaus.services.mapperservices.GithubMapperService.Companion.NO_CONFIGURATION_MESSAGE
 import de.hennihaus.services.mapperservices.GithubMapperService.Companion.NO_SCHUFA_STEP_MESSAGE
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -35,10 +43,10 @@ class GithubMapperServiceTest {
     )
 
     @Nested
-    inner class UpdateSchufaApi {
+    inner class UpdateSchufaApiByTask {
         @Test
-        fun `should return correctly updated schufa api when isOpenApiVerbose = true`() = runBlocking {
-            val api = getNonUpdatedSchufaApi()
+        fun `should return correctly updated schufa api when isOpenApiVerbose = true`() {
+            val api = getNonUpdatedByTaskSchufaApi()
             val task = getSchufaTask(isOpenApiVerbose = true)
 
             val result: SchufaApi = classUnderTest.updateSchufaApi(
@@ -46,12 +54,12 @@ class GithubMapperServiceTest {
                 task = task,
             )
 
-            result shouldBe getUpdatedSchufaApi()
+            result shouldBe getByTaskUpdatedSchufaApi()
         }
 
         @Test
-        fun `should return correctly updated schufa api when isOpenApiVerbose = false`() = runBlocking {
-            val api = getNonUpdatedSchufaApi()
+        fun `should return correctly updated schufa api when isOpenApiVerbose = false`() {
+            val api = getNonUpdatedByTaskSchufaApi()
             val task = getSchufaTask(isOpenApiVerbose = false)
 
             val result: SchufaApi = classUnderTest.updateSchufaApi(
@@ -59,16 +67,16 @@ class GithubMapperServiceTest {
                 task = task,
             )
 
-            result shouldBe getUpdatedSchufaApi(
-                info = getUpdatedSchufaInfo(
+            result shouldBe getByTaskUpdatedSchufaApi(
+                info = getByTaskUpdatedSchufaInfo(
                     description = "",
                 ),
             )
         }
 
         @Test
-        fun `should throw an exception when task step != SCHUFA_STEP`() = runBlocking {
-            val api = getNonUpdatedSchufaApi()
+        fun `should throw an exception when task step != SCHUFA_STEP`() {
+            val api = getNonUpdatedByTaskSchufaApi()
             val task = getSchufaTask(integrationStep = IntegrationStep.SYNC_BANK_STEP)
 
             val result: IllegalStateException = shouldThrowExactly {
@@ -82,8 +90,8 @@ class GithubMapperServiceTest {
         }
 
         @Test
-        fun `should throw an exception when task has not same parameters as schufa api`() = runBlocking {
-            val api = getNonUpdatedSchufaApi()
+        fun `should throw an exception when task has not same parameters as schufa api`() {
+            val api = getNonUpdatedByTaskSchufaApi()
             val task = getSchufaTask(
                 parameters = emptyList(),
             )
@@ -101,8 +109,8 @@ class GithubMapperServiceTest {
         }
 
         @Test
-        fun `should throw an exception when task has not same responses as schufa api`() = runBlocking {
-            val api = getNonUpdatedSchufaApi()
+        fun `should throw an exception when task has not same responses as schufa api`() {
+            val api = getNonUpdatedByTaskSchufaApi()
             val task = getSchufaTask(
                 responses = emptyList(),
             )
@@ -119,10 +127,46 @@ class GithubMapperServiceTest {
     }
 
     @Nested
-    inner class UpdateBankApi {
+    inner class UpdateSchufaApiByTeam {
         @Test
-        fun `should return correctly updated bank api when isOpenApiVerbose = true`() = runBlocking {
-            val api = getNonUpdatedBankApi()
+        fun `should return correctly updated schufa api`() {
+            val api = getNonUpdatedByTeamSchufaApi()
+            val team = getExampleTeam(
+                username = USERNAME_EXAMPLE,
+                password = PASSWORD_EXAMPLE,
+            )
+
+            val result: SchufaApi = classUnderTest.updateSchufaApi(
+                api = api,
+                team = team,
+            )
+
+            result shouldBe getByTeamUpdatedSchufaApi()
+        }
+
+        @Test
+        fun `should throw an exception when team type != EXAMPLE`() {
+            val api = getNonUpdatedByTeamSchufaApi()
+            val team = getExampleTeam(
+                type = TeamType.REGULAR,
+            )
+
+            val result: IllegalStateException = shouldThrowExactly {
+                classUnderTest.updateSchufaApi(
+                    api = api,
+                    team = team,
+                )
+            }
+
+            result shouldHaveMessage "provided team is not an example team"
+        }
+    }
+
+    @Nested
+    inner class UpdateBankApiByTask {
+        @Test
+        fun `should return correctly updated bank api when isOpenApiVerbose = true`() {
+            val api = getNonUpdatedByTaskBankApi()
             val task = getSynchronousBankTask(isOpenApiVerbose = true)
 
             val result: BankApi = classUnderTest.updateBankApi(
@@ -130,12 +174,12 @@ class GithubMapperServiceTest {
                 task = task,
             )
 
-            result shouldBe getUpdatedBankApi()
+            result shouldBe getByTaskUpdatedBankApi()
         }
 
         @Test
-        fun `should return correctly updated bank api when isOpenApiVerbose = false`() = runBlocking {
-            val api = getNonUpdatedBankApi()
+        fun `should return correctly updated bank api when isOpenApiVerbose = false`() {
+            val api = getNonUpdatedByTaskBankApi()
             val task = getSynchronousBankTask(isOpenApiVerbose = false)
 
             val result: BankApi = classUnderTest.updateBankApi(
@@ -143,16 +187,16 @@ class GithubMapperServiceTest {
                 task = task,
             )
 
-            result shouldBe getUpdatedBankApi(
-                info = getUpdatedBankInfo(
+            result shouldBe getByTaskUpdatedBankApi(
+                info = getByTaskUpdatedBankInfo(
                     description = "",
                 ),
             )
         }
 
         @Test
-        fun `should throw an exception when task step != SYNC_BANK_STEP`() = runBlocking {
-            val api = getNonUpdatedBankApi()
+        fun `should throw an exception when task step != SYNC_BANK_STEP`() {
+            val api = getNonUpdatedByTaskBankApi()
             val task = getSynchronousBankTask(integrationStep = IntegrationStep.SCHUFA_STEP)
 
             val result: IllegalStateException = shouldThrowExactly {
@@ -166,8 +210,8 @@ class GithubMapperServiceTest {
         }
 
         @Test
-        fun `should throw an exception when task has not same parameters as bank api`() = runBlocking {
-            val api = getNonUpdatedBankApi()
+        fun `should throw an exception when task has not same parameters as bank api`() {
+            val api = getNonUpdatedByTaskBankApi()
             val task = getSynchronousBankTask(
                 parameters = emptyList(),
             )
@@ -183,8 +227,8 @@ class GithubMapperServiceTest {
         }
 
         @Test
-        fun `should throw an exception when task has not same responses as bank api`() = runBlocking {
-            val api = getNonUpdatedBankApi()
+        fun `should throw an exception when task has not same responses as bank api`() {
+            val api = getNonUpdatedByTaskBankApi()
             val task = getSynchronousBankTask(
                 responses = emptyList(),
             )
@@ -198,43 +242,57 @@ class GithubMapperServiceTest {
 
             result shouldHaveMessage "response $OK_CODE not found in Task while updating BankApi"
         }
+    }
 
+    @Nested
+    inner class UpdateBankApiByTeam {
         @Test
-        fun `should throw an exception when task has no banks`() = runBlocking {
-            val api = getNonUpdatedBankApi()
-            val task = getSynchronousBankTask(
-                banks = emptyList(),
+        fun `should return correctly updated bank api`() {
+            val api = getNonUpdatedByTeamBankApi()
+            val team = getExampleTeam(
+                username = USERNAME_EXAMPLE,
+                password = PASSWORD_EXAMPLE,
             )
 
-            val result: IllegalStateException = shouldThrowExactly {
-                classUnderTest.updateBankApi(
-                    api = api,
-                    task = task,
-                )
-            }
+            val result: BankApi = classUnderTest.updateBankApi(
+                api = api,
+                team = team,
+            )
 
-            result shouldHaveMessage NO_CONFIGURATION_MESSAGE
+            result shouldBe getByTeamUpdatedBankApi()
         }
 
         @Test
-        fun `should throw an exception when bank of task has no configuration`() = runBlocking {
-            val api = getNonUpdatedBankApi()
-            val task = getSynchronousBankTask(
-                banks = listOf(
-                    getSyncBank(
-                        creditConfiguration = null,
-                    ),
-                ),
+        fun `should throw an exception when team type != EXAMPLE`() {
+            val api = getNonUpdatedByTeamBankApi()
+            val team = getExampleTeam(
+                type = TeamType.REGULAR,
             )
 
             val result: IllegalStateException = shouldThrowExactly {
                 classUnderTest.updateBankApi(
                     api = api,
-                    task = task,
+                    team = team,
                 )
             }
 
-            result shouldHaveMessage NO_CONFIGURATION_MESSAGE
+            result shouldHaveMessage "provided team is not an example team"
+        }
+    }
+
+    @Nested
+    inner class UpdateBankApiByCreditConfiguration {
+        @Test
+        fun `should return correctly updated bank api`() {
+            val api = getNonUpdatedByCreditConfigurationBankApi()
+            val creditConfiguration = getCreditConfigurationWithNoEmptyFields()
+
+            val result: BankApi = classUnderTest.updateBankApi(
+                api = api,
+                creditConfiguration = creditConfiguration,
+            )
+
+            result shouldBe getByCreditConfigurationUpdatedBankApi()
         }
     }
 }
