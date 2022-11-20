@@ -27,8 +27,8 @@ class TeamService(
 
         return cursorService.buildPagination(
             cursor = cursor,
-            position = { it.username },
-            fallbackPosition = DEFAULT_USERNAME_FALLBACK_POSITION,
+            positionSupplier = { it.username },
+            positionFallback = USERNAME_POSITION_FALLBACK,
             items = teams,
             limit = cursor.query.limit,
         )
@@ -109,6 +109,6 @@ class TeamService(
 
     companion object {
         const val TEAM_NOT_FOUND_MESSAGE = "team not found by uuid"
-        const val DEFAULT_USERNAME_FALLBACK_POSITION = ""
+        const val USERNAME_POSITION_FALLBACK = ""
     }
 }

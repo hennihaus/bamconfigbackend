@@ -12,13 +12,11 @@ import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
 import de.hennihaus.models.cursors.TeamPagination
 import de.hennihaus.models.cursors.TeamQuery
 import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithNonEmptyFields
-import de.hennihaus.objectmothers.PaginationObjectMother.getAscendingTeamPaginationWithNonEmptyFields
-import de.hennihaus.objectmothers.PaginationObjectMother.getTeamItemsAscending
-import de.hennihaus.objectmothers.PaginationObjectMother.getTeamItemsDescending
+import de.hennihaus.objectmothers.PaginationObjectMother.getFirstCursorTeamPaginationWithEmptyFields
 import de.hennihaus.repositories.StatisticRepository
 import de.hennihaus.repositories.TeamRepository
-import de.hennihaus.services.TeamService.Companion.DEFAULT_USERNAME_FALLBACK_POSITION
 import de.hennihaus.services.TeamService.Companion.TEAM_NOT_FOUND_MESSAGE
+import de.hennihaus.services.TeamService.Companion.USERNAME_POSITION_FALLBACK
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -66,34 +64,37 @@ class TeamServiceTest {
     inner class GetAllTeams {
         @Test
         fun `should return a list of teams sorted by username asc`() = runBlocking {
-            coEvery { teamRepository.getAll(cursor = any()) } returns getTeamItemsDescending()
+            coEvery { teamRepository.getAll(cursor = any()) } returns listOf(
+                getSecondTeam(),
+                getFirstTeam(),
+            )
             every {
                 cursorService.buildPagination<TeamQuery, Team>(
                     cursor = any(),
-                    position = any(),
-                    fallbackPosition = any(),
+                    positionSupplier = any(),
+                    positionFallback = any(),
                     items = any(),
                     limit = any(),
                 )
-            } returns getAscendingTeamPaginationWithNonEmptyFields()
+            } returns getFirstCursorTeamPaginationWithEmptyFields()
             val cursor = getFirstTeamCursorWithNonEmptyFields()
 
             val result: TeamPagination = classUnderTest.getAllTeams(
                 cursor = cursor,
             )
 
-            result shouldBe getAscendingTeamPaginationWithNonEmptyFields()
+            result shouldBe getFirstCursorTeamPaginationWithEmptyFields()
             coVerifySequence {
                 teamRepository.getAll(
                     cursor = cursor,
                 )
                 cursorService.buildPagination(
                     cursor = cursor,
-                    position = withArg {
+                    positionSupplier = withArg {
                         it.invoke(getFirstTeam()) shouldBe getFirstTeam().username
                     },
-                    fallbackPosition = DEFAULT_USERNAME_FALLBACK_POSITION,
-                    items = getTeamItemsAscending(),
+                    positionFallback = USERNAME_POSITION_FALLBACK,
+                    items = listOf(getFirstTeam(), getSecondTeam()),
                     limit = cursor.query.limit,
                 )
             }
