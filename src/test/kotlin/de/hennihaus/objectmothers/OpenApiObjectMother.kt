@@ -85,7 +85,7 @@ object OpenApiObjectMother {
         )
     }
 
-    private val creditConfigurationBankApi: BankApi by lazy {
+    private val creditConfigBankApi: BankApi by lazy {
         jacksonObjectMapper().readValue(
             src = File("./src/test/resources/openapi/credit-configuration-credit.json")
         )
@@ -99,7 +99,7 @@ object OpenApiObjectMother {
 
     fun getNonUpdatedByTeamBankApi(): BankApi = teamBankApi
 
-    fun getNonUpdatedByCreditConfigurationBankApi(): BankApi = creditConfigurationBankApi
+    fun getNonUpdatedByCreditConfigurationBankApi(): BankApi = creditConfigBankApi
 
     fun getByTaskUpdatedSchufaApi(
         info: SchufaInfo = getByTaskUpdatedSchufaInfo(),
@@ -131,7 +131,7 @@ object OpenApiObjectMother {
 
     fun getByCreditConfigurationUpdatedBankApi(
         components: BankComponents = getByCreditConfigurationBankComponents(),
-    ): BankApi = creditConfigurationBankApi.copy(
+    ): BankApi = creditConfigBankApi.copy(
         components = components,
     )
 
@@ -185,7 +185,7 @@ object OpenApiObjectMother {
 
     fun getByCreditConfigurationBankComponents(
         parameters: LinkedHashMap<String, BankParameter> = getByCreditConfigurationUpdatedBankParameters(),
-    ): BankComponents = creditConfigurationBankApi.components.copy(
+    ): BankComponents = creditConfigBankApi.components.copy(
         parameters = parameters,
     )
 
@@ -268,7 +268,7 @@ object OpenApiObjectMother {
     fun getByCreditConfigurationUpdatedAmountInEurosParameter(
         example: String = AMOUNT_IN_EUROS_EXAMPLE,
         schema: BankSchema = getByCreditConfigurationUpdatedAmountInEurosBankSchema(),
-    ): BankParameter = creditConfigurationBankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!.copy(
+    ): BankParameter = creditConfigBankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!.copy(
         example = example,
         schema = schema,
     )
@@ -284,7 +284,7 @@ object OpenApiObjectMother {
     fun getByCreditConfigurationUpdatedTermInMonthsParameter(
         example: String = TERM_IN_MONTHS_EXAMPLE,
         schema: BankSchema = getByCreditConfigurationUpdatedTermInMonthsBankSchema(),
-    ): BankParameter = creditConfigurationBankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!.copy(
+    ): BankParameter = creditConfigBankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!.copy(
         example = example,
         schema = schema,
     )
@@ -336,7 +336,7 @@ object OpenApiObjectMother {
     fun getByCreditConfigurationUpdatedAmountInEurosBankSchema(
         minAmountInEuros: Int = DEFAULT_MIN_AMOUNT_IN_EUROS,
         maxAmountInEuros: Int = DEFAULT_MAX_AMOUNT_IN_EUROS,
-    ): BankSchema = creditConfigurationBankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!.schema.copy(
+    ): BankSchema = creditConfigBankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!.schema.copy(
         minimum = minAmountInEuros,
         maximum = maxAmountInEuros,
     )
@@ -344,7 +344,7 @@ object OpenApiObjectMother {
     fun getByCreditConfigurationUpdatedTermInMonthsBankSchema(
         minTermInMonths: Int = DEFAULT_MIN_TERM_IN_MONTHS,
         maxTermInMonths: Int = DEFAULT_MAX_TERM_IN_MONTHS,
-    ): BankSchema = creditConfigurationBankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!.schema.copy(
+    ): BankSchema = creditConfigBankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!.schema.copy(
         minimum = minTermInMonths,
         maximum = maxTermInMonths,
     )
@@ -434,10 +434,10 @@ object OpenApiObjectMother {
     private fun getByCreditConfigurationUpdatedBankParameters(): LinkedHashMap<String, BankParameter> = linkedMapOf(
         AMOUNT_IN_EUROS_PARAMETER to getByCreditConfigurationUpdatedAmountInEurosParameter(),
         TERM_IN_MONTHS_PARAMETER to getByCreditConfigurationUpdatedTermInMonthsParameter(),
-        RATING_LEVEL_PARAMETER to creditConfigurationBankApi.components.parameters[RATING_LEVEL_PARAMETER]!!,
-        DELAY_IN_MILLISECONDS_PARAMETER to creditConfigurationBankApi.components.parameters[DELAY_IN_MILLISECONDS_PARAMETER]!!,
-        USERNAME_PARAMETER to creditConfigurationBankApi.components.parameters[USERNAME_PARAMETER]!!,
-        PASSWORD_PARAMETER to creditConfigurationBankApi.components.parameters[PASSWORD_PARAMETER]!!,
+        RATING_LEVEL_PARAMETER to creditConfigBankApi.components.parameters[RATING_LEVEL_PARAMETER]!!,
+        DELAY_IN_MILLISECONDS_PARAMETER to creditConfigBankApi.components.parameters[DELAY_IN_MILLISECONDS_PARAMETER]!!,
+        USERNAME_PARAMETER to creditConfigBankApi.components.parameters[USERNAME_PARAMETER]!!,
+        PASSWORD_PARAMETER to creditConfigBankApi.components.parameters[PASSWORD_PARAMETER]!!,
     )
 
     private fun getByTaskUpdatedSchufaResponses(): LinkedHashMap<String, SchufaResponse> = linkedMapOf(

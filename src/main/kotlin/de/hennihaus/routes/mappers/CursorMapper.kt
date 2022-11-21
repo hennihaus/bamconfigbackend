@@ -12,7 +12,9 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.util.Base64
 
-fun Cursor<*>.toCursorDTO(): String = ByteArrayOutputStream(512).let {
+private const val INITIAL_BYTE_ARRAY_SIZE = 512
+
+fun Cursor<*>.toCursorDTO(): String = ByteArrayOutputStream(INITIAL_BYTE_ARRAY_SIZE).let {
     ObjectOutputStream(it).use { objectOutput ->
         objectOutput.writeObject(this)
     }

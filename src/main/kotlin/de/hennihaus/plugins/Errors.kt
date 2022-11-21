@@ -90,20 +90,20 @@ object ErrorMessage {
 class UUIDException(override val message: String = UUID_EXCEPTION_MESSAGE) : RuntimeException() {
     companion object {
         @Serial
-        private const val serialVersionUID: Long = -1318755554914629714L
+        private const val serialVersionUID: Long = -1_318_755_554_914_629_714L
     }
 }
 
 class BrokerException(message: String?) : RuntimeException(message ?: BROKER_EXCEPTION_MESSAGE) {
     companion object {
         @Serial
-        private const val serialVersionUID: Long = -3796942227686013324L
+        private const val serialVersionUID: Long = -3_796_942_227_686_013_324L
     }
 }
 
 class TransactionException(message: String? = null) : RuntimeException(message ?: EXPOSED_TRANSACTION_EXCEPTION) {
     companion object {
         @Serial
-        private const val serialVersionUID: Long = 291194568384862334L
+        private const val serialVersionUID: Long = 291_194_568_384_862_334L
     }
 }

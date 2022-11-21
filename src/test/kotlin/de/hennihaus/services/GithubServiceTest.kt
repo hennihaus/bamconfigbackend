@@ -112,8 +112,13 @@ class GithubServiceTest {
         @Test
         fun `should correctly update bank with creditConfiguration`() = runBlocking {
             val creditConfiguration = getCreditConfigurationWithNoEmptyFields()
+            every {
+                githubMapper.updateBankApi(
+                    api = any(),
+                    creditConfiguration = any(),
+                )
+            } returns getByCreditConfigurationUpdatedBankApi()
             coEvery { githubCall.getFile(fileConfig = any()) } returns getCreditFileResponse()
-            every { githubMapper.updateBankApi(api = any(), creditConfiguration = any()) } returns getByCreditConfigurationUpdatedBankApi()
             coEvery { githubCall.updateFile(fileConfig = any(), file = any()) } returns mockk()
 
             classUnderTest.updateOpenApi(creditConfiguration = creditConfiguration)

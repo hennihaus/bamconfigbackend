@@ -260,7 +260,12 @@ class TaskServiceTest {
                 getAmountInEurosParameter(),
                 getTermInMonthsParameter(),
             )
-            val (minAmountInEuros, maxAmountInEuros, minTermInMonths, maxTermInMonths) = getCreditConfigurationWithNoEmptyFields()
+            val (
+                minAmountInEuros,
+                maxAmountInEuros,
+                minTermInMonths,
+                maxTermInMonths,
+            ) = getCreditConfigurationWithNoEmptyFields()
 
             classUnderTest.patchParameters(
                 minAmountInEuros = minAmountInEuros,
@@ -295,7 +300,12 @@ class TaskServiceTest {
                 getAmountInEurosParameter(),
                 null,
             )
-            val (minAmountInEuros, maxAmountInEuros, minTermInMonths, maxTermInMonths) = getCreditConfigurationWithNoEmptyFields()
+            val (
+                minAmountInEuros,
+                maxAmountInEuros,
+                minTermInMonths,
+                maxTermInMonths
+            ) = getCreditConfigurationWithNoEmptyFields()
 
             val result: NotFoundException = shouldThrowExactly {
                 classUnderTest.patchParameters(
@@ -321,7 +331,12 @@ class TaskServiceTest {
                 null,
                 getTermInMonthsParameter(),
             )
-            val (minAmountInEuros, maxAmountInEuros, minTermInMonths, maxTermInMonths) = getCreditConfigurationWithNoEmptyFields()
+            val (
+                minAmountInEuros,
+                maxAmountInEuros,
+                minTermInMonths,
+                maxTermInMonths
+            ) = getCreditConfigurationWithNoEmptyFields()
 
             val result: NotFoundException = shouldThrowExactly {
                 classUnderTest.patchParameters(

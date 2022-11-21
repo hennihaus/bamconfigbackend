@@ -47,7 +47,7 @@ fun Application.configureValidation() {
     }
 }
 
-private suspend inline fun <B : Any, reified S : ValidationService<B, *>> B.validateBodyWithService(): ValidationResult {
+private suspend inline fun <B, reified S : ValidationService<B, *>> B.validateBodyWithService(): ValidationResult {
     val reasons = getKoin().get<S>().validateBody(body = this)
     return if (reasons.isEmpty()) ValidationResult.Valid else ValidationResult.Invalid(reasons = reasons)
 }

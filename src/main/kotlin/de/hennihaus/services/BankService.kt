@@ -69,7 +69,7 @@ class BankService(
         creditConfiguration = this,
     )
 
-    private fun Bank.isSynchronousBank() = (!isAsync) and (creditConfiguration is CreditConfiguration)
+    private fun Bank.isSynchronousBank() = !isAsync and (creditConfiguration is CreditConfiguration)
 
     companion object {
         const val BANK_NOT_FOUND_MESSAGE = "bank not found by uuid"

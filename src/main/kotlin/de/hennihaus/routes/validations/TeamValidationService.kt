@@ -96,22 +96,22 @@ class TeamValidationService(
         }
     }
 
-    private suspend fun typeValidation(body: TeamDTO): Validation<TeamDTO> = when (body.type) {
-        TeamType.EXAMPLE.name -> {
+    private suspend fun typeValidation(body: TeamDTO): Validation<TeamDTO> {
+        if (body.type == TeamType.EXAMPLE.name) {
             val isTypeUnique = team.isTypeUnique(
                 id = body.uuid,
                 type = body.type,
             )
-
-            Validation {
+            return Validation {
                 TeamDTO::type {
                     unique(isUnique = isTypeUnique)
                 }
             }
-        }
-        else -> Validation {
-            TeamDTO::type {
-                enum<TeamType>()
+        } else {
+            return Validation {
+                TeamDTO::type {
+                    enum<TeamType>()
+                }
             }
         }
     }

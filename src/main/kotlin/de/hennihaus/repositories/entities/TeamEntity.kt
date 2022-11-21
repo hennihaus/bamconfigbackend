@@ -12,6 +12,7 @@ import org.jetbrains.exposed.sql.SizedIterable
 import java.util.UUID
 
 class TeamEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
+    val type: String by TeamTable.type
     val username: String by TeamTable.username
     val password: String by TeamTable.password
     val jmsQueue: String by TeamTable.jmsQueue

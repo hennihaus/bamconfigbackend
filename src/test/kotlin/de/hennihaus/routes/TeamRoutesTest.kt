@@ -184,21 +184,21 @@ class TeamRoutesTest {
 
         @Test
         fun `should return 200 and use query parameter when no cursor available`() = testApplicationWith(mockModule) {
-            val (limit, type, username, password, jmsQueue, hasPassed, minRequests, maxRequests, studentFirstname, studentLastname, banks) = getTeamQueryWithNoEmptyFields()
+            val query = getTeamQueryWithNoEmptyFields()
 
             val response = testClient.get(urlString = "/v1/teams") {
                 url {
-                    parameters.append(name = LIMIT_QUERY_PARAMETER, value = "$limit")
-                    parameters.append(name = TYPE_QUERY_PARAMETER, value = "$type")
-                    parameters.append(name = USERNAME_PARAMETER, value = "$username")
-                    parameters.append(name = PASSWORD_PARAMETER, value = "$password")
-                    parameters.append(name = JMS_QUEUE_PARAMETER, value = "$jmsQueue")
-                    parameters.append(name = HAS_PASSED_QUERY_PARAMETER, value = "$hasPassed")
-                    parameters.append(name = MIN_REQUESTS_QUERY_PARAMETER, value = "$minRequests")
-                    parameters.append(name = MAX_REQUESTS_QUERY_PARAMETER, value = "$maxRequests")
-                    parameters.append(name = STUDENT_FIRSTNAME_QUERY_PARAMETER, value = "$studentFirstname")
-                    parameters.append(name = STUDENT_LASTNAME_QUERY_PARAMETER, value = "$studentLastname")
-                    parameters.appendAll(name = BANKS_QUERY_PARAMETER, values = banks!!)
+                    parameters.append(name = LIMIT_QUERY_PARAMETER, value = "${query.limit}")
+                    parameters.append(name = TYPE_QUERY_PARAMETER, value = "${query.type}")
+                    parameters.append(name = USERNAME_PARAMETER, value = "${query.username}")
+                    parameters.append(name = PASSWORD_PARAMETER, value = "${query.password}")
+                    parameters.append(name = JMS_QUEUE_PARAMETER, value = "${query.jmsQueue}")
+                    parameters.append(name = HAS_PASSED_QUERY_PARAMETER, value = "${query.hasPassed}")
+                    parameters.append(name = MIN_REQUESTS_QUERY_PARAMETER, value = "${query.minRequests}")
+                    parameters.append(name = MAX_REQUESTS_QUERY_PARAMETER, value = "${query.maxRequests}")
+                    parameters.append(name = STUDENT_FIRSTNAME_QUERY_PARAMETER, value = "${query.studentFirstname}")
+                    parameters.append(name = STUDENT_LASTNAME_QUERY_PARAMETER, value = "${query.studentLastname}")
+                    parameters.appendAll(name = BANKS_QUERY_PARAMETER, values = query.banks!!)
                 }
             }
 
