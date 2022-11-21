@@ -2,7 +2,6 @@ package de.hennihaus.utils.validations
 
 import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import de.hennihaus.models.cursors.Cursor
 import de.hennihaus.utils.validations.RequestValidationUtils.DEFAULT_UNKNOWN_HTTP_STATUS_CODE
 import de.hennihaus.utils.validations.RequestValidationUtils.HTTP_PROTOCOL
@@ -14,6 +13,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import org.apache.commons.validator.routines.EmailValidator
 import org.apache.commons.validator.routines.UrlValidator
+import java.io.ByteArrayInputStream
+import java.io.ObjectInputStream
 import java.util.Base64
 import java.util.UUID
 
@@ -63,7 +64,12 @@ fun ValidationBuilder<String>.json(): Constraint<String> = addConstraint(
 fun <Query : Any> ValidationBuilder<String>.cursor(): Constraint<String> = addConstraint(
     errorMessage = "must have valid cursor",
 ) {
-    runCatching { jacksonObjectMapper().readValue<Cursor<Query>>(src = Base64.getDecoder().decode(it)) }
+    runCatching { Base64.getUrlDecoder().decode(it) }
+        .map {
+            ObjectInputStream(ByteArrayInputStream(it)).use { objectInput ->
+                objectInput.readObject() as Cursor<Query>
+            }
+        }
         .map { true }
         .getOrElse { false }
 }

@@ -7,7 +7,7 @@ import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.SYNC_BANK_NAME
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSchufaBank
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
 import de.hennihaus.objectmothers.TeamQueryObjectMother.getTeamQueryWithEmptyFields
-import de.hennihaus.objectmothers.TeamQueryObjectMother.getTeamQueryWithNonEmptyFields
+import de.hennihaus.objectmothers.TeamQueryObjectMother.getTeamQueryWithNoEmptyFields
 import de.hennihaus.routes.mappers.toTeamDTO
 import de.hennihaus.routes.mappers.toTeamQueryDTO
 import de.hennihaus.routes.validations.BankValidationService.Companion.BANK_NAME_MAX_LENGTH
@@ -413,7 +413,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return an empty list when query with max fields set is valid`() = runBlocking<Unit> {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO()
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO()
 
             val result: List<String> = classUnderTest.validateUrl(
                 query = query,
@@ -440,7 +440,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when limit is too small`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 limit = LIMIT_MINIMUM.dec(),
             )
 
@@ -453,7 +453,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when limit is too high`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 limit = LIMIT_MAXIMUM.inc(),
             )
 
@@ -466,7 +466,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when type has no enum value`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 type = "invalidType",
             )
 
@@ -479,7 +479,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when password is too short`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 password = Arb.string(size = TEAM_PASSWORD_MIN_LENGTH.dec()).single(),
             )
 
@@ -492,7 +492,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when password is too long`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 password = Arb.string(size = TEAM_PASSWORD_MAX_LENGTH.inc()).single(),
             )
 
@@ -505,7 +505,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when minRequests is negative`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 minRequests = TEAM_MIN_REQUESTS.dec(),
             )
 
@@ -518,7 +518,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when maxRequests is negative`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 maxRequests = TEAM_MIN_REQUESTS.dec(),
             )
 
@@ -531,7 +531,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when minRequests is null and maxRequests is negative`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 minRequests = null,
                 maxRequests = TEAM_MIN_REQUESTS.dec(),
             )
@@ -545,7 +545,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when maxRequests smaller minRequests`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 minRequests = 1L,
                 maxRequests = 0L,
             )
@@ -559,7 +559,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when bank elements are not unique`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 banks = listOf(
                     getSchufaBank().name,
                     getSchufaBank().name,
@@ -575,7 +575,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when one bank name is too short`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 banks = listOf(
                     element = Arb.string(size = BANK_NAME_MIN_LENGTH.dec()).single(),
                 ),
@@ -590,7 +590,7 @@ class TeamValidationServiceTest {
 
         @Test
         fun `should return a list with one error when one bank name is too long`() = runBlocking {
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
                 banks = listOf(
                     element = Arb.string(size = BANK_NAME_MAX_LENGTH.inc()).single(),
                 ),
@@ -606,8 +606,8 @@ class TeamValidationServiceTest {
         @Test
         fun `should return a list with one error when one bank does not exist`() = runBlocking {
             coEvery { bank.hasName(name = any()) } returnsMany listOf(true, true, true, false)
-            val query = getTeamQueryWithNonEmptyFields().toTeamQueryDTO().copy(
-                banks = getTeamQueryWithNonEmptyFields().banks!! + listOf(
+            val query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO().copy(
+                banks = getTeamQueryWithNoEmptyFields().banks!! + listOf(
                     "unknownBankName"
                 ),
             )

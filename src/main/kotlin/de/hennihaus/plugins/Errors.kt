@@ -15,6 +15,7 @@ import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
+import java.io.Serial
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
@@ -86,8 +87,23 @@ object ErrorMessage {
     const val INTEGRATION_STEP_NOT_FOUND_MESSAGE = "integrationStep is not found"
 }
 
-class UUIDException(override val message: String = UUID_EXCEPTION_MESSAGE) : RuntimeException()
+class UUIDException(override val message: String = UUID_EXCEPTION_MESSAGE) : RuntimeException() {
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = -1318755554914629714L
+    }
+}
 
-class BrokerException(message: String?) : RuntimeException(message ?: BROKER_EXCEPTION_MESSAGE)
+class BrokerException(message: String?) : RuntimeException(message ?: BROKER_EXCEPTION_MESSAGE) {
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = -3796942227686013324L
+    }
+}
 
-class TransactionException(message: String? = null) : RuntimeException(message ?: EXPOSED_TRANSACTION_EXCEPTION)
+class TransactionException(message: String? = null) : RuntimeException(message ?: EXPOSED_TRANSACTION_EXCEPTION) {
+    companion object {
+        @Serial
+        private const val serialVersionUID: Long = 291194568384862334L
+    }
+}

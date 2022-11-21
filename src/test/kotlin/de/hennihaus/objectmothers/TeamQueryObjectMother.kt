@@ -15,12 +15,12 @@ import de.hennihaus.models.cursors.TeamQuery
 
 object TeamQueryObjectMother {
 
-    const val DEFAULT_LIMIT = 1
+    const val DEFAULT_MIN_LIMIT = 1
     const val DEFAULT_TEAM_TYPE = "REGULAR"
     const val DEFAULT_MAX_REQUESTS = Long.MAX_VALUE
 
-    fun getTeamQueryWithNonEmptyFields(
-        limit: Int = DEFAULT_LIMIT,
+    fun getTeamQueryWithNoEmptyFields(
+        limit: Int = DEFAULT_MIN_LIMIT,
         type: TeamType? = TeamType.valueOf(value = DEFAULT_TEAM_TYPE),
         username: String? = FIRST_TEAM_USERNAME,
         password: String? = DEFAULT_PASSWORD,
@@ -46,7 +46,7 @@ object TeamQueryObjectMother {
     )
 
     fun getTeamQueryWithEmptyFields(
-        limit: Int = DEFAULT_LIMIT,
+        limit: Int = DEFAULT_MIN_LIMIT,
         type: TeamType? = null,
         username: String? = null,
         password: String? = null,

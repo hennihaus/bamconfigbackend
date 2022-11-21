@@ -164,7 +164,7 @@
               "minLength" : 6,
               "type" : "string"
             },
-            "minItems" : 1,
+            "minItems" : 0,
             "type" : "array",
             "uniqueItems" : true
           },
@@ -180,6 +180,23 @@
               }
             },
             "description" : "Teams"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description" : "Invalid Request"
           },
           "500" : {
             "content" : {
@@ -393,6 +410,23 @@
               }
             },
             "description" : "Invalid Request"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "reasons" : [ {
+                    "exception" : "NotFoundException",
+                    "message" : "resource not found"
+                  } ],
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description" : "Not Found"
           },
           "409" : {
             "content" : {
@@ -1666,6 +1700,23 @@
         },
         "description" : "Tasks"
       },
+      "400" : {
+        "content" : {
+          "application/json" : {
+            "example" : {
+              "reasons" : [ {
+                "exception" : "RequestValidationException",
+                "message" : "uuid must have valid uuid format"
+              } ],
+              "dateTime" : "2022-01-31T07:43:30"
+            },
+            "schema" : {
+              "$ref" : "#/components/schemas/Errors"
+            }
+          }
+        },
+        "description" : "Invalid Request"
+      },
       "500" : {
         "content" : {
           "application/json" : {
@@ -1692,23 +1743,6 @@
           }
         },
         "description" : "Task"
-      },
-      "400" : {
-        "content" : {
-          "application/json" : {
-            "example" : {
-              "reasons" : [ {
-                "exception" : "RequestValidationException",
-                "message" : "uuid must have valid uuid format"
-              } ],
-              "dateTime" : "2022-01-31T07:43:30"
-            },
-            "schema" : {
-              "$ref" : "#/components/schemas/Errors"
-            }
-          }
-        },
-        "description" : "Invalid Request"
       },
       "404" : {
         "content" : {
@@ -1875,9 +1909,8 @@
               "minLength" : 6,
               "type" : "string"
             },
-            "minItems" : 1,
-            "type" : "array",
-            "uniqueItems" : true
+            "minItems" : 0,
+            "type" : "array"
           }
         },
         "required" : [ "limit" ],

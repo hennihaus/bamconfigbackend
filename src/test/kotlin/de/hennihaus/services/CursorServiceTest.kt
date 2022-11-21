@@ -10,10 +10,7 @@ import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithEmpty
 import de.hennihaus.objectmothers.CursorObjectMother.getLastTeamCursorWithEmptyFields
 import de.hennihaus.objectmothers.CursorObjectMother.getNextTeamCursorWithEmptyFields
 import de.hennihaus.objectmothers.CursorObjectMother.getPreviousTeamCursorWithEmptyFields
-import de.hennihaus.objectmothers.PaginationObjectMother.getFirstCursorTeamPaginationWithEmptyFields
-import de.hennihaus.objectmothers.PaginationObjectMother.getLastCursorTeamPaginationWithEmptyFields
-import de.hennihaus.objectmothers.PaginationObjectMother.getNextCursorTeamPaginationWithEmptyFields
-import de.hennihaus.objectmothers.PaginationObjectMother.getPreviousCursorTeamPaginationWithEmptyFields
+import de.hennihaus.objectmothers.PaginationObjectMother.getTeamPaginationWithEmptyFields
 import de.hennihaus.objectmothers.TeamQueryObjectMother.DEFAULT_MIN_LIMIT
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
@@ -41,7 +38,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getFirstCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = null,
                 next = getNextTeamCursorWithEmptyFields(
                     position = getFirstTeam().username,
@@ -68,7 +65,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getFirstCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = null,
                 next = null,
                 items = emptyList(),
@@ -91,7 +88,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getFirstCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = null,
                 next = null,
                 items = listOf(
@@ -116,7 +113,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getLastCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = getPreviousTeamCursorWithEmptyFields(
                     position = getThirdTeam().username,
                 ),
@@ -143,7 +140,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getLastCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = null,
                 next = null,
                 items = emptyList(),
@@ -166,7 +163,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getLastCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = null,
                 next = null,
                 items = listOf(
@@ -191,7 +188,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getPreviousCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = getPreviousTeamCursorWithEmptyFields(
                     position = getSecondTeam().username,
                 ),
@@ -220,7 +217,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getPreviousCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = null,
                 next = null,
                 items = emptyList(),
@@ -243,7 +240,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getPreviousCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = null,
                 next = getNextTeamCursorWithEmptyFields(
                     position = getSecondTeam().username,
@@ -270,7 +267,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getNextCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = getPreviousTeamCursorWithEmptyFields(
                     position = getSecondTeam().username,
                 ),
@@ -299,7 +296,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getNextCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = null,
                 next = null,
                 items = emptyList(),
@@ -322,7 +319,7 @@ class CursorServiceTest {
                 limit = limit,
             )
 
-            result shouldBe getNextCursorTeamPaginationWithEmptyFields(
+            result shouldBe getTeamPaginationWithEmptyFields(
                 prev = getPreviousTeamCursorWithEmptyFields(
                     position = getSecondTeam().username,
                 ),

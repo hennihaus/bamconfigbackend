@@ -11,8 +11,8 @@ import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getZeroStatistic
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
 import de.hennihaus.models.cursors.TeamPagination
 import de.hennihaus.models.cursors.TeamQuery
-import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithNonEmptyFields
-import de.hennihaus.objectmothers.PaginationObjectMother.getFirstCursorTeamPaginationWithEmptyFields
+import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithNoEmptyFields
+import de.hennihaus.objectmothers.PaginationObjectMother.getTeamPaginationWithNoEmptyFields
 import de.hennihaus.repositories.StatisticRepository
 import de.hennihaus.repositories.TeamRepository
 import de.hennihaus.services.TeamService.Companion.TEAM_NOT_FOUND_MESSAGE
@@ -76,14 +76,14 @@ class TeamServiceTest {
                     items = any(),
                     limit = any(),
                 )
-            } returns getFirstCursorTeamPaginationWithEmptyFields()
-            val cursor = getFirstTeamCursorWithNonEmptyFields()
+            } returns getTeamPaginationWithNoEmptyFields()
+            val cursor = getFirstTeamCursorWithNoEmptyFields()
 
             val result: TeamPagination = classUnderTest.getAllTeams(
                 cursor = cursor,
             )
 
-            result shouldBe getFirstCursorTeamPaginationWithEmptyFields()
+            result shouldBe getTeamPaginationWithNoEmptyFields()
             coVerifySequence {
                 teamRepository.getAll(
                     cursor = cursor,
@@ -103,7 +103,7 @@ class TeamServiceTest {
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
             coEvery { teamRepository.getAll(cursor = any()) } throws Exception()
-            val cursor = getFirstTeamCursorWithNonEmptyFields()
+            val cursor = getFirstTeamCursorWithNoEmptyFields()
 
             val result = shouldThrow<Exception> {
                 classUnderTest.getAllTeams(

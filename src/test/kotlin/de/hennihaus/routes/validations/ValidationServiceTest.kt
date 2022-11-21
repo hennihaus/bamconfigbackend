@@ -16,7 +16,7 @@ class ValidationServiceTest {
     inner class ValidateCursor {
         @Test
         fun `should return an empty list when cursor is valid`() {
-            val cursor = CursorObjectMother.TEST_CURSOR_1
+            val cursor = CursorObjectMother.FIRST_TEAM_CURSOR_WITH_NO_EMPTY_FIELDS
 
             val result: List<String> = classUnderTest.validateCursor<TestQuery>(
                 cursor = cursor,

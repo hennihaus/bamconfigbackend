@@ -73,6 +73,9 @@
           "200": {
             "$ref": "#/components/responses/200s"
           },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
           "500": {
             "$ref": "../commons/commons.json#/components/responses/500"
           }
@@ -126,6 +129,9 @@
           },
           "400": {
             "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "404": {
+            "$ref": "../commons/commons.json#/components/responses/404"
           },
           "409": {
             "$ref": "../commons/commons.json#/components/responses/409"

@@ -89,14 +89,12 @@ class CursorService {
     private fun <Query : Any> Cursor<Query>.buildAscendingCursor(position: String) = Cursor(
         position = position,
         direction = Direction.ASCENDING,
-        queryHash = query.hashCode(),
         query = query,
     )
 
     private fun <Query : Any> Cursor<Query>.buildDescendingCursor(position: String) = Cursor(
         position = position,
         direction = Direction.DESCENDING,
-        queryHash = query.hashCode(),
         query = query,
     )
 
