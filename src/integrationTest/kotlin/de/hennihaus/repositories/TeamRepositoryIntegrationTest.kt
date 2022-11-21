@@ -8,6 +8,8 @@ import de.hennihaus.bamdatamodel.objectmothers.StudentObjectMother.getSecondStud
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
+import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
+import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithEmptyFields
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
 import de.hennihaus.objectmothers.ExposedContainerObjectMother.PSD_BANK_NAME
 import de.hennihaus.plugins.initKoin
@@ -83,7 +85,9 @@ class TeamRepositoryIntegrationTest : KoinTest {
     inner class GetAll {
         @Test
         fun `should return at a minimum one team`() = runBlocking<Unit> {
-            val result: List<Team> = classUnderTest.getAll()
+            val cursor = getFirstTeamCursorWithEmptyFields()
+
+            val result: List<Team> = classUnderTest.getAll(cursor = cursor)
 
             result.shouldNotBeEmpty()
         }
@@ -128,7 +132,10 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 ),
             )
 
-            val result: Team = classUnderTest.save(entry = team)
+            val result: Team = classUnderTest.save(
+                entry = team,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
 
             result shouldBe team
         }
@@ -142,7 +149,10 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 jmsQueue = "NewJmsQueue",
             )
 
-            val result: Team = classUnderTest.save(entry = team)
+            val result: Team = classUnderTest.save(
+                entry = team,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
 
             result shouldBe team
         }
@@ -229,16 +239,6 @@ class TeamRepositoryIntegrationTest : KoinTest {
             val result: String? = classUnderTest.getJmsQueueById(id = id)
 
             result.shouldBeNull()
-        }
-    }
-
-    @Nested
-    inner class GetAllTeamIds {
-        @Test
-        fun `should return at a minimum one team id`() = runBlocking<Unit> {
-            val result: List<UUID> = classUnderTest.getAllTeamIds()
-
-            result.shouldNotBeEmpty()
         }
     }
 }

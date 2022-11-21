@@ -2,6 +2,7 @@ package de.hennihaus.repositories
 
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
+import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
 import de.hennihaus.models.Task
 import de.hennihaus.objectmothers.EndpointObjectMother
 import de.hennihaus.objectmothers.EndpointObjectMother.getSchufaRestEndpoint
@@ -150,7 +151,10 @@ class TaskRepositoryIntegrationTest : KoinTest {
                 )
             )
 
-            val result: Task = classUnderTest.save(entry = task)
+            val result: Task = classUnderTest.save(
+                entry = task,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
 
             result.shouldBeEqualToIgnoringFields(
                 other = task,
@@ -163,7 +167,10 @@ class TaskRepositoryIntegrationTest : KoinTest {
             val task = getAsynchronousBankTask(uuid = ExposedContainerObjectMother.UNKNOWN_UUID)
             classUnderTest.deleteById(id = getAsynchronousBankTask().uuid)
 
-            val result: Task = classUnderTest.save(entry = task)
+            val result: Task = classUnderTest.save(
+                entry = task,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
 
             result.shouldBeEqualToIgnoringFields(
                 other = task,

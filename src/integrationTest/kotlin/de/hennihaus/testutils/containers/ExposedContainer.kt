@@ -29,7 +29,7 @@ import java.sql.ResultSet
 object ExposedContainer {
 
     private const val IMAGE_NAME = "hennihaus/bamconfigdb"
-    private const val IMAGE_VERSION = "latest"
+    private const val IMAGE_VERSION = "latest-test"
     private const val EXPOSED_PORT = 5_432
 
     private const val FIRST_COLUMN = 1
