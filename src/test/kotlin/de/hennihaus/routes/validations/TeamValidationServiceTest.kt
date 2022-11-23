@@ -77,7 +77,7 @@ class TeamValidationServiceTest {
 
             result.shouldBeEmpty()
             coVerifyAll {
-                team.isTypeUnique(id = body.uuid, type = body.type)
+                team.isTypeUnique(id = body.uuid, type = TeamType.valueOf(value = body.type))
                 team.isUsernameUnique(id = body.uuid, username = body.username)
                 team.isPasswordUnique(id = body.uuid, password = body.password)
                 team.isJmsQueueUnique(id = body.uuid, jmsQueue = body.jmsQueue)
@@ -126,7 +126,7 @@ class TeamValidationServiceTest {
             )
 
             result shouldContainExactly listOf("type must be unique")
-            coVerify(exactly = 1) { team.isTypeUnique(id = body.uuid, type = body.type) }
+            coVerify(exactly = 1) { team.isTypeUnique(id = body.uuid, type = TeamType.EXAMPLE) }
         }
 
         @Test

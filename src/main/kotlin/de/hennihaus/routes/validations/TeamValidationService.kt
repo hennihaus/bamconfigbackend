@@ -100,7 +100,9 @@ class TeamValidationService(
         if (body.type == TeamType.EXAMPLE.name) {
             val isTypeUnique = team.isTypeUnique(
                 id = body.uuid,
-                type = body.type,
+                type = TeamType.valueOf(
+                    value = body.type,
+                ),
             )
             return Validation {
                 TeamDTO::type {

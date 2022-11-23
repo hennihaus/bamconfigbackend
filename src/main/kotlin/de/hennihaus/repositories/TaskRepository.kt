@@ -1,10 +1,11 @@
 package de.hennihaus.repositories
 
+import de.hennihaus.models.Parameter
 import de.hennihaus.models.Task
 import de.hennihaus.repositories.entities.BankEntity
-import de.hennihaus.repositories.entities.StatisticEntity
+import de.hennihaus.repositories.entities.ParameterEntity
 import de.hennihaus.repositories.entities.TaskEntity
-import de.hennihaus.repositories.entities.TeamEntity
+import de.hennihaus.repositories.mappers.toParameter
 import de.hennihaus.repositories.mappers.toTask
 import de.hennihaus.repositories.tables.ContactTable
 import de.hennihaus.repositories.tables.EndpointTable
@@ -22,21 +23,22 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.UUID
 
 @Single
-class TaskRepository : Repository<Task, UUID> {
+class TaskRepository {
 
-    override suspend fun getById(id: UUID): Task? = inTransaction {
+    suspend fun getById(id: UUID): Task? = inTransaction {
         TaskEntity.findById(id = id)
             ?.load(relations = getTaskRelations())
             ?.toTask()
     }
 
-    override suspend fun getAll(): List<Task> = inTransaction {
+    suspend fun getAll(): List<Task> = inTransaction {
         TaskEntity.all()
             .with(relations = getTaskRelations())
             .map {
@@ -44,14 +46,14 @@ class TaskRepository : Repository<Task, UUID> {
             }
     }
 
-    override suspend fun deleteById(id: UUID): Boolean = inTransaction {
+    suspend fun deleteById(id: UUID): Boolean = inTransaction {
         TaskEntity.findById(id = id)
             ?.delete()
             ?.let { true }
             ?: false
     }
 
-    override suspend fun save(entry: Task, repetitionAttempts: Int): Task = inTransaction(
+    suspend fun save(entry: Task, repetitionAttempts: Int): Task = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {
         val now = ZonedDateTime.now().toInstant()
@@ -85,6 +87,18 @@ class TaskRepository : Repository<Task, UUID> {
         TaskResponseTable.slice(column = TaskResponseTable.responseId)
             .select { TaskResponseTable.taskId eq id }
             .map { it[TaskResponseTable.responseId].value }
+    }
+
+    suspend fun updateParameter(name: String, example: String, repetitionAttempts: Int): Parameter? = inTransaction(
+        repetitionAttempts = repetitionAttempts,
+    ) {
+        ParameterTable.update(where = { ParameterTable.name eq name }) {
+            it[ParameterTable.example] = example
+        }
+
+        ParameterEntity.find { ParameterTable.name eq name }
+            .singleOrNull()
+            ?.toParameter()
     }
 
     private fun Task.saveContact(now: Instant) {
@@ -200,10 +214,7 @@ class TaskRepository : Repository<Task, UUID> {
         TaskEntity::responses,
         TaskEntity::banks,
         BankEntity::creditConfiguration,
-        BankEntity::teams,
-        TeamEntity::students,
-        TeamEntity::statistics,
-        StatisticEntity::bank,
+        BankEntity::statistics,
     )
 
     companion object {

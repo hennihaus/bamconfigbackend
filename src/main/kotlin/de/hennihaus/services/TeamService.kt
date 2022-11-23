@@ -39,7 +39,7 @@ class TeamService(
             ?: throw NotFoundException(message = TEAM_NOT_FOUND_MESSAGE)
     }
 
-    suspend fun isTypeUnique(id: String, type: String): Boolean = id.toUUID { uuid ->
+    suspend fun isTypeUnique(id: String, type: TeamType): Boolean = id.toUUID { uuid ->
         teamRepository.getTeamIdByType(type = type)
             ?.let { it == uuid }
             ?: true

@@ -152,10 +152,10 @@ class TeamServiceTest {
             val (id, type) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByType(type = any()) } returns getSecondTeam().uuid
 
-            val result: Boolean = classUnderTest.isTypeUnique(id = "$id", type = type.name)
+            val result: Boolean = classUnderTest.isTypeUnique(id = "$id", type = type)
 
             result.shouldBeFalse()
-            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type.name) }
+            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type) }
         }
 
         @Test
@@ -163,10 +163,10 @@ class TeamServiceTest {
             val (id, type) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByType(type = any()) } returns getFirstTeam().uuid
 
-            val result: Boolean = classUnderTest.isTypeUnique(id = "$id", type = type.name)
+            val result: Boolean = classUnderTest.isTypeUnique(id = "$id", type = type)
 
             result.shouldBeTrue()
-            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type.name) }
+            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type) }
         }
 
         @Test
@@ -174,10 +174,10 @@ class TeamServiceTest {
             val (id, type) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByType(type = any()) } returns null
 
-            val result: Boolean = classUnderTest.isTypeUnique(id = "$id", type = type.name)
+            val result: Boolean = classUnderTest.isTypeUnique(id = "$id", type = type)
 
             result.shouldBeTrue()
-            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type.name) }
+            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type) }
         }
 
         @Test
@@ -186,11 +186,11 @@ class TeamServiceTest {
             coEvery { teamRepository.getTeamIdByType(type = any()) } throws Exception()
 
             val result = shouldThrow<Exception> {
-                classUnderTest.isTypeUnique(id = "$id", type = type.name)
+                classUnderTest.isTypeUnique(id = "$id", type = type)
             }
 
             result should beInstanceOf<Exception>()
-            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type.name) }
+            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type) }
         }
     }
 
