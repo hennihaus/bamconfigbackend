@@ -12,8 +12,10 @@ import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
 import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithEmptyFields
+import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithNoEmptyFields
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
 import de.hennihaus.objectmothers.ExposedContainerObjectMother.PSD_BANK_NAME
+import de.hennihaus.objectmothers.TeamQueryObjectMother.getTeamQueryWithNoEmptyFields
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
 import de.hennihaus.testutils.containers.ExposedContainer
@@ -93,8 +95,27 @@ class TeamRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class GetAll {
         @Test
-        fun `should return at a minimum one team`() = runBlocking<Unit> {
+        fun `should return at least one team with minimal cursor fields`() = runBlocking<Unit> {
             val cursor = getFirstTeamCursorWithEmptyFields()
+
+            val result: List<Team> = classUnderTest.getAll(cursor = cursor)
+
+            result.shouldNotBeEmpty()
+        }
+
+        @Test
+        fun `should return at least one team with maximal cursor fields`() = runBlocking<Unit> {
+            val cursor = getFirstTeamCursorWithNoEmptyFields(
+                query = getTeamQueryWithNoEmptyFields(
+                    type = TeamType.REGULAR,
+                    username = ExposedContainerObjectMother.TEAM_USERNAME,
+                    password = ExposedContainerObjectMother.TEAM_PASSWORD,
+                    jmsQueue = ExposedContainerObjectMother.TEAM_JMS_QUEUE,
+                    studentFirstname = ExposedContainerObjectMother.STUDENT_FIRSTNAME,
+                    studentLastname = ExposedContainerObjectMother.STUDENT_LASTNAME,
+                    banks = listOf(PSD_BANK_NAME),
+                ),
+            )
 
             val result: List<Team> = classUnderTest.getAll(cursor = cursor)
 

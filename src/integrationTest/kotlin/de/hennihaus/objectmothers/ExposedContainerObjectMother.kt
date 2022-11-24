@@ -10,6 +10,9 @@ object ExposedContainerObjectMother {
     val TEAM_UUID: UUID = UUID.fromString("ad5181da-d8ed-45e6-ae09-a7a775ea55c1")
     val STUDENT_UUID: UUID = UUID.fromString("8c2d8e9d-fd9a-43b8-96e0-85f2e72aea5c")
 
+    const val STUDENT_FIRSTNAME = "Corinna"
+    const val STUDENT_LASTNAME = "Wurm"
+
     const val TEAM_USERNAME = "Team000001"
     const val TEAM_PASSWORD = "sPSwsUwPOQ"
     const val TEAM_JMS_QUEUE = "ResponseQueueTeam000001"
