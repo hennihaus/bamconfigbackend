@@ -17,4 +17,6 @@ object ExposedContainerObjectMother {
     const val PSD_BANK_NAME = "PSD Bank"
 
     const val TASK_TITLE = "Asynchrone Banken"
+
+    const val PARAMETER_NAME = "username"
 }

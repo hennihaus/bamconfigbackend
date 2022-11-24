@@ -1,9 +1,14 @@
 package de.hennihaus.repositories
 
 import de.hennihaus.bamdatamodel.Team
+import de.hennihaus.bamdatamodel.TeamType
+import de.hennihaus.configurations.Configuration.PASSWORD_LENGTH
+import de.hennihaus.models.cursors.TeamCursor
+import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
 import de.hennihaus.repositories.entities.StatisticEntity
 import de.hennihaus.repositories.entities.TeamEntity
 import de.hennihaus.repositories.mappers.toTeam
+import de.hennihaus.repositories.queries.TeamQueryBuilder
 import de.hennihaus.repositories.tables.BankTable
 import de.hennihaus.repositories.tables.StatisticTable
 import de.hennihaus.repositories.tables.StudentTable
@@ -13,40 +18,52 @@ import de.hennihaus.utils.inTransaction
 import de.hennihaus.utils.upsert
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
+import org.jetbrains.exposed.sql.CustomStringFunction
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.intParam
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.update
+import org.koin.core.annotation.Property
 import org.koin.core.annotation.Single
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.UUID
 
 @Single
-class TeamRepository : Repository<Team, UUID> {
+class TeamRepository(
+    private val queryBuilder: TeamQueryBuilder,
+    @Property(PASSWORD_LENGTH) private val passwordLength: String,
+) {
 
-    override suspend fun getById(id: UUID): Team? = inTransaction {
+    suspend fun getById(id: UUID): Team? = inTransaction {
         TeamEntity.findById(id = id)
             ?.load(relations = getTeamRelations())
             ?.toTeam()
     }
 
-    override suspend fun getAll(): List<Team> = inTransaction {
-        TeamEntity.all()
+    suspend fun getAll(cursor: TeamCursor): List<Team> = inTransaction {
+        val rows = queryBuilder.buildTeamPaginationQuery(
+            cursor = cursor,
+        )
+
+        TeamEntity.wrapRows(rows = rows)
             .with(relations = getTeamRelations())
             .map {
                 it.toTeam()
             }
     }
 
-    override suspend fun deleteById(id: UUID): Boolean = inTransaction {
+    suspend fun deleteById(id: UUID): Boolean = inTransaction {
         TeamEntity.findById(id = id)
             ?.delete()
             ?.let { true }
             ?: false
     }
 
-    override suspend fun save(entry: Team, repetitionAttempts: Int): Team = inTransaction(
+    suspend fun save(entry: Team, repetitionAttempts: Int): Team = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {
         val now = ZonedDateTime.now().toInstant()
@@ -61,6 +78,13 @@ class TeamRepository : Repository<Team, UUID> {
             ?: throw IllegalStateException(TEAM_NOT_FOUND_MESSAGE)
     }
 
+    suspend fun getTeamIdByType(type: TeamType): UUID? = inTransaction {
+        TeamTable.slice(column = TeamTable.id)
+            .select { TeamTable.type eq type.name }
+            .firstOrNull()
+            ?.let { it[TeamTable.id].value }
+    }
+
     suspend fun getTeamIdByUsername(username: String): UUID? = inTransaction {
         TeamTable.slice(column = TeamTable.id)
             .select { TeamTable.username eq username }
@@ -69,9 +93,9 @@ class TeamRepository : Repository<Team, UUID> {
     }
 
     suspend fun getTeamIdByPassword(password: String): UUID? = inTransaction {
-        TeamTable.slice(columns = listOf(TeamTable.id, TeamTable.password))
-            .selectAll()
-            .find { it[TeamTable.password] == password }
+        TeamTable.slice(column = TeamTable.id)
+            .select { TeamTable.password eq password }
+            .singleOrNull()
             ?.let { it[TeamTable.id].value }
     }
 
@@ -89,7 +113,30 @@ class TeamRepository : Repository<Team, UUID> {
             ?.let { it[TeamTable.jmsQueue] }
     }
 
-    suspend fun getAllTeamIds(): List<UUID> = inTransaction {
+    suspend fun resetAllTeams(repetitionAttempts: Int): List<UUID> = inTransaction(
+        repetitionAttempts = repetitionAttempts,
+    ) {
+        TeamTable.update {
+            with(SqlExpressionBuilder) {
+                it.update(
+                    column = password,
+                    value = CustomStringFunction(
+                        functionName = "RANDOM_STRING",
+                        params = arrayOf(
+                            intParam(
+                                value = passwordLength.toInt(),
+                            ),
+                        ),
+                    ),
+                )
+            }
+        }
+        StatisticTable.update { statisticTable ->
+            with(SqlExpressionBuilder) {
+                statisticTable[requestsCount] = ZERO_REQUESTS
+            }
+        }
+
         TeamTable.slice(column = TeamTable.id)
             .selectAll()
             .map {
@@ -99,6 +146,7 @@ class TeamRepository : Repository<Team, UUID> {
 
     private fun Team.saveTeam(now: Instant) = TeamTable.upsert(conflictColumns = listOf(TeamTable.id)) { teamTable ->
         teamTable[id] = this@saveTeam.uuid
+        teamTable[type] = this@saveTeam.type.name
         teamTable[username] = this@saveTeam.username
         teamTable[password] = this@saveTeam.password
         teamTable[jmsQueue] = this@saveTeam.jmsQueue

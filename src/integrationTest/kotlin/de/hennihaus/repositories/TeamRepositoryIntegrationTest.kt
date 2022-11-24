@@ -1,11 +1,13 @@
 package de.hennihaus.repositories
 
 import de.hennihaus.bamdatamodel.Team
+import de.hennihaus.bamdatamodel.TeamType
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.SCHUFA_BANK_NAME
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.SYNC_BANK_NAME
 import de.hennihaus.bamdatamodel.objectmothers.StudentObjectMother.getFirstStudent
 import de.hennihaus.bamdatamodel.objectmothers.StudentObjectMother.getSecondStudent
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
+import de.hennihaus.configurations.Configuration.PASSWORD_LENGTH
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
@@ -13,14 +15,21 @@ import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithEmpty
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
 import de.hennihaus.objectmothers.ExposedContainerObjectMother.PSD_BANK_NAME
 import de.hennihaus.plugins.initKoin
+import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
 import de.hennihaus.testutils.containers.ExposedContainer
+import io.kotest.inspectors.forAll
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldNotBeEmpty
+import io.kotest.matchers.maps.shouldContainValues
 import io.kotest.matchers.maps.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldHaveLength
+import io.kotest.property.Arb
+import io.kotest.property.arbitrary.enum
+import io.kotest.property.checkAll
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -159,6 +168,20 @@ class TeamRepositoryIntegrationTest : KoinTest {
     }
 
     @Nested
+    inner class GetTeamIdByType {
+        @Test
+        fun `should return null when team is not found by type`() = runBlocking<Unit> {
+            checkAll(genA = Arb.enum<TeamType>()) {
+                val result: UUID? = classUnderTest.getTeamIdByType(
+                    type = it,
+                )
+
+                result.shouldNotBeNull()
+            }
+        }
+    }
+
+    @Nested
     inner class GetTeamIdByUsername {
         @Test
         fun `should return a team uuid when team is found by username`() = runBlocking<Unit> {
@@ -239,6 +262,23 @@ class TeamRepositoryIntegrationTest : KoinTest {
             val result: String? = classUnderTest.getJmsQueueById(id = id)
 
             result.shouldBeNull()
+        }
+    }
+
+    @Nested
+    inner class ResetAllTeams {
+        @Test
+        fun `should reset all team statistics, hasPassed and passwords`() = runBlocking<Unit> {
+            val result: List<UUID> = classUnderTest.resetAllTeams(
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
+
+            result.shouldNotBeEmpty()
+            classUnderTest.getAll(cursor = getFirstTeamCursorWithEmptyFields()).forAll {
+                it.hasPassed.shouldBeFalse()
+                it.password shouldHaveLength getKoin().getProperty<String>(key = PASSWORD_LENGTH)!!.toInt()
+                it.statistics.shouldContainValues(ZERO_REQUESTS)
+            }
         }
     }
 }
