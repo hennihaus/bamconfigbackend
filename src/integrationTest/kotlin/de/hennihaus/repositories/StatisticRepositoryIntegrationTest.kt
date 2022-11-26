@@ -7,9 +7,12 @@ import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getZeroStatistic
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
+import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithEmptyFields
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
+import de.hennihaus.objectmothers.TeamQueryObjectMother.getTeamQueryWithEmptyFields
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
+import de.hennihaus.routes.validations.ValidationService.Companion.LIMIT_MAXIMUM
 import de.hennihaus.testutils.containers.ExposedContainer
 import io.kotest.inspectors.forAll
 import io.kotest.inspectors.forAllValues
@@ -65,7 +68,10 @@ class StatisticRepositoryIntegrationTest : KoinTest {
                 bankId = ExposedContainerObjectMother.BANK_UUID,
                 teamId = ExposedContainerObjectMother.TEAM_UUID,
             )
-            teamRepository.save(entry = getFirstTeam(statistics = getZeroStatistics()))
+            teamRepository.save(
+                entry = getFirstTeam(statistics = getZeroStatistics()),
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
 
             val result: Statistic? = classUnderTest.incrementRequest(entry = statistic)
 
@@ -96,7 +102,13 @@ class StatisticRepositoryIntegrationTest : KoinTest {
 
             val result: Statistic? = classUnderTest.incrementRequest(entry = statistic)
 
-            teamRepository.getAll().forAll { team ->
+            teamRepository.getAll(
+                cursor = getFirstTeamCursorWithEmptyFields(
+                    query = getTeamQueryWithEmptyFields(
+                        limit = LIMIT_MAXIMUM,
+                    ),
+                ),
+            ).forAll { team ->
                 team.statistics.forAllValues {
                     it.shouldBeZero()
                 }

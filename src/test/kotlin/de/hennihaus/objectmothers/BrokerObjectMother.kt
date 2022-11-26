@@ -11,7 +11,7 @@ object BrokerObjectMother {
 
     const val DEAD_LETTER_QUEUE = "ActiveMQ.DLQ"
     const val JMS_BANK_A_QUEUE = "jmsBankA"
-    const val FIRST_TEAM_QUEUE = "ResponseLoanBrokerTeam01"
+    const val FIRST_TEAM_QUEUE = "ResponseQueueTeam01"
 
     /**
      * https://activemq.apache.org/advisory-message

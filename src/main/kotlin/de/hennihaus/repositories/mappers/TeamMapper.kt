@@ -2,18 +2,20 @@ package de.hennihaus.repositories.mappers
 
 import de.hennihaus.bamdatamodel.Student
 import de.hennihaus.bamdatamodel.Team
+import de.hennihaus.bamdatamodel.TeamType
+import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
 import de.hennihaus.repositories.entities.StatisticEntity
 import de.hennihaus.repositories.entities.StudentEntity
 import de.hennihaus.repositories.entities.TeamEntity
-import de.hennihaus.services.StatisticService.Companion.ZERO_REQUESTS
 
 fun TeamEntity.toTeam() = Team(
     uuid = id.value,
+    type = TeamType.valueOf(value = type),
     username = username,
     password = password,
     jmsQueue = jmsQueue,
     students = students.map { it.toStudent() },
-    statistics = statistics.associate { it.toPair() },
+    statistics = statistics.filter { it.bank.isActive }.associate { it.toPair() },
     hasPassed = statistics.filter { it.bank.isActive }.all { it.requestsCount > ZERO_REQUESTS },
 )
 

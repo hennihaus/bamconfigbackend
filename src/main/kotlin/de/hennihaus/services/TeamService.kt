@@ -1,33 +1,48 @@
 package de.hennihaus.services
 
 import de.hennihaus.bamdatamodel.Team
-import de.hennihaus.configurations.Configuration.PASSWORD_LENGTH
+import de.hennihaus.bamdatamodel.TeamType
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
+import de.hennihaus.models.cursors.TeamCursor
+import de.hennihaus.models.cursors.TeamPagination
 import de.hennihaus.repositories.StatisticRepository
+import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
 import de.hennihaus.repositories.TeamRepository
 import de.hennihaus.utils.toUUID
 import io.ktor.server.plugins.NotFoundException
-import org.koin.core.annotation.Property
 import org.koin.core.annotation.Single
-import org.passay.CharacterRule
-import org.passay.EnglishCharacterData
-import org.passay.PasswordGenerator
 import java.util.UUID
 
 @Single
 class TeamService(
     private val teamRepository: TeamRepository,
     private val statisticRepository: StatisticRepository,
-    @Property(PASSWORD_LENGTH) private val passwordLength: String,
+    private val taskService: TaskService,
+    private val githubService: GithubService,
+    private val cursorService: CursorService,
 ) {
 
-    suspend fun getAllTeams(): List<Team> = teamRepository.getAll().sortedBy { it.username }
+    suspend fun getAllTeams(cursor: TeamCursor): TeamPagination {
+        val teams = teamRepository.getAll(cursor = cursor).sortedBy { it.username }
 
-    suspend fun getAllTeamIds(): List<UUID> = teamRepository.getAllTeamIds()
+        return cursorService.buildPagination(
+            cursor = cursor,
+            positionSupplier = { it.username },
+            positionFallback = USERNAME_POSITION_FALLBACK,
+            items = teams,
+            limit = cursor.query.limit,
+        )
+    }
 
     suspend fun getTeamById(id: String): Team = id.toUUID { uuid ->
         teamRepository.getById(id = uuid)
             ?: throw NotFoundException(message = TEAM_NOT_FOUND_MESSAGE)
+    }
+
+    suspend fun isTypeUnique(id: String, type: TeamType): Boolean = id.toUUID { uuid ->
+        teamRepository.getTeamIdByType(type = type)
+            ?.let { it == uuid }
+            ?: true
     }
 
     suspend fun isUsernameUnique(id: String, username: String): Boolean = id.toUUID { uuid ->
@@ -48,14 +63,28 @@ class TeamService(
             ?: true
     }
 
-    suspend fun saveTeam(team: Team): Team = teamRepository.save(
-        entry = team.copy(
-            statistics = team.statistics.mapValues { (_, requests) ->
-                if (requests < ZERO_REQUESTS) ZERO_REQUESTS else requests
-            },
-        ),
-        repetitionAttempts = ONE_REPETITION_ATTEMPT,
-    )
+    suspend fun saveTeam(team: Team): Team {
+        return teamRepository
+            .save(
+                entry = team.copy(
+                    statistics = team.statistics.mapValues { (_, requests) ->
+                        if (requests < ZERO_REQUESTS) ZERO_REQUESTS else requests
+                    },
+                ),
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
+            .also {
+                if (it.type == TeamType.EXAMPLE) taskService.patchParameters(
+                    username = it.username,
+                    password = it.password,
+                )
+            }
+            .also {
+                if (it.type == TeamType.EXAMPLE) githubService.updateOpenApi(
+                    team = it,
+                )
+            }
+    }
 
     suspend fun getJmsQueueById(id: String): String? = id.toUUID { uuid ->
         teamRepository.getJmsQueueById(id = uuid)
@@ -65,18 +94,9 @@ class TeamService(
         teamRepository.deleteById(id = uuid)
     }
 
-    suspend fun resetAllTeams(): List<Team> {
-        return teamRepository.getAll()
-            .map {
-                resetTeam(team = it)
-            }
-            .map {
-                teamRepository.save(
-                    entry = it,
-                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
-                )
-            }
-    }
+    suspend fun resetAllTeams(): List<UUID> = teamRepository.resetAllTeams(
+        repetitionAttempts = ONE_REPETITION_ATTEMPT,
+    )
 
     suspend fun resetStatistics(id: String): Team = id.toUUID { uuid ->
         statisticRepository.resetRequests(
@@ -87,19 +107,8 @@ class TeamService(
             ?: throw NotFoundException(message = TEAM_NOT_FOUND_MESSAGE)
     }
 
-    private fun resetTeam(team: Team): Team = team.let {
-        it.copy(
-            statistics = it.statistics.mapValues { ZERO_REQUESTS },
-            hasPassed = false,
-            password = PasswordGenerator().generatePassword(
-                passwordLength.toInt(),
-                CharacterRule(EnglishCharacterData.Alphabetical),
-            ),
-        )
-    }
-
     companion object {
         const val TEAM_NOT_FOUND_MESSAGE = "team not found by uuid"
-        const val ZERO_REQUESTS = 0L
+        const val USERNAME_POSITION_FALLBACK = ""
     }
 }

@@ -50,7 +50,7 @@
         "summary": "Gets task by UUID",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           }
         ],
         "responses": {
@@ -76,7 +76,7 @@
         "summary": "Updates particular fields of a task",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           }
         ],
         "requestBody": {
@@ -110,10 +110,10 @@
         "summary": "Checks uniqueness of a title based on task id",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           },
           {
-            "$ref": "#/components/parameters/title"
+            "$ref": "#/components/parameters/titlePath"
           }
         ],
         "responses": {
@@ -132,10 +132,13 @@
   },
   "components": {
     "parameters": {
-      "uuid": {
+      "uuidPath": {
         "name": "uuid",
         "in": "path",
         "required": true,
+        "style": "simple",
+        "explode": false,
+        "allowReserved": false,
         "example": "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
         "schema": {
           "type": "string",
@@ -143,10 +146,13 @@
           "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
         }
       },
-      "title": {
+      "titlePath": {
         "name": "title",
         "in": "path",
         "required": true,
+        "style": "simple",
+        "explode": false,
+        "allowReserved": false,
         "example": "Asynchrone Banken",
         "schema": {
           "type": "string",

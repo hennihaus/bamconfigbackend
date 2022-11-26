@@ -140,10 +140,6 @@ complexity:
       - 'with'
   LabeledExpression:
     active: true
-    ignoredLabels:
-      - 'saveTeam'
-      - 'saveTask'
-      - 'saveBank'
   LargeClass:
     active: true
     threshold: 600

@@ -21,13 +21,13 @@
       "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.MessageDLQd.Queue.jmsBankA,destinationType=Topic,type=Broker"
     },
     {
-      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.MessageDLQd.Queue.ResponseLoanBrokerTeam01,destinationType=Topic,type=Broker"
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.MessageDLQd.Queue.ResponseQueueTeam01,destinationType=Topic,type=Broker"
     },
     {
       "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.Producer.Queue.jmsBankA,destinationType=Topic,type=Broker"
     },
     {
-      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.Producer.Queue.ResponseLoanBrokerTeam01,destinationType=Topic,type=Broker"
+      "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.Producer.Queue.ResponseQueueTeam01,destinationType=Topic,type=Broker"
     },
     {
       "objectName": "org.apache.activemq:brokerName=localhost,destinationName=ActiveMQ.Advisory.Queue,destinationType=Topic,type=Broker"

@@ -1,34 +1,40 @@
 package de.hennihaus.services
 
 import de.hennihaus.bamdatamodel.Team
+import de.hennihaus.bamdatamodel.TeamType
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.ASYNC_BANK_NAME
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getExampleTeam
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
-import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getNonZeroStatistics
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getSecondTeam
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getThirdTeam
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getZeroStatistics
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
+import de.hennihaus.models.cursors.TeamPagination
+import de.hennihaus.models.cursors.TeamQuery
+import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithNoEmptyFields
+import de.hennihaus.objectmothers.PaginationObjectMother.getTeamPaginationWithNoEmptyFields
 import de.hennihaus.repositories.StatisticRepository
 import de.hennihaus.repositories.TeamRepository
 import de.hennihaus.services.TeamService.Companion.TEAM_NOT_FOUND_MESSAGE
+import de.hennihaus.services.TeamService.Companion.USERNAME_POSITION_FALLBACK
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldMatch
 import io.kotest.matchers.throwable.shouldHaveMessage
 import io.kotest.matchers.types.beInstanceOf
 import io.ktor.server.plugins.NotFoundException
+import io.mockk.Called
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -39,12 +45,16 @@ class TeamServiceTest {
 
     private val teamRepository = mockk<TeamRepository>()
     private val statisticRepository = mockk<StatisticRepository>()
-    private val passwordLength = "10"
+    private val taskService = mockk<TaskService>()
+    private val githubService = mockk<GithubService>()
+    private val cursorService = mockk<CursorService>()
 
     private val classUnderTest = TeamService(
         teamRepository = teamRepository,
         statisticRepository = statisticRepository,
-        passwordLength = passwordLength,
+        taskService = taskService,
+        githubService = githubService,
+        cursorService = cursorService,
     )
 
     @BeforeEach
@@ -54,65 +64,55 @@ class TeamServiceTest {
     inner class GetAllTeams {
         @Test
         fun `should return a list of teams sorted by username asc`() = runBlocking {
-            coEvery { teamRepository.getAll() } returns listOf(
+            coEvery { teamRepository.getAll(cursor = any()) } returns listOf(
                 getSecondTeam(),
-                getThirdTeam(),
                 getFirstTeam(),
             )
+            every {
+                cursorService.buildPagination<TeamQuery, Team>(
+                    cursor = any(),
+                    positionSupplier = any(),
+                    positionFallback = any(),
+                    items = any(),
+                    limit = any(),
+                )
+            } returns getTeamPaginationWithNoEmptyFields()
+            val cursor = getFirstTeamCursorWithNoEmptyFields()
 
-            val result: List<Team> = classUnderTest.getAllTeams()
-
-            result.shouldContainExactly(
-                getFirstTeam(),
-                getSecondTeam(),
-                getThirdTeam(),
+            val result: TeamPagination = classUnderTest.getAllTeams(
+                cursor = cursor,
             )
+
+            result shouldBe getTeamPaginationWithNoEmptyFields()
             coVerifySequence {
-                teamRepository.getAll()
+                teamRepository.getAll(
+                    cursor = cursor,
+                )
+                cursorService.buildPagination(
+                    cursor = cursor,
+                    positionSupplier = withArg {
+                        it.invoke(getFirstTeam()) shouldBe getFirstTeam().username
+                    },
+                    positionFallback = USERNAME_POSITION_FALLBACK,
+                    items = listOf(getFirstTeam(), getSecondTeam()),
+                    limit = cursor.query.limit,
+                )
             }
         }
 
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
-            coEvery { teamRepository.getAll() } throws Exception()
+            coEvery { teamRepository.getAll(cursor = any()) } throws Exception()
+            val cursor = getFirstTeamCursorWithNoEmptyFields()
 
-            val result = shouldThrow<Exception> { classUnderTest.getAllTeams() }
-
-            result should beInstanceOf<Exception>()
-            coVerify(exactly = 1) { teamRepository.getAll() }
-        }
-    }
-
-    @Nested
-    inner class GetAllTeamIds {
-        @Test
-        fun `should return a list of teams ids`() = runBlocking {
-            coEvery { teamRepository.getAllTeamIds() } returns listOf(
-                getSecondTeam().uuid,
-                getThirdTeam().uuid,
-                getFirstTeam().uuid,
-            )
-
-            val result: List<UUID> = classUnderTest.getAllTeamIds()
-
-            result.shouldContainExactly(
-                getSecondTeam().uuid,
-                getThirdTeam().uuid,
-                getFirstTeam().uuid,
-            )
-            coVerifySequence {
-                teamRepository.getAllTeamIds()
+            val result = shouldThrow<Exception> {
+                classUnderTest.getAllTeams(
+                    cursor = cursor,
+                )
             }
-        }
-
-        @Test
-        fun `should throw an exception when error occurs`() = runBlocking {
-            coEvery { teamRepository.getAllTeamIds() } throws Exception()
-
-            val result = shouldThrow<Exception> { classUnderTest.getAllTeamIds() }
 
             result should beInstanceOf<Exception>()
-            coVerify(exactly = 1) { teamRepository.getAllTeamIds() }
+            coVerify(exactly = 1) { teamRepository.getAll(cursor = cursor) }
         }
     }
 
@@ -146,10 +146,59 @@ class TeamServiceTest {
     }
 
     @Nested
+    inner class IsTypeUnique {
+        @Test
+        fun `should return false when type is already in db and ids are different`() = runBlocking {
+            val (id, type) = getFirstTeam()
+            coEvery { teamRepository.getTeamIdByType(type = any()) } returns getSecondTeam().uuid
+
+            val result: Boolean = classUnderTest.isTypeUnique(id = "$id", type = type)
+
+            result.shouldBeFalse()
+            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type) }
+        }
+
+        @Test
+        fun `should return true when type is in database and ids are equal`() = runBlocking {
+            val (id, type) = getFirstTeam()
+            coEvery { teamRepository.getTeamIdByType(type = any()) } returns getFirstTeam().uuid
+
+            val result: Boolean = classUnderTest.isTypeUnique(id = "$id", type = type)
+
+            result.shouldBeTrue()
+            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type) }
+        }
+
+        @Test
+        fun `should return true when type is not in database`() = runBlocking {
+            val (id, type) = getFirstTeam()
+            coEvery { teamRepository.getTeamIdByType(type = any()) } returns null
+
+            val result: Boolean = classUnderTest.isTypeUnique(id = "$id", type = type)
+
+            result.shouldBeTrue()
+            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type) }
+        }
+
+        @Test
+        fun `should throw an exception when error occurs`() = runBlocking {
+            val (id, type) = getFirstTeam()
+            coEvery { teamRepository.getTeamIdByType(type = any()) } throws Exception()
+
+            val result = shouldThrow<Exception> {
+                classUnderTest.isTypeUnique(id = "$id", type = type)
+            }
+
+            result should beInstanceOf<Exception>()
+            coVerify(exactly = 1) { teamRepository.getTeamIdByType(type = type) }
+        }
+    }
+
+    @Nested
     inner class IsUsernameUnique {
         @Test
         fun `should return false when username is already in db and ids are different`() = runBlocking {
-            val (id, username) = getFirstTeam()
+            val (id, _, username) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByUsername(username = username) } returns getSecondTeam().uuid
 
             val result: Boolean = classUnderTest.isUsernameUnique(id = "$id", username = username)
@@ -160,7 +209,7 @@ class TeamServiceTest {
 
         @Test
         fun `should return true when username is in database and ids are equal`() = runBlocking {
-            val (id, username) = getFirstTeam()
+            val (id, _, username) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByUsername(username = any()) } returns getFirstTeam().uuid
 
             val result: Boolean = classUnderTest.isUsernameUnique(id = "$id", username = username)
@@ -171,7 +220,7 @@ class TeamServiceTest {
 
         @Test
         fun `should return true when username is not in database`() = runBlocking {
-            val (id, username) = getFirstTeam()
+            val (id, _, username) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByUsername(username = any()) } returns null
 
             val result: Boolean = classUnderTest.isUsernameUnique(id = "$id", username = username)
@@ -182,7 +231,7 @@ class TeamServiceTest {
 
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
-            val (id, username) = getFirstTeam()
+            val (id, _, username) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByUsername(username = any()) } throws Exception()
 
             val result = shouldThrow<Exception> {
@@ -198,7 +247,7 @@ class TeamServiceTest {
     inner class IsPasswordUnique {
         @Test
         fun `should return false when password is already in db and ids are different`() = runBlocking {
-            val (id, _, password) = getFirstTeam()
+            val (id, _, _, password) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByPassword(password = password) } returns getSecondTeam().uuid
 
             val result: Boolean = classUnderTest.isPasswordUnique(id = "$id", password = password)
@@ -209,7 +258,7 @@ class TeamServiceTest {
 
         @Test
         fun `should return true when password is in database and ids are equal`() = runBlocking {
-            val (id, _, password) = getFirstTeam()
+            val (id, _, _, password) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByPassword(password = any()) } returns getFirstTeam().uuid
 
             val result: Boolean = classUnderTest.isPasswordUnique(id = "$id", password = password)
@@ -220,7 +269,7 @@ class TeamServiceTest {
 
         @Test
         fun `should return true when password is not in database`() = runBlocking {
-            val (id, _, password) = getFirstTeam()
+            val (id, _, _, password) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByPassword(password = any()) } returns null
 
             val result: Boolean = classUnderTest.isPasswordUnique(id = "$id", password = password)
@@ -231,7 +280,7 @@ class TeamServiceTest {
 
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
-            val (id, _, password) = getFirstTeam()
+            val (id, _, _, password) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByPassword(password = any()) } throws Exception()
 
             val result = shouldThrow<Exception> {
@@ -247,7 +296,7 @@ class TeamServiceTest {
     inner class IsJmsQueueUnique {
         @Test
         fun `should return false when jmsQueue is already in db and ids are different`() = runBlocking {
-            val (id, _, _, jmsQueue) = getFirstTeam()
+            val (id, _, _, _, jmsQueue) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByJmsQueue(jmsQueue = jmsQueue) } returns getSecondTeam().uuid
 
             val result: Boolean = classUnderTest.isJmsQueueUnique(id = "$id", jmsQueue = jmsQueue)
@@ -258,7 +307,7 @@ class TeamServiceTest {
 
         @Test
         fun `should return true when jmsQueue is in database and ids are equal`() = runBlocking {
-            val (id, _, _, jmsQueue) = getFirstTeam()
+            val (id, _, _, _, jmsQueue) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByJmsQueue(jmsQueue = any()) } returns getFirstTeam().uuid
 
             val result: Boolean = classUnderTest.isJmsQueueUnique(id = "$id", jmsQueue = jmsQueue)
@@ -269,7 +318,7 @@ class TeamServiceTest {
 
         @Test
         fun `should return true when jmsQueue is not in database`() = runBlocking {
-            val (id, _, _, jmsQueue) = getFirstTeam()
+            val (id, _, _, _, jmsQueue) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByJmsQueue(jmsQueue = any()) } returns null
 
             val result: Boolean = classUnderTest.isJmsQueueUnique(id = "$id", jmsQueue = jmsQueue)
@@ -280,7 +329,7 @@ class TeamServiceTest {
 
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
-            val (id, _, _, jmsQueue) = getFirstTeam()
+            val (id, _, _, _, jmsQueue) = getFirstTeam()
             coEvery { teamRepository.getTeamIdByJmsQueue(jmsQueue = any()) } throws Exception()
 
             val result = shouldThrow<Exception> {
@@ -295,17 +344,49 @@ class TeamServiceTest {
     @Nested
     inner class SaveTeam {
         @Test
-        fun `should return and save a team with only positive statistic requests`() = runBlocking {
-            val testTeam = getFirstTeam(
+        fun `should save and return a regular team with only positive statistic requests`() = runBlocking {
+            val team = getFirstTeam(
+                type = TeamType.REGULAR,
                 statistics = getFirstTeam().statistics + (ASYNC_BANK_NAME to -1)
             )
-            coEvery { teamRepository.save(entry = any(), repetitionAttempts = any()) } returns testTeam
+            coEvery { teamRepository.save(entry = any(), repetitionAttempts = any()) } returns team
 
-            val result: Team = classUnderTest.saveTeam(team = testTeam)
+            val result: Team = classUnderTest.saveTeam(team = team)
 
-            result shouldBe testTeam
+            result shouldBe team
             coVerifySequence {
-                teamRepository.save(entry = getFirstTeam(), repetitionAttempts = ONE_REPETITION_ATTEMPT)
+                teamRepository.save(
+                    entry = getFirstTeam(),
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+            }
+            verify { listOf(taskService, githubService) wasNot Called }
+        }
+
+        @Test
+        fun `should save, patch parameters, update open api and return an example team`() = runBlocking {
+            val team = getExampleTeam(
+                type = TeamType.EXAMPLE,
+            )
+            coEvery { teamRepository.save(entry = any(), repetitionAttempts = any()) } returns team
+            coEvery { taskService.patchParameters(username = any(), password = any()) } returns Unit
+            coEvery { githubService.updateOpenApi(team = any()) } returns Unit
+
+            val result: Team = classUnderTest.saveTeam(team = team)
+
+            result shouldBe team
+            coVerifySequence {
+                teamRepository.save(
+                    entry = team,
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+                taskService.patchParameters(
+                    username = team.username,
+                    password = team.password,
+                )
+                githubService.updateOpenApi(
+                    team = team,
+                )
             }
         }
 
@@ -329,7 +410,7 @@ class TeamServiceTest {
     inner class GetJmsQueueById {
         @Test
         fun `should return a jmsQueue when is in database`() = runBlocking {
-            val (id, _, _, jmsQueue) = getFirstTeam()
+            val (id, _, _, _, jmsQueue) = getFirstTeam()
             coEvery { teamRepository.getJmsQueueById(id = any()) } returns jmsQueue
 
             val result: String? = classUnderTest.getJmsQueueById(
@@ -401,71 +482,36 @@ class TeamServiceTest {
     @Nested
     inner class ResetAllTeams {
         @Test
-        fun `should reset all team statistics, hasPassed and passwords`() = runBlocking {
-            coEvery { teamRepository.getAll() } returns listOf(
-                getFirstTeam(statistics = getNonZeroStatistics(), hasPassed = true),
-                getSecondTeam(statistics = getZeroStatistics(), hasPassed = false),
+        fun `should reset all teams`() = runBlocking {
+            coEvery { teamRepository.resetAllTeams(repetitionAttempts = any()) } returns listOf(
+                getFirstTeam().uuid,
+                getSecondTeam().uuid,
+                getThirdTeam().uuid,
             )
-            coEvery {
-                teamRepository.save(
-                    entry = any(), repetitionAttempts = any()
-                )
-            }.returns(returnValue = getFirstTeam()).andThen(returnValue = getSecondTeam())
 
-            val result: List<Team> = classUnderTest.resetAllTeams()
+            val result: List<UUID> = classUnderTest.resetAllTeams()
 
             result shouldBe listOf(
-                getFirstTeam(), getSecondTeam()
+                getFirstTeam().uuid,
+                getSecondTeam().uuid,
+                getThirdTeam().uuid,
             )
             coVerifySequence {
-                teamRepository.getAll()
-                teamRepository.save(
-                    entry = withArg {
-                        it.shouldBeEqualToIgnoringFields(
-                            other = getFirstTeam(statistics = getZeroStatistics(), hasPassed = false),
-                            property = Team::password,
-                        )
-                        it.password shouldMatch Regex(pattern = "[a-zA-Z]{10}")
-                    },
-                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
-                )
-                teamRepository.save(
-                    entry = withArg {
-                        it.shouldBeEqualToIgnoringFields(
-                            other = getSecondTeam(statistics = getZeroStatistics(), hasPassed = false),
-                            property = Team::password,
-                        )
-                        it.password shouldMatch Regex(pattern = "[a-zA-Z]{10}")
-                    },
-                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
-                )
+                teamRepository.resetAllTeams(repetitionAttempts = ONE_REPETITION_ATTEMPT)
             }
         }
 
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
-            coEvery { teamRepository.getAll() } returns listOf(getFirstTeam())
-            coEvery { teamRepository.save(entry = any(), repetitionAttempts = any()) } throws NotFoundException(
-                message = TEAM_NOT_FOUND_MESSAGE
-            )
+            coEvery { teamRepository.resetAllTeams(repetitionAttempts = any()) } throws Exception()
 
-            val result = shouldThrowExactly<NotFoundException> {
+            val result = shouldThrow<Exception> {
                 classUnderTest.resetAllTeams()
             }
 
-            result shouldHaveMessage TEAM_NOT_FOUND_MESSAGE
+            result should beInstanceOf<Exception>()
             coVerifySequence {
-                teamRepository.getAll()
-                teamRepository.save(
-                    entry = withArg {
-                        it.shouldBeEqualToIgnoringFields(
-                            other = getFirstTeam(),
-                            property = Team::password,
-                        )
-                        it.password shouldMatch Regex(pattern = "[a-zA-Z]{10}")
-                    },
-                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
-                )
+                teamRepository.resetAllTeams(repetitionAttempts = ONE_REPETITION_ATTEMPT)
             }
         }
     }

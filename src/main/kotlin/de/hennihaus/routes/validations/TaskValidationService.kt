@@ -31,7 +31,7 @@ import kotlinx.coroutines.coroutineScope
 import org.koin.core.annotation.Single
 
 @Single
-class TaskValidationService(private val task: TaskService) : ValidationService<TaskDTO> {
+class TaskValidationService(private val task: TaskService) : ValidationService<TaskDTO, Any> {
 
     override suspend fun bodyValidation(body: TaskDTO): Validation<TaskDTO> = coroutineScope {
         val asyncValidations = listOf(

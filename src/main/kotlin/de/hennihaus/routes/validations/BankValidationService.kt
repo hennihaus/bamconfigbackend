@@ -3,11 +3,6 @@ package de.hennihaus.routes.validations
 import de.hennihaus.bamdatamodel.RatingLevel
 import de.hennihaus.models.generated.rest.BankDTO
 import de.hennihaus.models.generated.rest.CreditConfigurationDTO
-import de.hennihaus.models.generated.rest.TeamDTO
-import de.hennihaus.services.TeamService
-import de.hennihaus.utils.validations.containsAll
-import de.hennihaus.utils.validations.containsToMany
-import de.hennihaus.utils.validations.oneOf
 import de.hennihaus.utils.validations.url
 import de.hennihaus.utils.validations.uuid
 import io.konform.validation.Constraint
@@ -16,25 +11,17 @@ import io.konform.validation.ValidationBuilder
 import io.konform.validation.jsonschema.const
 import io.konform.validation.jsonschema.enum
 import io.konform.validation.jsonschema.minimum
-import io.konform.validation.jsonschema.uniqueItems
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.koin.core.annotation.Single
-import java.util.UUID
 
 @Single
-class BankValidationService(private val team: TeamService) : ValidationService<BankDTO> {
+class BankValidationService : ValidationService<BankDTO, Any> {
 
     override suspend fun bodyValidation(body: BankDTO): Validation<BankDTO> = coroutineScope {
-        val asyncValidations = listOf(
-            async { teamsValidation(body = body) },
-        )
-        val syncValidations = listOf(
+        val validations = listOf(
             isActiveValidation(body = body),
             creditConfigurationValidation(body = body),
         )
-        val validations = asyncValidations.awaitAll() + syncValidations
 
         Validation {
             BankDTO::uuid {
@@ -45,43 +32,6 @@ class BankValidationService(private val team: TeamService) : ValidationService<B
             }
             validations.forEach {
                 run(validation = it)
-            }
-        }
-    }
-
-    private suspend fun teamsValidation(body: BankDTO): Validation<BankDTO> {
-        val teamIds = team.getAllTeamIds().map {
-            "$it"
-        }
-
-        return Validation {
-            BankDTO::teams {
-                uniqueItems(unique = true)
-            }
-            BankDTO::teams onEach {
-                TeamDTO::uuid {
-                    uuid()
-                }
-            }
-            if (body.isAsync) {
-                BankDTO::teams onEach {
-                    TeamDTO::uuid {
-                        oneOf(items = teamIds)
-                    }
-                }
-            } else {
-                BankDTO::teams {
-                    containsAll(
-                        items = body.toValidTeamUUIDs(),
-                        expectedItems = teamIds,
-                        fieldName = TEAM_UUID_FIELD,
-                    )
-                    containsToMany(
-                        items = body.toValidTeamUUIDs(),
-                        expectedItems = teamIds,
-                        fieldName = TEAM_UUID_FIELD,
-                    )
-                }
             }
         }
     }
@@ -164,18 +114,13 @@ class BankValidationService(private val team: TeamService) : ValidationService<B
         }
     }
 
-    private fun BankDTO.toValidTeamUUIDs() = teams.map { it.uuid }.filter {
-        runCatching { UUID.fromString(it) }
-            .map { true }
-            .getOrElse { false }
-    }
-
     companion object {
         const val BANK_MUST_BE_ACTIVE = true
 
+        const val BANK_NAME_MIN_LENGTH = 6
+        const val BANK_NAME_MAX_LENGTH = 50
+
         const val CREDIT_CONFIGURATION_MIN_AMOUNT_IN_EUROS = 0
         const val CREDIT_CONFIGURATION_MIN_TERM_IN_MONTHS = 0
-
-        const val TEAM_UUID_FIELD = "uuids"
     }
 }

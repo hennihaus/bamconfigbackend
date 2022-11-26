@@ -52,8 +52,8 @@ class BrokerRoutesTest {
         @Test
         fun `should return 204 and no content when reset was successful`() = testApplicationWith(mockModule) {
             coEvery { teamService.resetAllTeams() } returns listOf(
-                getFirstTeam(),
-                getSecondTeam(),
+                getFirstTeam().uuid,
+                getSecondTeam().uuid,
             )
             coEvery { brokerService.resetBroker() } returns Unit
 

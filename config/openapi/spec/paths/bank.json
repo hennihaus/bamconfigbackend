@@ -50,7 +50,7 @@
         "summary": "Finds bank by UUID",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           }
         ],
         "responses": {
@@ -73,7 +73,7 @@
         "summary": "Updates particular fields of a bank",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           }
         ],
         "requestBody": {
@@ -101,10 +101,13 @@
   },
   "components": {
     "parameters": {
-      "uuid": {
+      "uuidPath": {
         "name": "uuid",
         "in": "path",
         "required": true,
+        "style": "simple",
+        "explode": false,
+        "allowReserved": false,
         "example": "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
         "schema": {
           "type": "string",

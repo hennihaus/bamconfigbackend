@@ -18,7 +18,7 @@ class BankEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
     val creditConfiguration: CreditConfigurationEntity? by CreditConfigurationEntity.optionalBackReferencedOn(
         column = CreditConfigurationTable.bankId,
     )
-    val teams: SizedIterable<TeamEntity> by TeamEntity via StatisticTable
+    val statistics: SizedIterable<StatisticEntity> by StatisticEntity referrersOn StatisticTable.bankId
 
     companion object : UUIDEntityClass<BankEntity>(BankTable)
 }

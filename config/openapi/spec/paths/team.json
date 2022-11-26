@@ -31,9 +31,50 @@
         ],
         "operationId": "getAllTeams",
         "summary": "Gets all teams",
+        "parameters": [
+          {
+            "$ref": "../commons/commons.json#/components/parameters/cursorParameter"
+          },
+          {
+            "$ref": "../commons/commons.json#/components/parameters/limitParameter"
+          },
+          {
+            "$ref": "#/components/parameters/typeParameter"
+          },
+          {
+            "$ref": "#/components/parameters/usernameParameter"
+          },
+          {
+            "$ref": "#/components/parameters/passwordParameter"
+          },
+          {
+            "$ref": "#/components/parameters/jmsQueueParameter"
+          },
+          {
+            "$ref": "#/components/parameters/hasPassedParameter"
+          },
+          {
+            "$ref": "#/components/parameters/minRequestsParameter"
+          },
+          {
+            "$ref": "#/components/parameters/maxRequestsParameter"
+          },
+          {
+            "$ref": "#/components/parameters/studentFirstnameParameter"
+          },
+          {
+            "$ref": "#/components/parameters/studentLastnameParameter"
+          },
+          {
+            "$ref": "#/components/parameters/banksParameter"
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/components/responses/200s"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
           },
           "500": {
             "$ref": "../commons/commons.json#/components/responses/500"
@@ -50,7 +91,7 @@
         "summary": "Finds team by UUID",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           }
         ],
         "responses": {
@@ -76,7 +117,7 @@
         "summary": "Creates or updates a team",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           }
         ],
         "requestBody": {
@@ -88,6 +129,9 @@
           },
           "400": {
             "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "404": {
+            "$ref": "../commons/commons.json#/components/responses/404"
           },
           "409": {
             "$ref": "../commons/commons.json#/components/responses/409"
@@ -105,7 +149,7 @@
         "summary": "Deletes a team",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           }
         ],
         "responses": {
@@ -130,7 +174,7 @@
         "summary": "Resets all team statistics to zero",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           }
         ],
         "responses": {
@@ -161,10 +205,10 @@
         "summary": "Checks uniqueness of a username based on team id",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           },
           {
-            "$ref": "#/components/parameters/username"
+            "$ref": "#/components/parameters/usernamePath"
           }
         ],
         "responses": {
@@ -189,10 +233,10 @@
         "summary": "Checks uniqueness of a password based on team id",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           },
           {
-            "$ref": "#/components/parameters/password"
+            "$ref": "#/components/parameters/passwordPath"
           }
         ],
         "responses": {
@@ -217,10 +261,10 @@
         "summary": "Checks uniqueness of a jmsQueue based on team id",
         "parameters": [
           {
-            "$ref": "#/components/parameters/uuid"
+            "$ref": "#/components/parameters/uuidPath"
           },
           {
-            "$ref": "#/components/parameters/jmsQueue"
+            "$ref": "#/components/parameters/jmsQueuePath"
           }
         ],
         "responses": {
@@ -239,10 +283,13 @@
   },
   "components": {
     "parameters": {
-      "uuid": {
+      "uuidPath": {
         "name": "uuid",
         "in": "path",
         "required": true,
+        "style": "simple",
+        "explode": false,
+        "allowReserved": false,
         "example": "9426de16-95b9-4250-b22f-6d1d6d9b8d7e",
         "schema": {
           "type": "string",
@@ -250,10 +297,13 @@
           "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
         }
       },
-      "username": {
+      "usernamePath": {
         "name": "username",
         "in": "path",
         "required": true,
+        "style": "simple",
+        "explode": false,
+        "allowReserved": false,
         "example": "Beispielteam",
         "schema": {
           "type": "string",
@@ -261,10 +311,13 @@
           "maxLength": 50
         }
       },
-      "password": {
+      "passwordPath": {
         "name": "password",
         "in": "path",
         "required": true,
+        "style": "simple",
+        "explode": false,
+        "allowReserved": false,
         "example": "OOfKqWksmA",
         "schema": {
           "type": "string",
@@ -273,15 +326,160 @@
           "maxLength": 50
         }
       },
-      "jmsQueue": {
+      "jmsQueuePath": {
         "name": "jmsQueue",
         "in": "path",
         "required": true,
-        "example": "ResponseLoanBrokerBeispielteam",
+        "style": "simple",
+        "explode": false,
+        "allowReserved": false,
+        "example": "ResponseQueueBeispielteam",
         "schema": {
           "type": "string",
           "minLength": 6,
           "maxLength": 50
+        }
+      },
+      "typeParameter": {
+        "name": "type",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": false,
+        "allowReserved": false,
+        "example": "REGULAR",
+        "schema": {
+          "type": "string",
+          "format": "enum"
+        }
+      },
+      "usernameParameter": {
+        "name": "username",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": false,
+        "example": "Team",
+        "allowReserved": false,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "passwordParameter": {
+        "name": "password",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": false,
+        "allowReserved": false,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "jmsQueueParameter": {
+        "name": "jmsQueue",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": false,
+        "allowReserved": false,
+        "example": "ResponseQueueTeam",
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "hasPassedParameter": {
+        "name": "hasPassed",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": false,
+        "allowReserved": false,
+        "example": false,
+        "schema": {
+          "type": "boolean"
+        }
+      },
+      "minRequestsParameter": {
+        "name": "minRequests",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": false,
+        "allowReserved": false,
+        "example": 0,
+        "schema": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 0
+        }
+      },
+      "maxRequestsParameter": {
+        "name": "maxRequests",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": false,
+        "allowReserved": false,
+        "example": 9223372036854775807,
+        "schema": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 0
+        }
+      },
+      "studentFirstnameParameter": {
+        "name": "studentFirstname",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": false,
+        "allowReserved": false,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "studentLastnameParameter": {
+        "name": "studentLastname",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": false,
+        "allowReserved": false,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "banksParameter": {
+        "name": "banks",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": true,
+        "allowReserved": false,
+        "example": [
+          "Schufa",
+          "Deutsche Bank",
+          "Sparkasse",
+          "PSD Bank",
+          "Raiffeisen",
+          "Volksbank",
+          "Commerzbank"
+        ],
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 6,
+            "maxLength": 50
+          },
+          "minItems": 0,
+          "uniqueItems": true
         }
       }
     },
@@ -313,13 +511,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "type": "array",
-              "title": "Teams",
-              "items": {
-                "$ref": "../schemas/team.json#/components/schemas/Team"
-              },
-              "minItems": 0,
-              "uniqueItems": true
+              "$ref": "../schemas/team.json#/components/schemas/Teams"
             }
           }
         }

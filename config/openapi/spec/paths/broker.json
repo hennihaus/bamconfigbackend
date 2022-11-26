@@ -53,7 +53,7 @@
         "summary": "Deletes a queue",
         "parameters": [
           {
-            "$ref": "#/components/parameters/name"
+            "$ref": "#/components/parameters/namePath"
           }
         ],
         "responses": {
@@ -69,11 +69,14 @@
   },
   "components": {
     "parameters": {
-      "name": {
+      "namePath": {
         "name": "name",
         "in": "path",
         "required": true,
-        "example": "ResponseLoanBrokerBeispielteam",
+        "style": "simple",
+        "explode": false,
+        "allowReserved": false,
+        "example": "ResponseQueueBeispielteam",
         "schema": {
           "type": "string",
           "minLength": 6,

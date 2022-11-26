@@ -6,6 +6,35 @@
   },
   "paths": {},
   "components": {
+    "parameters": {
+      "cursorParameter": {
+        "name": "cursor",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": false,
+        "allowReserved": false,
+        "schema": {
+          "type": "string",
+          "format": "byte",
+          "minLength": 3
+        }
+      },
+      "limitParameter": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "explode": false,
+        "allowReserved": false,
+        "example": "10",
+        "schema": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 0
+        }
+      }
+    },
     "responses": {
       "200": {
         "description": "OK",
@@ -149,6 +178,35 @@
           "message": {
             "type": "string",
             "minLength": 1
+          }
+        }
+      },
+      "Pagination": {
+        "type": "object",
+        "required": [
+          "first",
+          "last"
+        ],
+        "properties": {
+          "first": {
+            "type": "string",
+            "format": "byte",
+            "minLength": 3
+          },
+          "prev": {
+            "type": "string",
+            "format": "byte",
+            "minLength": 3
+          },
+          "next": {
+            "type": "string",
+            "format": "byte",
+            "minLength": 3
+          },
+          "last": {
+            "type": "string",
+            "format": "byte",
+            "minLength": 3
           }
         }
       }

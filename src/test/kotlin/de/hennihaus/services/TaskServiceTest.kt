@@ -1,12 +1,23 @@
 package de.hennihaus.services
 
+import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.getCreditConfigurationWithNoEmptyFields
+import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
 import de.hennihaus.models.IntegrationStep
 import de.hennihaus.models.Task
+import de.hennihaus.objectmothers.ParameterObjectMother.getAmountInEurosParameter
+import de.hennihaus.objectmothers.ParameterObjectMother.getPasswordParameter
+import de.hennihaus.objectmothers.ParameterObjectMother.getTermInMonthsParameter
+import de.hennihaus.objectmothers.ParameterObjectMother.getUsernameParameter
 import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask
 import de.hennihaus.repositories.TaskRepository
+import de.hennihaus.services.TaskService.Companion.AMOUNT_IN_EUROS_PARAMETER
+import de.hennihaus.services.TaskService.Companion.PARAMETER_NOT_FOUND_MESSAGE
+import de.hennihaus.services.TaskService.Companion.PASSWORD_PARAMETER
+import de.hennihaus.services.TaskService.Companion.TERM_IN_MONTHS_PARAMETER
+import de.hennihaus.services.TaskService.Companion.USERNAME_PARAMETER
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -149,6 +160,194 @@ class TaskServiceTest {
             coVerify(exactly = 1) { repository.getById(id = UUID.fromString(id)) }
             coVerify(exactly = 0) { github.updateOpenApi(task = any()) }
             coVerify(exactly = 0) { repository.save(entry = any(), repetitionAttempts = any()) }
+        }
+    }
+
+    @Nested
+    inner class PatchParameters {
+        @Test
+        fun `should update username and password parameter correctly`() = runBlocking {
+            coEvery {
+                repository.updateParameter(
+                    name = any(),
+                    example = any(),
+                    repetitionAttempts = any(),
+                )
+            } returnsMany listOf(
+                getUsernameParameter(),
+                getPasswordParameter(),
+            )
+            val (_, _, username, password) = getFirstTeam()
+
+            classUnderTest.patchParameters(
+                username = username,
+                password = password,
+            )
+
+            coVerifySequence {
+                repository.updateParameter(
+                    name = USERNAME_PARAMETER,
+                    example = username,
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+                repository.updateParameter(
+                    name = PASSWORD_PARAMETER,
+                    example = password,
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+            }
+        }
+
+        @Test
+        fun `should throw an exception but update username when password parameter not found`() = runBlocking {
+            coEvery {
+                repository.updateParameter(
+                    name = any(),
+                    example = any(),
+                    repetitionAttempts = any(),
+                )
+            } returnsMany listOf(
+                getUsernameParameter(),
+                null,
+            )
+            val username = getFirstTeam().username
+            val password = "unknownPassword"
+
+            val result: NotFoundException = shouldThrowExactly {
+                classUnderTest.patchParameters(
+                    username = username,
+                    password = password,
+                )
+            }
+
+            result shouldHaveMessage "$PARAMETER_NOT_FOUND_MESSAGE by $PASSWORD_PARAMETER"
+        }
+
+        @Test
+        fun `should throw an exception but update password when username parameter not found`() = runBlocking {
+            coEvery {
+                repository.updateParameter(
+                    name = any(),
+                    example = any(),
+                    repetitionAttempts = any(),
+                )
+            } returnsMany listOf(
+                null,
+                getPasswordParameter(),
+            )
+            val username = "unknownUsername"
+            val password = getFirstTeam().password
+
+            val result: NotFoundException = shouldThrowExactly {
+                classUnderTest.patchParameters(
+                    username = username,
+                    password = password,
+                )
+            }
+
+            result shouldHaveMessage "$PARAMETER_NOT_FOUND_MESSAGE by $USERNAME_PARAMETER"
+        }
+
+        @Test
+        fun `should update amountInEuros and termInMonths parameter correctly`() = runBlocking {
+            coEvery {
+                repository.updateParameter(
+                    name = any(),
+                    example = any(),
+                    repetitionAttempts = any(),
+                )
+            } returnsMany listOf(
+                getAmountInEurosParameter(),
+                getTermInMonthsParameter(),
+            )
+            val (
+                minAmountInEuros,
+                maxAmountInEuros,
+                minTermInMonths,
+                maxTermInMonths,
+            ) = getCreditConfigurationWithNoEmptyFields()
+
+            classUnderTest.patchParameters(
+                minAmountInEuros = minAmountInEuros,
+                maxAmountInEuros = maxAmountInEuros,
+                minTermInMonths = minTermInMonths,
+                maxTermInMonths = maxTermInMonths,
+            )
+
+            coVerifySequence {
+                repository.updateParameter(
+                    name = AMOUNT_IN_EUROS_PARAMETER,
+                    example = "${30_000}",
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+                repository.updateParameter(
+                    name = TERM_IN_MONTHS_PARAMETER,
+                    example = "${21}",
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+            }
+        }
+
+        @Test
+        fun `should throw an exception but update amountInEuros when termInMonths parameter not found`() = runBlocking {
+            coEvery {
+                repository.updateParameter(
+                    name = any(),
+                    example = any(),
+                    repetitionAttempts = any(),
+                )
+            } returnsMany listOf(
+                getAmountInEurosParameter(),
+                null,
+            )
+            val (
+                minAmountInEuros,
+                maxAmountInEuros,
+                minTermInMonths,
+                maxTermInMonths
+            ) = getCreditConfigurationWithNoEmptyFields()
+
+            val result: NotFoundException = shouldThrowExactly {
+                classUnderTest.patchParameters(
+                    minAmountInEuros = minAmountInEuros,
+                    maxAmountInEuros = maxAmountInEuros,
+                    minTermInMonths = minTermInMonths,
+                    maxTermInMonths = maxTermInMonths,
+                )
+            }
+
+            result shouldHaveMessage "$PARAMETER_NOT_FOUND_MESSAGE by $TERM_IN_MONTHS_PARAMETER"
+        }
+
+        @Test
+        fun `should throw an exception but update termInMonths when amountInEuros parameter not found`() = runBlocking {
+            coEvery {
+                repository.updateParameter(
+                    name = any(),
+                    example = any(),
+                    repetitionAttempts = any(),
+                )
+            } returnsMany listOf(
+                null,
+                getTermInMonthsParameter(),
+            )
+            val (
+                minAmountInEuros,
+                maxAmountInEuros,
+                minTermInMonths,
+                maxTermInMonths
+            ) = getCreditConfigurationWithNoEmptyFields()
+
+            val result: NotFoundException = shouldThrowExactly {
+                classUnderTest.patchParameters(
+                    minAmountInEuros = minAmountInEuros,
+                    maxAmountInEuros = maxAmountInEuros,
+                    minTermInMonths = minTermInMonths,
+                    maxTermInMonths = maxTermInMonths,
+                )
+            }
+
+            result shouldHaveMessage "$PARAMETER_NOT_FOUND_MESSAGE by $AMOUNT_IN_EUROS_PARAMETER"
         }
     }
 

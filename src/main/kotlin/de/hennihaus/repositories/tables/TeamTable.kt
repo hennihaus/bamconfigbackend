@@ -1,8 +1,5 @@
 package de.hennihaus.repositories.tables
 
-import de.hennihaus.configurations.ExposedConfiguration.DATABASE_AES_256_BIT_SALT
-import de.hennihaus.configurations.ExposedConfiguration.DATABASE_AES_PASSWORD
-import de.hennihaus.plugins.PropertyNotFoundException
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_UUID_COLUMN
 import de.hennihaus.repositories.tables.StatisticTableDescription.STATISTIC_ID_COLUMN
 import de.hennihaus.repositories.tables.StatisticTableDescription.STATISTIC_LAST_UPDATED_COLUMN
@@ -14,28 +11,17 @@ import de.hennihaus.repositories.tables.StudentTableDescription.STUDENT_UUID_COL
 import de.hennihaus.repositories.tables.TeamTableDescription.TEAM_JMS_QUEUE_COLUMN
 import de.hennihaus.repositories.tables.TeamTableDescription.TEAM_LAST_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.TeamTableDescription.TEAM_PASSWORD_COLUMN
-import de.hennihaus.repositories.tables.TeamTableDescription.TEAM_PASSWORD_VARCHAR_LENGTH
+import de.hennihaus.repositories.tables.TeamTableDescription.TEAM_TYPE_COLUMN
 import de.hennihaus.repositories.tables.TeamTableDescription.TEAM_USERNAME_COLUMN
 import de.hennihaus.repositories.tables.TeamTableDescription.TEAM_UUID_COLUMN
-import org.jetbrains.exposed.crypt.Algorithms
-import org.jetbrains.exposed.crypt.encryptedVarchar
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.javatime.timestamp
-import org.koin.java.KoinJavaComponent.getKoin
 
 object TeamTable : UUIDTable(columnName = TEAM_UUID_COLUMN) {
+    val type = text(name = TEAM_TYPE_COLUMN)
     val username = text(name = TEAM_USERNAME_COLUMN)
-    val password = encryptedVarchar(
-        name = TEAM_PASSWORD_COLUMN,
-        cipherTextLength = TEAM_PASSWORD_VARCHAR_LENGTH,
-        encryptor = Algorithms.AES_256_PBE_GCM(
-            salt = getKoin().getProperty(key = DATABASE_AES_256_BIT_SALT)
-                ?: throw PropertyNotFoundException(key = DATABASE_AES_256_BIT_SALT),
-            password = getKoin().getProperty(key = DATABASE_AES_PASSWORD)
-                ?: throw PropertyNotFoundException(key = DATABASE_AES_PASSWORD),
-        ),
-    )
+    val password = text(name = TEAM_PASSWORD_COLUMN)
     val jmsQueue = text(name = TEAM_JMS_QUEUE_COLUMN)
     val lastUpdated = timestamp(name = TEAM_LAST_UPDATED_COLUMN)
 }
@@ -56,12 +42,11 @@ object StatisticTable : LongIdTable(columnName = STATISTIC_ID_COLUMN) {
 
 object TeamTableDescription {
     const val TEAM_UUID_COLUMN = "team_uuid"
+    const val TEAM_TYPE_COLUMN = "team_type"
     const val TEAM_USERNAME_COLUMN = "team_username"
     const val TEAM_PASSWORD_COLUMN = "team_password"
     const val TEAM_JMS_QUEUE_COLUMN = "team_jms_queue"
     const val TEAM_LAST_UPDATED_COLUMN = "team_updated_timestamp_with_time_zone"
-
-    const val TEAM_PASSWORD_VARCHAR_LENGTH = 112
 }
 
 object StudentTableDescription {

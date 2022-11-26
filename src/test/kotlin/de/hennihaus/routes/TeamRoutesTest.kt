@@ -2,26 +2,54 @@ package de.hennihaus.routes
 
 import de.hennihaus.bamdatamodel.Team
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
-import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getSecondTeam
-import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getThirdTeam
+import de.hennihaus.configurations.RoutesConfiguration.CURSOR_QUERY_PARAMETER
+import de.hennihaus.configurations.RoutesConfiguration.DEFAULT_LIMIT_PARAMETER
+import de.hennihaus.configurations.RoutesConfiguration.LIMIT_QUERY_PARAMETER
+import de.hennihaus.models.cursors.TeamQuery
 import de.hennihaus.models.generated.rest.ErrorsDTO
 import de.hennihaus.models.generated.rest.UniqueDTO
+import de.hennihaus.objectmothers.CursorObjectMother.PREVIOUS_TEAM_CURSOR_WITH_NO_EMPTY_FIELDS
+import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithEmptyFields
+import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithNoEmptyFields
+import de.hennihaus.objectmothers.CursorObjectMother.getPreviousTeamCursorWithNoEmptyFields
 import de.hennihaus.objectmothers.ErrorsObjectMother.getConflictErrors
 import de.hennihaus.objectmothers.ErrorsObjectMother.getInternalServerErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getInvalidCursorErrors
 import de.hennihaus.objectmothers.ErrorsObjectMother.getInvalidIdErrors
+import de.hennihaus.objectmothers.ErrorsObjectMother.getInvalidQueryErrors
 import de.hennihaus.objectmothers.ErrorsObjectMother.getInvalidTeamErrors
 import de.hennihaus.objectmothers.ErrorsObjectMother.getTeamNotFoundErrors
+import de.hennihaus.objectmothers.PaginationObjectMother.getPaginationDTOWithEmptyFields
+import de.hennihaus.objectmothers.PaginationObjectMother.getTeamPaginationDTOWithEmptyFields
+import de.hennihaus.objectmothers.PaginationObjectMother.getTeamPaginationDTOWithNoEmptyFields
+import de.hennihaus.objectmothers.PaginationObjectMother.getTeamPaginationWithEmptyFields
+import de.hennihaus.objectmothers.PaginationObjectMother.getTeamPaginationWithNoEmptyFields
+import de.hennihaus.objectmothers.ReasonObjectMother.INVALID_CURSOR_MESSAGE
+import de.hennihaus.objectmothers.ReasonObjectMother.INVALID_QUERY_MESSAGE
 import de.hennihaus.objectmothers.ReasonObjectMother.INVALID_TEAM_MESSAGE
+import de.hennihaus.objectmothers.TeamQueryObjectMother.getTeamQueryWithEmptyFields
+import de.hennihaus.objectmothers.TeamQueryObjectMother.getTeamQueryWithNoEmptyFields
 import de.hennihaus.plugins.TransactionException
 import de.hennihaus.plugins.UUIDException
+import de.hennihaus.routes.TeamRoutes.BANKS_QUERY_PARAMETER
+import de.hennihaus.routes.TeamRoutes.HAS_PASSED_QUERY_PARAMETER
+import de.hennihaus.routes.TeamRoutes.JMS_QUEUE_PARAMETER
+import de.hennihaus.routes.TeamRoutes.MAX_REQUESTS_QUERY_PARAMETER
+import de.hennihaus.routes.TeamRoutes.MIN_REQUESTS_QUERY_PARAMETER
+import de.hennihaus.routes.TeamRoutes.PASSWORD_PARAMETER
+import de.hennihaus.routes.TeamRoutes.STUDENT_FIRSTNAME_QUERY_PARAMETER
+import de.hennihaus.routes.TeamRoutes.STUDENT_LASTNAME_QUERY_PARAMETER
+import de.hennihaus.routes.TeamRoutes.TYPE_QUERY_PARAMETER
+import de.hennihaus.routes.TeamRoutes.USERNAME_PARAMETER
 import de.hennihaus.routes.mappers.toTeamDTO
+import de.hennihaus.routes.mappers.toTeamQueryDTO
 import de.hennihaus.routes.validations.TeamValidationService
 import de.hennihaus.services.TeamService
 import de.hennihaus.services.TeamService.Companion.TEAM_NOT_FOUND_MESSAGE
 import de.hennihaus.testutils.KtorTestUtils.testApplicationWith
 import de.hennihaus.testutils.testClient
 import io.kotest.assertions.ktor.client.shouldHaveStatus
-import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -37,7 +65,9 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -45,6 +75,7 @@ import org.junit.jupiter.api.Test
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import java.util.UUID
+import de.hennihaus.models.generated.rest.TeamsDTO as TeamPaginationDTO
 
 class TeamRoutesTest {
 
@@ -61,52 +92,176 @@ class TeamRoutesTest {
     }
 
     @BeforeEach
-    fun init() = clearAllMocks()
+    fun init() {
+        clearAllMocks()
+
+        coEvery { teamValidationService.validateUrl(query = any()) } returns emptyList()
+    }
 
     @AfterEach
     fun tearDown() = stopKoin()
 
     @Nested
     inner class GetAllTeams {
+        @BeforeEach
+        fun init() {
+            every { teamValidationService.validateCursor<TeamQuery>(cursor = any()) } returns emptyList()
+            coEvery { teamService.getAllTeams(cursor = any()) } returns getTeamPaginationWithNoEmptyFields()
+        }
+
         @Test
-        fun `should return 200 and a list of three teams`() = testApplicationWith(mockModule) {
-            coEvery { teamService.getAllTeams() } returns listOf(
-                getFirstTeam(),
-                getSecondTeam(),
-                getThirdTeam(),
+        fun `should return 200 and team pagination with all fields set`() = testApplicationWith(mockModule) {
+            coEvery { teamService.getAllTeams(cursor = any()) } returns getTeamPaginationWithNoEmptyFields()
+
+            val response = testClient.get(urlString = "/v1/teams")
+
+            response shouldHaveStatus HttpStatusCode.OK
+            response.body<TeamPaginationDTO>() shouldBe getTeamPaginationDTOWithNoEmptyFields()
+            coVerifySequence {
+                teamValidationService.validateUrl(
+                    query = getTeamQueryWithEmptyFields(limit = DEFAULT_LIMIT_PARAMETER).toTeamQueryDTO(),
+                )
+                teamService.getAllTeams(
+                    cursor = getFirstTeamCursorWithNoEmptyFields(
+                        query = getTeamQueryWithEmptyFields(limit = DEFAULT_LIMIT_PARAMETER),
+                    ),
+                )
+            }
+            verify(exactly = 0) { teamValidationService.validateCursor<TeamQuery>(cursor = any()) }
+        }
+
+        @Test
+        fun `should return 200 and team pagination with min fields and no teams`() = testApplicationWith(mockModule) {
+            coEvery { teamService.getAllTeams(cursor = any()) } returns getTeamPaginationWithEmptyFields(
+                prev = null,
+                next = null,
+                items = emptyList(),
             )
 
             val response = testClient.get(urlString = "/v1/teams")
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.body<List<Team>>().shouldContainExactly(
-                getFirstTeam(),
-                getSecondTeam(),
-                getThirdTeam(),
+            response.body<TeamPaginationDTO>() shouldBe getTeamPaginationDTOWithEmptyFields(
+                pagination = getPaginationDTOWithEmptyFields(
+                    prev = null,
+                    next = null,
+                ),
+                items = emptyList(),
             )
-            coVerify(exactly = 1) { teamService.getAllTeams() }
+            coVerifySequence {
+                teamValidationService.validateUrl(
+                    query = getTeamQueryWithEmptyFields(limit = DEFAULT_LIMIT_PARAMETER).toTeamQueryDTO(),
+                )
+                teamService.getAllTeams(
+                    cursor = getFirstTeamCursorWithEmptyFields(
+                        query = getTeamQueryWithEmptyFields(limit = DEFAULT_LIMIT_PARAMETER),
+                    ),
+                )
+            }
+            verify(exactly = 0) { teamValidationService.validateCursor<TeamQuery>(cursor = any()) }
         }
 
         @Test
-        fun `should return 200 and an empty list when no teams`() = testApplicationWith(mockModule) {
-            coEvery { teamService.getAllTeams() } returns emptyList()
+        fun `should return 200 and use cursor instead of query parameters`() = testApplicationWith(mockModule) {
+            val cursor = PREVIOUS_TEAM_CURSOR_WITH_NO_EMPTY_FIELDS
+            val query = getTeamQueryWithEmptyFields()
 
-            val response = client.get(urlString = "/v1/teams")
+            val response = testClient.get(urlString = "/v1/teams") {
+                url {
+                    parameters.append(name = CURSOR_QUERY_PARAMETER, value = cursor)
+                    parameters.append(name = LIMIT_QUERY_PARAMETER, value = "${query.limit}")
+                }
+            }
 
             response shouldHaveStatus HttpStatusCode.OK
-            response.bodyAsText() shouldBe "[ ]"
-            coVerify(exactly = 1) { teamService.getAllTeams() }
+            response.body<TeamPaginationDTO>().shouldNotBeNull()
+            coVerifySequence {
+                teamValidationService.validateUrl(query = getTeamQueryWithEmptyFields().toTeamQueryDTO())
+                teamValidationService.validateCursor<TeamQuery>(cursor = cursor)
+                teamService.getAllTeams(cursor = getPreviousTeamCursorWithNoEmptyFields())
+            }
+        }
+
+        @Test
+        fun `should return 200 and use query parameter when no cursor available`() = testApplicationWith(mockModule) {
+            val query = getTeamQueryWithNoEmptyFields()
+
+            val response = testClient.get(urlString = "/v1/teams") {
+                url {
+                    parameters.append(name = LIMIT_QUERY_PARAMETER, value = "${query.limit}")
+                    parameters.append(name = TYPE_QUERY_PARAMETER, value = "${query.type}")
+                    parameters.append(name = USERNAME_PARAMETER, value = "${query.username}")
+                    parameters.append(name = PASSWORD_PARAMETER, value = "${query.password}")
+                    parameters.append(name = JMS_QUEUE_PARAMETER, value = "${query.jmsQueue}")
+                    parameters.append(name = HAS_PASSED_QUERY_PARAMETER, value = "${query.hasPassed}")
+                    parameters.append(name = MIN_REQUESTS_QUERY_PARAMETER, value = "${query.minRequests}")
+                    parameters.append(name = MAX_REQUESTS_QUERY_PARAMETER, value = "${query.maxRequests}")
+                    parameters.append(name = STUDENT_FIRSTNAME_QUERY_PARAMETER, value = "${query.studentFirstname}")
+                    parameters.append(name = STUDENT_LASTNAME_QUERY_PARAMETER, value = "${query.studentLastname}")
+                    parameters.appendAll(name = BANKS_QUERY_PARAMETER, values = query.banks!!)
+                }
+            }
+
+            response shouldHaveStatus HttpStatusCode.OK
+            response.body<TeamPaginationDTO>().shouldNotBeNull()
+            coVerifySequence {
+                teamValidationService.validateUrl(query = getTeamQueryWithNoEmptyFields().toTeamQueryDTO())
+                teamService.getAllTeams(cursor = getFirstTeamCursorWithNoEmptyFields())
+            }
+            verify(exactly = 0) { teamValidationService.validateCursor<TeamQuery>(cursor = any()) }
+        }
+
+        @Test
+        fun `should return 400 and error response with invalid query parameter`() = testApplicationWith(mockModule) {
+            coEvery { teamValidationService.validateUrl(query = any()) } returns listOf(
+                INVALID_QUERY_MESSAGE,
+            )
+            val limit = -1
+
+            val response = testClient.get(urlString = "/v1/teams") {
+                url {
+                    parameters.append(name = LIMIT_QUERY_PARAMETER, value = "$limit")
+                }
+            }
+
+            response shouldHaveStatus HttpStatusCode.BadRequest
+            response.body<ErrorsDTO>() shouldBe getInvalidQueryErrors()
+            coVerify(exactly = 1) {
+                teamValidationService.validateUrl(
+                    query = getTeamQueryWithEmptyFields(limit = limit).toTeamQueryDTO(),
+                )
+            }
+            coVerify(exactly = 0) { teamService.getAllTeams(cursor = any()) }
+        }
+
+        @Test
+        fun `should return 400 and error response with invalid cursor parameter`() = testApplicationWith(mockModule) {
+            every { teamValidationService.validateCursor<TeamQuery>(cursor = any()) } returns listOf(
+                INVALID_CURSOR_MESSAGE,
+            )
+            val cursor = "invalidCursor"
+
+            val response = testClient.get(urlString = "v1/teams") {
+                url {
+                    parameters.append(name = CURSOR_QUERY_PARAMETER, value = cursor)
+                }
+            }
+
+            response shouldHaveStatus HttpStatusCode.BadRequest
+            response.body<ErrorsDTO>() shouldBe getInvalidCursorErrors()
+            coVerify(exactly = 1) { teamValidationService.validateCursor<TeamQuery>(cursor = cursor) }
+            coVerify(exactly = 0) { teamService.getAllTeams(cursor = any()) }
         }
 
         @Test
         fun `should return 500 and an error response when exception is thrown`() = testApplicationWith(mockModule) {
-            coEvery { teamService.getAllTeams() } throws IllegalStateException()
+            coEvery { teamService.getAllTeams(cursor = any()) } throws IllegalStateException()
 
             val response = testClient.get(urlString = "/v1/teams")
 
             response shouldHaveStatus HttpStatusCode.InternalServerError
             response.body<ErrorsDTO>() shouldBe getInternalServerErrors()
-            coVerify(exactly = 1) { teamService.getAllTeams() }
+            coVerify(exactly = 1) { teamService.getAllTeams(cursor = any()) }
         }
     }
 
@@ -143,7 +298,7 @@ class TeamRoutesTest {
     inner class IsUsernameUnique {
         @Test
         fun `should return 200 and true when username is unique`() = testApplicationWith(mockModule) {
-            val (uuid, username) = getFirstTeam()
+            val (uuid, _, username) = getFirstTeam()
             coEvery { teamService.isUsernameUnique(id = any(), username = any()) } returns true
 
             val response = testClient.get(urlString = "/v1/teams/$uuid/unique/username/$username")
@@ -171,7 +326,7 @@ class TeamRoutesTest {
     inner class IsPasswordUnique {
         @Test
         fun `should return 200 and true when password is unique`() = testApplicationWith(mockModule) {
-            val (uuid, _, password) = getFirstTeam()
+            val (uuid, _, _, password) = getFirstTeam()
             coEvery { teamService.isPasswordUnique(id = any(), password = any()) } returns true
 
             val response = testClient.get(urlString = "/v1/teams/$uuid/unique/password/$password")
@@ -199,7 +354,7 @@ class TeamRoutesTest {
     inner class IsJmsQueueUnique {
         @Test
         fun `should return 200 and true when jmsQueue is unique`() = testApplicationWith(mockModule) {
-            val (uuid, _, _, jmsQueue) = getFirstTeam()
+            val (uuid, _, _, _, jmsQueue) = getFirstTeam()
             coEvery { teamService.isJmsQueueUnique(id = any(), jmsQueue = any()) } returns true
 
             val response = testClient.get(urlString = "/v1/teams/$uuid/unique/jmsQueue/$jmsQueue")
@@ -239,6 +394,7 @@ class TeamRoutesTest {
             response shouldHaveStatus HttpStatusCode.OK
             response.body<Team>() shouldBe testTeam
             coVerifySequence {
+                teamValidationService.validateUrl(query = any())
                 teamValidationService.validateBody(body = testTeam.toTeamDTO())
                 teamService.saveTeam(team = testTeam)
             }
@@ -280,6 +436,7 @@ class TeamRoutesTest {
             response shouldHaveStatus HttpStatusCode.Conflict
             response.body<ErrorsDTO>() shouldBe getConflictErrors()
             coVerifySequence {
+                teamValidationService.validateUrl(query = any())
                 teamValidationService.validateBody(body = testTeam.toTeamDTO())
                 teamService.saveTeam(team = testTeam)
             }

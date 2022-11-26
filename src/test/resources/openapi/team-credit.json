@@ -1,12 +1,12 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "CHANGEABLE",
+    "title": "BAM Business Integration - Deutsche Bank",
     "contact": {
-      "name": "CHANGEABLE",
-      "email": "CHANGEABLE"
+      "name": "Jan-Hendrik Hausner",
+      "email": "jan-hendrik.hausner@outlook.com"
     },
-    "description": "CHANGEABLE",
+    "description": "<p>Synchrone-Bank-Beschreibung (\"2. Integrationsschritt\")</p>",
     "license": {
       "name": "Apache 2.0",
       "url": "https://github.com/hennihaus/bambankrest/blob/master/LICENSE"
@@ -72,46 +72,46 @@
     "parameters": {
       "amountInEuros": {
         "name": "amountInEuros",
-        "description": "CHANGEABLE",
+        "description": "Gewünschte Höhe des Kredites in Euro",
         "in": "query",
         "required": true,
-        "example": "-1",
+        "example": "30000",
         "schema": {
           "type": "integer",
           "format": "int32",
-          "minimum": -1,
-          "maximum": -1
+          "minimum": 10000,
+          "maximum": 50000
         }
       },
       "termInMonths": {
         "name": "termInMonths",
-        "description": "CHANGEABLE",
+        "description": "Gewünschte Länge des Kredites in Monaten",
         "in": "query",
         "required": true,
-        "example": "-1",
+        "example": "21",
         "schema": {
           "type": "integer",
           "format": "int32",
-          "minimum": -1,
-          "maximum": -1
+          "minimum": 6,
+          "maximum": 36
         }
       },
       "ratingLevel": {
         "name": "ratingLevel",
-        "description": "CHANGEABLE",
+        "description": "Bewertung des Debitors",
         "in": "query",
         "required": true,
-        "example": "CHANGEABLE",
+        "example": "A",
         "schema": {
           "$ref": "#/components/schemas/RatingLevel"
         }
       },
       "delayInMilliseconds": {
         "name": "delayInMilliseconds",
-        "description": "CHANGEABLE",
+        "description": "Zeit in Millisekunden, um die die Antwort verzögert werden soll",
         "in": "query",
         "required": true,
-        "example": "CHANGEABLE",
+        "example": "0",
         "schema": {
           "type": "integer",
           "format": "int64",
@@ -120,7 +120,7 @@
       },
       "username": {
         "name": "username",
-        "description": "CHANGEABLE",
+        "description": "Benutzername des Teams",
         "in": "query",
         "required": true,
         "example": "CHANGEABLE",
@@ -132,7 +132,7 @@
       },
       "password": {
         "name": "password",
-        "description": "CHANGEABLE",
+        "description": "Passwort des Teams",
         "in": "query",
         "required": true,
         "example": "CHANGEABLE",
@@ -146,7 +146,7 @@
     },
     "responses": {
       "200": {
-        "description": "CHANGEABLE",
+        "description": "Kreditzins in Prozent",
         "content": {
           "application/json": {
             "schema": {
@@ -159,7 +159,7 @@
         }
       },
       "400": {
-        "description": "CHANGEABLE",
+        "description": "Ungültige Parameter",
         "content": {
           "application/json": {
             "schema": {
@@ -178,7 +178,7 @@
         }
       },
       "404": {
-        "description": "CHANGEABLE",
+        "description": "Team wurde nicht gefunden",
         "content": {
           "application/json": {
             "schema": {
@@ -197,7 +197,7 @@
         }
       },
       "500": {
-        "description": "CHANGEABLE",
+        "description": "Interner Server Fehler",
         "content": {
           "application/json": {
             "schema": {

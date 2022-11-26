@@ -3,6 +3,7 @@ package de.hennihaus.objectmothers
 import de.hennihaus.models.generated.rest.ReasonDTO
 import de.hennihaus.plugins.TransactionException
 import de.hennihaus.plugins.UUIDException
+import de.hennihaus.routes.validations.ValidationService.Companion.LIMIT_MINIMUM
 import de.hennihaus.services.BankService.Companion.BANK_NOT_FOUND_MESSAGE
 import de.hennihaus.services.StatisticService.Companion.STATISTIC_NOT_FOUND_MESSAGE
 import de.hennihaus.services.TaskService.Companion.TASK_NOT_FOUND_MESSAGE
@@ -16,6 +17,8 @@ object ReasonObjectMother {
     const val INVALID_BANK_MESSAGE = "uuid must have valid uuid format"
     const val INVALID_TASK_MESSAGE = "uuid must have valid uuid format"
     const val INVALID_STATISTIC_MESSAGE = "bankId must have valid uuid format"
+    const val INVALID_CURSOR_MESSAGE = "request must have valid cursor"
+    const val INVALID_QUERY_MESSAGE = "limit must be at least '$LIMIT_MINIMUM'"
 
     fun getInvalidIdReason(
         exception: String = UUIDException::class.simpleName!!,
@@ -52,6 +55,22 @@ object ReasonObjectMother {
     fun getInvalidStatisticReason(
         exception: String = RequestValidationException::class.simpleName!!,
         message: String = INVALID_STATISTIC_MESSAGE,
+    ) = ReasonDTO(
+        exception = exception,
+        message = message,
+    )
+
+    fun getInvalidCursorReason(
+        exception: String = RequestValidationException::class.simpleName!!,
+        message: String = INVALID_CURSOR_MESSAGE,
+    ) = ReasonDTO(
+        exception = exception,
+        message = message,
+    )
+
+    fun getInvalidQueryReason(
+        exception: String = RequestValidationException::class.simpleName!!,
+        message: String = INVALID_QUERY_MESSAGE,
     ) = ReasonDTO(
         exception = exception,
         message = message,

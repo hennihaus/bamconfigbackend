@@ -5,7 +5,6 @@ import de.hennihaus.models.generated.rest.ReasonDTO
 import de.hennihaus.plugins.ErrorMessage.ANONYMOUS_OBJECT
 import de.hennihaus.plugins.ErrorMessage.BROKER_EXCEPTION_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.EXPOSED_TRANSACTION_EXCEPTION
-import de.hennihaus.plugins.ErrorMessage.MISSING_PROPERTY_MESSAGE
 import de.hennihaus.plugins.ErrorMessage.UUID_EXCEPTION_MESSAGE
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -87,10 +86,20 @@ object ErrorMessage {
     const val INTEGRATION_STEP_NOT_FOUND_MESSAGE = "integrationStep is not found"
 }
 
-class UUIDException(override val message: String = UUID_EXCEPTION_MESSAGE) : RuntimeException()
+class UUIDException(override val message: String = UUID_EXCEPTION_MESSAGE) : RuntimeException() {
+    companion object {
+        private const val serialVersionUID: Long = -1_318_755_554_914_629_714L
+    }
+}
 
-class BrokerException(message: String?) : RuntimeException(message ?: BROKER_EXCEPTION_MESSAGE)
+class BrokerException(message: String?) : RuntimeException(message ?: BROKER_EXCEPTION_MESSAGE) {
+    companion object {
+        private const val serialVersionUID: Long = -3_796_942_227_686_013_324L
+    }
+}
 
-class TransactionException(message: String? = null) : RuntimeException(message ?: EXPOSED_TRANSACTION_EXCEPTION)
-
-class PropertyNotFoundException(key: String) : IllegalStateException("$MISSING_PROPERTY_MESSAGE $key")
+class TransactionException(message: String? = null) : RuntimeException(message ?: EXPOSED_TRANSACTION_EXCEPTION) {
+    companion object {
+        private const val serialVersionUID: Long = 291_194_568_384_862_334L
+    }
+}

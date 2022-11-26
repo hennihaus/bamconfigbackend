@@ -1,0 +1,294 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BAM Business Integration - Deutsche Bank",
+    "contact": {
+      "name": "Jan-Hendrik Hausner",
+      "email": "jan-hendrik.hausner@outlook.com"
+    },
+    "description": "<p>Synchrone-Bank-Beschreibung (\"2. Integrationsschritt\")</p>",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://github.com/hennihaus/bambankrest/blob/master/LICENSE"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://bambusinessintegration.wi.hs-furtwangen.de/deutschebank",
+      "description": "Base-URL"
+    }
+  ],
+  "paths": {
+    "/credit": {
+      "get": {
+        "tags": [
+          "Credit"
+        ],
+        "operationId": "getCredit",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/amountInEuros"
+          },
+          {
+            "$ref": "#/components/parameters/termInMonths"
+          },
+          {
+            "$ref": "#/components/parameters/ratingLevel"
+          },
+          {
+            "$ref": "#/components/parameters/delayInMilliseconds"
+          },
+          {
+            "$ref": "#/components/parameters/username"
+          },
+          {
+            "$ref": "#/components/parameters/password"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Credit"
+    }
+  ],
+  "components": {
+    "parameters": {
+      "amountInEuros": {
+        "name": "amountInEuros",
+        "description": "Gewünschte Höhe des Kredites in Euro",
+        "in": "query",
+        "required": true,
+        "example": "-1",
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": -1,
+          "maximum": -1
+        }
+      },
+      "termInMonths": {
+        "name": "termInMonths",
+        "description": "Gewünschte Länge des Kredites in Monaten",
+        "in": "query",
+        "required": true,
+        "example": "-1",
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": -1,
+          "maximum": -1
+        }
+      },
+      "ratingLevel": {
+        "name": "ratingLevel",
+        "description": "Bewertung des Debitors",
+        "in": "query",
+        "required": true,
+        "example": "A",
+        "schema": {
+          "$ref": "#/components/schemas/RatingLevel"
+        }
+      },
+      "delayInMilliseconds": {
+        "name": "delayInMilliseconds",
+        "description": "Zeit in Millisekunden, um die die Antwort verzögert werden soll",
+        "in": "query",
+        "required": true,
+        "example": "0",
+        "schema": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 0
+        }
+      },
+      "username": {
+        "name": "username",
+        "description": "Benutzername des Teams",
+        "in": "query",
+        "required": true,
+        "example": "Beispielteam",
+        "schema": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 50
+        }
+      },
+      "password": {
+        "name": "password",
+        "description": "Passwort des Teams",
+        "in": "query",
+        "required": true,
+        "example": "OOfKqWksmA",
+        "schema": {
+          "type": "string",
+          "format": "password",
+          "minLength": 8,
+          "maxLength": 50
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Kreditzins in Prozent",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Credit"
+            },
+            "example": {
+              "lendingRateInPercent": 3.8
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Ungültige Parameter",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
+            },
+            "example": {
+              "reasons": [
+                {
+                  "exception": "RequestValidationException",
+                  "message": "password is required"
+                }
+              ],
+              "dateTime": "2022-01-31T07:43:30"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Team wurde nicht gefunden",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
+            },
+            "example": {
+              "reasons": [
+                {
+                  "exception": "NotFoundException",
+                  "message": "team not found by username and password"
+                }
+              ],
+              "dateTime": "2022-01-31T07:43:30"
+            }
+          }
+        }
+      },
+      "500": {
+        "description": "Interner Server Fehler",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
+            },
+            "example": {
+              "reasons": [
+                {
+                  "exception": "Exception",
+                  "message": "internal server error"
+                }
+              ],
+              "dateTime": "2022-01-31T07:43:30"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "RatingLevel": {
+        "type": "string",
+        "enum": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "L",
+          "N",
+          "O",
+          "P"
+        ]
+      },
+      "Credit": {
+        "type": "object",
+        "required": [
+          "lendingRateInPercent"
+        ],
+        "properties": {
+          "lendingRateInPercent": {
+            "type": "number",
+            "format": "double",
+            "minimum": 0,
+            "maximum": 10
+          }
+        }
+      },
+      "Errors": {
+        "type": "object",
+        "required": [
+          "reasons",
+          "dateTime"
+        ],
+        "properties": {
+          "reasons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Reason"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "dateTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Reason": {
+        "type": "object",
+        "required": [
+          "exception",
+          "message"
+        ],
+        "properties": {
+          "exception": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

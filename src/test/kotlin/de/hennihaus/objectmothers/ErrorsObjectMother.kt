@@ -6,7 +6,9 @@ import de.hennihaus.objectmothers.ReasonObjectMother.getBankNotFoundReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getConflictReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getInternalServerErrorReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidBankReason
+import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidCursorReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidIdReason
+import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidQueryReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidStatisticReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidTaskReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidTeamReason
@@ -52,6 +54,22 @@ object ErrorsObjectMother {
 
     fun getInvalidStatisticErrors(
         reasons: List<ReasonDTO> = getInvalidStatisticReasons(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
+    ) = ErrorsDTO(
+        reasons = reasons,
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
+    )
+
+    fun getInvalidCursorErrors(
+        reasons: List<ReasonDTO> = getInvalidCursorReasons(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
+    ) = ErrorsDTO(
+        reasons = reasons,
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
+    )
+
+    fun getInvalidQueryErrors(
+        reasons: List<ReasonDTO> = getInvalidQueryReasons(),
         dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
@@ -124,6 +142,14 @@ object ErrorsObjectMother {
 
     private fun getInvalidStatisticReasons() = listOf(
         getInvalidStatisticReason(),
+    )
+
+    private fun getInvalidCursorReasons() = listOf(
+        getInvalidCursorReason(),
+    )
+
+    private fun getInvalidQueryReasons() = listOf(
+        getInvalidQueryReason(),
     )
 
     private fun getTeamNotFoundReasons() = listOf(

@@ -61,75 +61,135 @@ import java.io.File
 
 object OpenApiObjectMother {
 
-    private val schufaApi: SchufaApi by lazy {
+    private val taskSchufaApi: SchufaApi by lazy {
         jacksonObjectMapper().readValue(
-            src = File("./src/test/resources/openapi/rating.json"),
+            src = File("./src/test/resources/openapi/task-rating.json"),
         )
     }
 
-    private val bankApi: BankApi by lazy {
+    private val teamSchufaApi: SchufaApi by lazy {
         jacksonObjectMapper().readValue(
-            src = File("./src/test/resources/openapi/credit.json"),
+            src = File("./src/test/resources/openapi/team-rating.json"),
         )
     }
 
-    fun getNonUpdatedSchufaApi(): SchufaApi = schufaApi
+    private val taskBankApi: BankApi by lazy {
+        jacksonObjectMapper().readValue(
+            src = File("./src/test/resources/openapi/task-credit.json"),
+        )
+    }
 
-    fun getNonUpdatedBankApi(): BankApi = bankApi
+    private val teamBankApi: BankApi by lazy {
+        jacksonObjectMapper().readValue(
+            src = File("./src/test/resources/openapi/team-credit.json")
+        )
+    }
 
-    fun getUpdatedSchufaApi(
-        info: SchufaInfo = getUpdatedSchufaInfo(),
-        components: SchufaComponents = getUpdatedSchufaComponents(),
-    ): SchufaApi = schufaApi.copy(
+    private val creditConfigBankApi: BankApi by lazy {
+        jacksonObjectMapper().readValue(
+            src = File("./src/test/resources/openapi/credit-configuration-credit.json")
+        )
+    }
+
+    fun getNonUpdatedByTaskSchufaApi(): SchufaApi = taskSchufaApi
+
+    fun getNonUpdatedByTeamSchufaApi(): SchufaApi = teamSchufaApi
+
+    fun getNonUpdatedByTaskBankApi(): BankApi = taskBankApi
+
+    fun getNonUpdatedByTeamBankApi(): BankApi = teamBankApi
+
+    fun getNonUpdatedByCreditConfigurationBankApi(): BankApi = creditConfigBankApi
+
+    fun getByTaskUpdatedSchufaApi(
+        info: SchufaInfo = getByTaskUpdatedSchufaInfo(),
+        components: SchufaComponents = getByTaskUpdatedSchufaComponents(),
+    ): SchufaApi = taskSchufaApi.copy(
         info = info,
         components = components,
     )
 
-    fun getUpdatedBankApi(
-        info: BankInfo = getUpdatedBankInfo(),
-        components: BankComponents = getUpdatedBankComponents(),
-    ): BankApi = bankApi.copy(
+    fun getByTeamUpdatedSchufaApi(
+        components: SchufaComponents = getByTeamUpdatedSchufaComponents(),
+    ): SchufaApi = teamSchufaApi.copy(
+        components = components,
+    )
+
+    fun getByTaskUpdatedBankApi(
+        info: BankInfo = getByTaskUpdatedBankInfo(),
+        components: BankComponents = getByTaskUpdatedBankComponents(),
+    ): BankApi = taskBankApi.copy(
         info = info,
         components = components,
     )
 
-    fun getUpdatedSchufaInfo(
+    fun getByTeamUpdatedBankApi(
+        components: BankComponents = getByTeamUpdatedBankComponents(),
+    ): BankApi = teamBankApi.copy(
+        components = components,
+    )
+
+    fun getByCreditConfigurationUpdatedBankApi(
+        components: BankComponents = getByCreditConfigurationBankComponents(),
+    ): BankApi = creditConfigBankApi.copy(
+        components = components,
+    )
+
+    fun getByTaskUpdatedSchufaInfo(
         title: String = "$DEFAULT_TITLE - $DEFAULT_SCHUFA_TITLE",
-        contact: SchufaContact = getUpdatedSchufaContact(),
+        contact: SchufaContact = getByTaskUpdatedSchufaContact(),
         description: String = DEFAULT_SCHUFA_DESCRIPTION,
-    ): SchufaInfo = schufaApi.info.copy(
+    ): SchufaInfo = taskSchufaApi.info.copy(
         title = title,
         contact = contact,
         description = description,
     )
 
-    fun getUpdatedBankInfo(
+    fun getByTaskUpdatedBankInfo(
         title: String = "$DEFAULT_TITLE - $DEFAULT_SYNC_BANK_TITLE",
-        contact: BankContact = getUpdatedBankContact(),
+        contact: BankContact = getByTaskUpdatedBankContact(),
         description: String = DEFAULT_SYNC_BANK_DESCRIPTION,
-    ): BankInfo = bankApi.info.copy(
+    ): BankInfo = taskBankApi.info.copy(
         title = title,
         contact = contact,
         description = description,
     )
 
-    fun getUpdatedSchufaComponents(
-        parameters: LinkedHashMap<String, SchufaParameter> = getUpdatedSchufaParameters(),
-        responses: LinkedHashMap<String, SchufaResponse> = getUpdatedSchufaResponses(),
-    ): SchufaComponents = schufaApi.components.copy(
+    fun getByTaskUpdatedSchufaComponents(
+        parameters: LinkedHashMap<String, SchufaParameter> = getByTaskUpdatedSchufaParameters(),
+        responses: LinkedHashMap<String, SchufaResponse> = getByTaskUpdatedSchufaResponses(),
+    ): SchufaComponents = taskSchufaApi.components.copy(
         parameters = parameters,
         responses = responses,
     )
 
-    fun getUpdatedBankComponents(
-        parameters: LinkedHashMap<String, BankParameter> = getUpdatedBankParameters(),
-        responses: LinkedHashMap<String, BankResponse> = getUpdatedBankResponses(),
-    ): BankComponents = bankApi.components.copy(
+    fun getByTeamUpdatedSchufaComponents(
+        parameters: LinkedHashMap<String, SchufaParameter> = getByTeamUpdatedSchufaParameters(),
+    ): SchufaComponents = teamSchufaApi.components.copy(
+        parameters = parameters,
+    )
+
+    fun getByTaskUpdatedBankComponents(
+        parameters: LinkedHashMap<String, BankParameter> = getByTaskUpdatedBankParameters(),
+        responses: LinkedHashMap<String, BankResponse> = getByTaskUpdatedBankResponses(),
+    ): BankComponents = taskBankApi.components.copy(
         parameters = parameters,
         responses = responses,
     )
 
-    fun getUpdatedSchufaContact(
+    fun getByTeamUpdatedBankComponents(
+        parameters: LinkedHashMap<String, BankParameter> = getByTeamUpdatedBankParameters(),
+    ): BankComponents = teamBankApi.components.copy(
+        parameters = parameters,
+    )
+
+    fun getByCreditConfigurationBankComponents(
+        parameters: LinkedHashMap<String, BankParameter> = getByCreditConfigurationUpdatedBankParameters(),
+    ): BankComponents = creditConfigBankApi.components.copy(
+        parameters = parameters,
+    )
+
+    fun getByTaskUpdatedSchufaContact(
         name: String = "$DEFAULT_CONTACT_FIRSTNAME $DEFAULT_CONTACT_LASTNAME",
         email: String = DEFAULT_CONTACT_EMAIL,
     ) = SchufaContact(
@@ -137,7 +197,7 @@ object OpenApiObjectMother {
         email = email,
     )
 
-    fun getUpdatedBankContact(
+    fun getByTaskUpdatedBankContact(
         name: String = "$DEFAULT_CONTACT_FIRSTNAME $DEFAULT_CONTACT_LASTNAME",
         email: String = DEFAULT_CONTACT_EMAIL,
     ) = BankContact(
@@ -145,190 +205,252 @@ object OpenApiObjectMother {
         email = email,
     )
 
-    fun getUpdatedSocialSecuritySchufaParameter(
+    fun getByTaskUpdatedSocialSecuritySchufaParameter(
         description: String = SOCIAL_SECURITY_NUMBER_DESCRIPTION,
         example: String = SOCIAL_SECURITY_NUMBER_EXAMPLE,
-    ): SchufaParameter = schufaApi.components.parameters[SOCIAL_SECURITY_NUMBER_PARAMETER]!!.copy(
+    ): SchufaParameter = taskSchufaApi.components.parameters[SOCIAL_SECURITY_NUMBER_PARAMETER]!!.copy(
         description = description,
         example = example,
     )
 
-    fun getUpdatedRatingLevelSchufaParameter(
+    fun getByTaskUpdatedRatingLevelSchufaParameter(
         description: String = RATING_LEVEL_DESCRIPTION,
         example: String = RATING_LEVEL_EXAMPLE,
-    ): SchufaParameter = schufaApi.components.parameters[RATING_LEVEL_PARAMETER]!!.copy(
+    ): SchufaParameter = taskSchufaApi.components.parameters[RATING_LEVEL_PARAMETER]!!.copy(
         description = description,
         example = example,
     )
 
-    fun getUpdatedDelayInMillisecondsSchufaParameter(
+    fun getByTaskUpdatedDelayInMillisecondsSchufaParameter(
         description: String = DELAY_IN_MILLISECONDS_DESCRIPTION,
         example: String = DELAY_IN_MILLISECONDS_EXAMPLE,
-    ): SchufaParameter = schufaApi.components.parameters[DELAY_IN_MILLISECONDS_PARAMETER]!!.copy(
+    ): SchufaParameter = taskSchufaApi.components.parameters[DELAY_IN_MILLISECONDS_PARAMETER]!!.copy(
         description = description,
         example = example,
     )
 
-    fun getUpdatedUsernameSchufaParameter(
+    fun getByTaskUpdatedUsernameSchufaParameter(
         description: String = USERNAME_DESCRIPTION,
         example: String = USERNAME_EXAMPLE,
-    ): SchufaParameter = schufaApi.components.parameters[USERNAME_PARAMETER]!!.copy(
+    ): SchufaParameter = taskSchufaApi.components.parameters[USERNAME_PARAMETER]!!.copy(
         description = description,
         example = example,
     )
 
-    fun getUpdatedPasswordSchufaParameter(
+    fun getByTeamUpdatedUsernameSchufaParameter(
+        example: String = USERNAME_EXAMPLE,
+    ): SchufaParameter = teamSchufaApi.components.parameters[USERNAME_PARAMETER]!!.copy(
+        example = example,
+    )
+
+    fun getByTaskUpdatedPasswordSchufaParameter(
         description: String = PASSWORD_DESCRIPTION,
         example: String = PASSWORD_EXAMPLE,
-    ): SchufaParameter = schufaApi.components.parameters[PASSWORD_PARAMETER]!!.copy(
+    ): SchufaParameter = taskSchufaApi.components.parameters[PASSWORD_PARAMETER]!!.copy(
         description = description,
         example = example,
     )
 
-    fun getUpdatedAmountInEurosBankParameter(
+    fun getByTeamUpdatedPasswordSchufaParameter(
+        example: String = PASSWORD_EXAMPLE,
+    ): SchufaParameter = teamSchufaApi.components.parameters[PASSWORD_PARAMETER]!!.copy(
+        example = example,
+    )
+
+    fun getByTaskUpdatedAmountInEurosBankParameter(
         description: String = AMOUNT_IN_EUROS_DESCRIPTION,
         example: String = AMOUNT_IN_EUROS_EXAMPLE,
-        schema: BankSchema = getUpdatedAmountInEurosBankSchema(),
-    ): BankParameter = bankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!.copy(
+    ): BankParameter = taskBankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!.copy(
         description = description,
+        example = example,
+    )
+
+    fun getByCreditConfigurationUpdatedAmountInEurosParameter(
+        example: String = AMOUNT_IN_EUROS_EXAMPLE,
+        schema: BankSchema = getByCreditConfigurationUpdatedAmountInEurosBankSchema(),
+    ): BankParameter = creditConfigBankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!.copy(
         example = example,
         schema = schema,
     )
 
-    fun getUpdatedTermInMonthsBankParameter(
+    fun getByTaskUpdatedTermInMonthsBankParameter(
         description: String = TERM_IN_MONTHS_DESCRIPTION,
         example: String = TERM_IN_MONTHS_EXAMPLE,
-        schema: BankSchema = getUpdatedTermInMonthsBankSchema(),
-    ): BankParameter = bankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!.copy(
+    ): BankParameter = taskBankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!.copy(
         description = description,
+        example = example,
+    )
+
+    fun getByCreditConfigurationUpdatedTermInMonthsParameter(
+        example: String = TERM_IN_MONTHS_EXAMPLE,
+        schema: BankSchema = getByCreditConfigurationUpdatedTermInMonthsBankSchema(),
+    ): BankParameter = creditConfigBankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!.copy(
         example = example,
         schema = schema,
     )
 
-    fun getUpdatedRatingLevelBankParameter(
+    fun getByTaskUpdatedRatingLevelBankParameter(
         description: String = RATING_LEVEL_DESCRIPTION,
         example: String = RATING_LEVEL_EXAMPLE,
-    ): BankParameter = bankApi.components.parameters[RATING_LEVEL_PARAMETER]!!.copy(
+    ): BankParameter = taskBankApi.components.parameters[RATING_LEVEL_PARAMETER]!!.copy(
         description = description,
         example = example,
     )
 
-    fun getUpdatedDelayInMillisecondsBankParameter(
+    fun getByTaskUpdatedDelayInMillisecondsBankParameter(
         description: String = DELAY_IN_MILLISECONDS_DESCRIPTION,
         example: String = DELAY_IN_MILLISECONDS_EXAMPLE,
-    ): BankParameter = bankApi.components.parameters[DELAY_IN_MILLISECONDS_PARAMETER]!!.copy(
+    ): BankParameter = taskBankApi.components.parameters[DELAY_IN_MILLISECONDS_PARAMETER]!!.copy(
         description = description,
         example = example,
     )
 
-    fun getUpdatedUsernameBankParameter(
+    fun getByTaskUpdatedUsernameBankParameter(
         description: String = USERNAME_DESCRIPTION,
         example: String = USERNAME_EXAMPLE,
-    ): BankParameter = bankApi.components.parameters[USERNAME_PARAMETER]!!.copy(
+    ): BankParameter = taskBankApi.components.parameters[USERNAME_PARAMETER]!!.copy(
         description = description,
         example = example,
     )
 
-    fun getUpdatedPasswordBankParameter(
+    fun getByTeamUpdatedUsernameBankParameter(
+        example: String = USERNAME_EXAMPLE,
+    ): BankParameter = teamBankApi.components.parameters[USERNAME_PARAMETER]!!.copy(
+        example = example,
+    )
+
+    fun getByTaskUpdatedPasswordBankParameter(
         description: String = PASSWORD_DESCRIPTION,
         example: String = PASSWORD_EXAMPLE,
-    ): BankParameter = bankApi.components.parameters[PASSWORD_PARAMETER]!!.copy(
+    ): BankParameter = taskBankApi.components.parameters[PASSWORD_PARAMETER]!!.copy(
         description = description,
         example = example,
     )
 
-    fun getUpdatedAmountInEurosBankSchema(
+    fun getByTeamUpdatedPasswordBankParameter(
+        example: String = PASSWORD_EXAMPLE,
+    ): BankParameter = teamBankApi.components.parameters[PASSWORD_PARAMETER]!!.copy(
+        example = example,
+    )
+
+    fun getByCreditConfigurationUpdatedAmountInEurosBankSchema(
         minAmountInEuros: Int = DEFAULT_MIN_AMOUNT_IN_EUROS,
         maxAmountInEuros: Int = DEFAULT_MAX_AMOUNT_IN_EUROS,
-    ): BankSchema = bankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!.schema.copy(
+    ): BankSchema = creditConfigBankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!.schema.copy(
         minimum = minAmountInEuros,
         maximum = maxAmountInEuros,
     )
 
-    fun getUpdatedTermInMonthsBankSchema(
+    fun getByCreditConfigurationUpdatedTermInMonthsBankSchema(
         minTermInMonths: Int = DEFAULT_MIN_TERM_IN_MONTHS,
         maxTermInMonths: Int = DEFAULT_MAX_TERM_IN_MONTHS,
-    ): BankSchema = bankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!.schema.copy(
+    ): BankSchema = creditConfigBankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!.schema.copy(
         minimum = minTermInMonths,
         maximum = maxTermInMonths,
     )
 
     fun getUpdatedOkSchufaResponse(
         description: String = SCHUFA_OK_DESCRIPTION,
-    ): SchufaResponse = schufaApi.components.responses[OK_CODE]!!.copy(
+    ): SchufaResponse = taskSchufaApi.components.responses[OK_CODE]!!.copy(
         description = description,
     )
 
-    fun getUpdatedBadRequestSchufaResponse(
+    fun getByTaskUpdatedBadRequestSchufaResponse(
         description: String = BAD_REQUEST_DESCRIPTION,
-    ): SchufaResponse = schufaApi.components.responses[BAD_REQUEST_CODE]!!.copy(
+    ): SchufaResponse = taskSchufaApi.components.responses[BAD_REQUEST_CODE]!!.copy(
         description = description,
     )
 
-    fun getUpdatedNotFoundSchufaResponse(
+    fun getByTaskUpdatedNotFoundSchufaResponse(
         description: String = NOT_FOUND_DESCRIPTION,
-    ): SchufaResponse = schufaApi.components.responses[NOT_FOUND_CODE]!!.copy(
+    ): SchufaResponse = taskSchufaApi.components.responses[NOT_FOUND_CODE]!!.copy(
         description = description,
     )
 
-    fun getUpdatedInternalServerErrorSchufaResponse(
+    fun getByTaskUpdatedInternalServerErrorSchufaResponse(
         description: String = INTERNAL_SERVER_ERROR_DESCRIPTION,
-    ): SchufaResponse = schufaApi.components.responses[INTERNAL_SERVER_ERROR_CODE]!!.copy(
+    ): SchufaResponse = taskSchufaApi.components.responses[INTERNAL_SERVER_ERROR_CODE]!!.copy(
         description = description,
     )
 
-    fun getUpdatedOkBankResponse(
+    fun getByTaskUpdatedOkBankResponse(
         description: String = BANK_OK_DESCRIPTION,
-    ): BankResponse = bankApi.components.responses[OK_CODE]!!.copy(
+    ): BankResponse = taskBankApi.components.responses[OK_CODE]!!.copy(
         description = description,
     )
 
-    fun getUpdatedBadRequestBankResponse(
+    fun getByTaskUpdatedBadRequestBankResponse(
         description: String = BAD_REQUEST_DESCRIPTION,
-    ): BankResponse = bankApi.components.responses[BAD_REQUEST_CODE]!!.copy(
+    ): BankResponse = taskBankApi.components.responses[BAD_REQUEST_CODE]!!.copy(
         description = description,
     )
 
-    fun getUpdatedNotFoundBankResponse(
+    fun getByTaskUpdatedNotFoundBankResponse(
         description: String = NOT_FOUND_DESCRIPTION,
-    ): BankResponse = bankApi.components.responses[NOT_FOUND_CODE]!!.copy(
+    ): BankResponse = taskBankApi.components.responses[NOT_FOUND_CODE]!!.copy(
         description = description,
     )
 
-    fun getUpdatedInternalServerErrorBankResponse(
+    fun getByTaskUpdatedInternalServerErrorBankResponse(
         description: String = INTERNAL_SERVER_ERROR_DESCRIPTION,
-    ): BankResponse = bankApi.components.responses[INTERNAL_SERVER_ERROR_CODE]!!.copy(
+    ): BankResponse = taskBankApi.components.responses[INTERNAL_SERVER_ERROR_CODE]!!.copy(
         description = description,
     )
 
-    private fun getUpdatedSchufaParameters(): LinkedHashMap<String, SchufaParameter> = linkedMapOf(
-        SOCIAL_SECURITY_NUMBER_PARAMETER to getUpdatedSocialSecuritySchufaParameter(),
-        RATING_LEVEL_PARAMETER to getUpdatedRatingLevelSchufaParameter(),
-        DELAY_IN_MILLISECONDS_PARAMETER to getUpdatedDelayInMillisecondsSchufaParameter(),
-        USERNAME_PARAMETER to getUpdatedUsernameSchufaParameter(),
-        PASSWORD_PARAMETER to getUpdatedPasswordSchufaParameter(),
+    private fun getByTaskUpdatedSchufaParameters(): LinkedHashMap<String, SchufaParameter> = linkedMapOf(
+        SOCIAL_SECURITY_NUMBER_PARAMETER to getByTaskUpdatedSocialSecuritySchufaParameter(),
+        RATING_LEVEL_PARAMETER to getByTaskUpdatedRatingLevelSchufaParameter(),
+        DELAY_IN_MILLISECONDS_PARAMETER to getByTaskUpdatedDelayInMillisecondsSchufaParameter(),
+        USERNAME_PARAMETER to getByTaskUpdatedUsernameSchufaParameter(),
+        PASSWORD_PARAMETER to getByTaskUpdatedPasswordSchufaParameter(),
     )
 
-    private fun getUpdatedBankParameters(): LinkedHashMap<String, BankParameter> = linkedMapOf(
-        AMOUNT_IN_EUROS_PARAMETER to getUpdatedAmountInEurosBankParameter(),
-        TERM_IN_MONTHS_PARAMETER to getUpdatedTermInMonthsBankParameter(),
-        RATING_LEVEL_PARAMETER to getUpdatedRatingLevelBankParameter(),
-        DELAY_IN_MILLISECONDS_PARAMETER to getUpdatedDelayInMillisecondsBankParameter(),
-        USERNAME_PARAMETER to getUpdatedUsernameBankParameter(),
-        PASSWORD_PARAMETER to getUpdatedPasswordBankParameter(),
+    private fun getByTeamUpdatedSchufaParameters(): LinkedHashMap<String, SchufaParameter> = linkedMapOf(
+        SOCIAL_SECURITY_NUMBER_PARAMETER to teamSchufaApi.components.parameters[SOCIAL_SECURITY_NUMBER_PARAMETER]!!,
+        RATING_LEVEL_PARAMETER to teamSchufaApi.components.parameters[RATING_LEVEL_PARAMETER]!!,
+        DELAY_IN_MILLISECONDS_PARAMETER to teamSchufaApi.components.parameters[DELAY_IN_MILLISECONDS_PARAMETER]!!,
+        USERNAME_PARAMETER to getByTeamUpdatedUsernameSchufaParameter(),
+        PASSWORD_PARAMETER to getByTeamUpdatedPasswordSchufaParameter(),
     )
 
-    private fun getUpdatedSchufaResponses(): LinkedHashMap<String, SchufaResponse> = linkedMapOf(
+    private fun getByTaskUpdatedBankParameters(): LinkedHashMap<String, BankParameter> = linkedMapOf(
+        AMOUNT_IN_EUROS_PARAMETER to getByTaskUpdatedAmountInEurosBankParameter(),
+        TERM_IN_MONTHS_PARAMETER to getByTaskUpdatedTermInMonthsBankParameter(),
+        RATING_LEVEL_PARAMETER to getByTaskUpdatedRatingLevelBankParameter(),
+        DELAY_IN_MILLISECONDS_PARAMETER to getByTaskUpdatedDelayInMillisecondsBankParameter(),
+        USERNAME_PARAMETER to getByTaskUpdatedUsernameBankParameter(),
+        PASSWORD_PARAMETER to getByTaskUpdatedPasswordBankParameter(),
+    )
+
+    private fun getByTeamUpdatedBankParameters(): LinkedHashMap<String, BankParameter> = linkedMapOf(
+        AMOUNT_IN_EUROS_PARAMETER to teamBankApi.components.parameters[AMOUNT_IN_EUROS_PARAMETER]!!,
+        TERM_IN_MONTHS_PARAMETER to teamBankApi.components.parameters[TERM_IN_MONTHS_PARAMETER]!!,
+        RATING_LEVEL_PARAMETER to teamBankApi.components.parameters[RATING_LEVEL_PARAMETER]!!,
+        DELAY_IN_MILLISECONDS_PARAMETER to teamBankApi.components.parameters[DELAY_IN_MILLISECONDS_PARAMETER]!!,
+        USERNAME_PARAMETER to getByTeamUpdatedUsernameBankParameter(),
+        PASSWORD_PARAMETER to getByTeamUpdatedPasswordBankParameter(),
+    )
+
+    private fun getByCreditConfigurationUpdatedBankParameters(): LinkedHashMap<String, BankParameter> = linkedMapOf(
+        AMOUNT_IN_EUROS_PARAMETER to getByCreditConfigurationUpdatedAmountInEurosParameter(),
+        TERM_IN_MONTHS_PARAMETER to getByCreditConfigurationUpdatedTermInMonthsParameter(),
+        RATING_LEVEL_PARAMETER to creditConfigBankApi.components.parameters[RATING_LEVEL_PARAMETER]!!,
+        DELAY_IN_MILLISECONDS_PARAMETER to creditConfigBankApi.components.parameters[DELAY_IN_MILLISECONDS_PARAMETER]!!,
+        USERNAME_PARAMETER to creditConfigBankApi.components.parameters[USERNAME_PARAMETER]!!,
+        PASSWORD_PARAMETER to creditConfigBankApi.components.parameters[PASSWORD_PARAMETER]!!,
+    )
+
+    private fun getByTaskUpdatedSchufaResponses(): LinkedHashMap<String, SchufaResponse> = linkedMapOf(
         OK_CODE to getUpdatedOkSchufaResponse(),
-        BAD_REQUEST_CODE to getUpdatedBadRequestSchufaResponse(),
-        NOT_FOUND_CODE to getUpdatedNotFoundSchufaResponse(),
-        INTERNAL_SERVER_ERROR_CODE to getUpdatedInternalServerErrorSchufaResponse(),
+        BAD_REQUEST_CODE to getByTaskUpdatedBadRequestSchufaResponse(),
+        NOT_FOUND_CODE to getByTaskUpdatedNotFoundSchufaResponse(),
+        INTERNAL_SERVER_ERROR_CODE to getByTaskUpdatedInternalServerErrorSchufaResponse(),
     )
 
-    private fun getUpdatedBankResponses(): LinkedHashMap<String, BankResponse> = linkedMapOf(
-        OK_CODE to getUpdatedOkBankResponse(),
-        BAD_REQUEST_CODE to getUpdatedBadRequestBankResponse(),
-        NOT_FOUND_CODE to getUpdatedNotFoundBankResponse(),
-        INTERNAL_SERVER_ERROR_CODE to getUpdatedInternalServerErrorBankResponse(),
+    private fun getByTaskUpdatedBankResponses(): LinkedHashMap<String, BankResponse> = linkedMapOf(
+        OK_CODE to getByTaskUpdatedOkBankResponse(),
+        BAD_REQUEST_CODE to getByTaskUpdatedBadRequestBankResponse(),
+        NOT_FOUND_CODE to getByTaskUpdatedNotFoundBankResponse(),
+        INTERNAL_SERVER_ERROR_CODE to getByTaskUpdatedInternalServerErrorBankResponse(),
     )
 }

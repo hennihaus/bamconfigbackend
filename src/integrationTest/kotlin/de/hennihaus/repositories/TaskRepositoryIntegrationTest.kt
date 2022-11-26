@@ -2,6 +2,8 @@ package de.hennihaus.repositories
 
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
+import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
+import de.hennihaus.models.Parameter
 import de.hennihaus.models.Task
 import de.hennihaus.objectmothers.EndpointObjectMother
 import de.hennihaus.objectmothers.EndpointObjectMother.getSchufaRestEndpoint
@@ -17,6 +19,7 @@ import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
 import de.hennihaus.objectmothers.TaskObjectMother.getDefaultContact
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.testutils.containers.ExposedContainer
+import io.kotest.inspectors.forAll
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -24,6 +27,8 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -150,7 +155,10 @@ class TaskRepositoryIntegrationTest : KoinTest {
                 )
             )
 
-            val result: Task = classUnderTest.save(entry = task)
+            val result: Task = classUnderTest.save(
+                entry = task,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
 
             result.shouldBeEqualToIgnoringFields(
                 other = task,
@@ -163,7 +171,10 @@ class TaskRepositoryIntegrationTest : KoinTest {
             val task = getAsynchronousBankTask(uuid = ExposedContainerObjectMother.UNKNOWN_UUID)
             classUnderTest.deleteById(id = getAsynchronousBankTask().uuid)
 
-            val result: Task = classUnderTest.save(entry = task)
+            val result: Task = classUnderTest.save(
+                entry = task,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
 
             result.shouldBeEqualToIgnoringFields(
                 other = task,
@@ -216,6 +227,41 @@ class TaskRepositoryIntegrationTest : KoinTest {
             val result: List<UUID> = classUnderTest.getAllResponsesById(id = id)
 
             result.shouldNotBeEmpty()
+        }
+    }
+
+    @Nested
+    inner class UpdateParameter {
+        @Test
+        fun `should update example property of parameter and return a parameter`() = runBlocking<Unit> {
+            val name = ExposedContainerObjectMother.PARAMETER_NAME
+            val example = "TestParameterName"
+
+            val result: Parameter? = classUnderTest.updateParameter(
+                name = name,
+                example = example,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
+
+            result.shouldNotBeNull()
+            result.example shouldBe example
+        }
+
+        @Test
+        fun `should update no parameter and return null when name is unknown`() = runBlocking {
+            val name = "unknownName"
+            val example = "nonAvailableExampleValue"
+
+            val result: Parameter? = classUnderTest.updateParameter(
+                name = name,
+                example = example,
+                repetitionAttempts = ONE_REPETITION_ATTEMPT,
+            )
+
+            classUnderTest.getAll().flatMap { it.parameters }.forAll {
+                it.example shouldNotBe example
+            }
+            result.shouldBeNull()
         }
     }
 }

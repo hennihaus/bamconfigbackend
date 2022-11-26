@@ -6,7 +6,7 @@ import io.konform.validation.Validation
 import org.koin.core.annotation.Single
 
 @Single
-class StatisticValidationService : ValidationService<StatisticDTO> {
+class StatisticValidationService : ValidationService<StatisticDTO, Any> {
 
     override suspend fun bodyValidation(body: StatisticDTO): Validation<StatisticDTO> = Validation {
         StatisticDTO::bankId {
