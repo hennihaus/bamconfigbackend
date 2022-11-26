@@ -3,7 +3,6 @@ package de.hennihaus.models.cursors
 import de.hennihaus.bamdatamodel.Team
 import de.hennihaus.bamdatamodel.TeamType
 import de.hennihaus.models.Pagination
-import java.io.Serial
 import java.io.Serializable
 
 typealias TeamCursor = Cursor<TeamQuery>
@@ -24,7 +23,6 @@ data class TeamQuery(
     val banks: List<String>?,
 ) : Serializable {
     companion object {
-        @Serial
         private const val serialVersionUID: Long = 8868291383640594341L
     }
 }
