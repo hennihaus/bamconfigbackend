@@ -106,13 +106,6 @@ class TeamRepository(
             ?.let { it[TeamTable.id].value }
     }
 
-    suspend fun getJmsQueueById(id: UUID): String? = inTransaction {
-        TeamTable.slice(column = TeamTable.jmsQueue)
-            .select { TeamTable.id eq id }
-            .singleOrNull()
-            ?.let { it[TeamTable.jmsQueue] }
-    }
-
     suspend fun resetAllTeams(repetitionAttempts: Int): List<UUID> = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {

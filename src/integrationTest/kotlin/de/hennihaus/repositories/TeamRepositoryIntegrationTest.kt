@@ -266,27 +266,6 @@ class TeamRepositoryIntegrationTest : KoinTest {
     }
 
     @Nested
-    inner class GetJmsQueueById {
-        @Test
-        fun `should return a team jmsQueue when team is found by id`() = runBlocking<Unit> {
-            val id = ExposedContainerObjectMother.TEAM_UUID
-
-            val result: String? = classUnderTest.getJmsQueueById(id = id)
-
-            result.shouldNotBeNull()
-        }
-
-        @Test
-        fun `should return null when team jmsQueue is not found by id`() = runBlocking {
-            val id = ExposedContainerObjectMother.UNKNOWN_UUID
-
-            val result: String? = classUnderTest.getJmsQueueById(id = id)
-
-            result.shouldBeNull()
-        }
-    }
-
-    @Nested
     inner class ResetAllTeams {
         @Test
         fun `should reset all team statistics, hasPassed and passwords`() = runBlocking<Unit> {
