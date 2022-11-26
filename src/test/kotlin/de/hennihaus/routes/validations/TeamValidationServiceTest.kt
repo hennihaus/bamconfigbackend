@@ -61,7 +61,6 @@ class TeamValidationServiceTest {
             coEvery { team.isUsernameUnique(id = any(), username = any()) } returns true
             coEvery { team.isPasswordUnique(id = any(), password = any()) } returns true
             coEvery { team.isJmsQueueUnique(id = any(), jmsQueue = any()) } returns true
-            coEvery { team.getJmsQueueById(id = any()) } returns getFirstTeam().jmsQueue
             coEvery { bank.hasName(name = any()) } returns true
         }
 
@@ -81,24 +80,10 @@ class TeamValidationServiceTest {
                 team.isUsernameUnique(id = body.uuid, username = body.username)
                 team.isPasswordUnique(id = body.uuid, password = body.password)
                 team.isJmsQueueUnique(id = body.uuid, jmsQueue = body.jmsQueue)
-                team.getJmsQueueById(id = body.uuid)
                 bank.hasName(name = SCHUFA_BANK_NAME)
                 bank.hasName(name = SYNC_BANK_NAME)
                 bank.hasName(name = ASYNC_BANK_NAME)
             }
-        }
-
-        @Test
-        fun `should return an empty list when team is created with new jmsQueue`() = runBlocking {
-            coEvery { team.getJmsQueueById(id = any()) } returns null
-            val body = getFirstTeam().toTeamDTO()
-
-            val result: List<String> = classUnderTest.validateBody(
-                body = body,
-            )
-
-            result.shouldBeEmpty()
-            coVerify(exactly = 1) { team.getJmsQueueById(id = body.uuid) }
         }
 
         @Test
@@ -226,7 +211,6 @@ class TeamValidationServiceTest {
             val body = getFirstTeam().toTeamDTO().copy(
                 jmsQueue = jmsQueue,
             )
-            coEvery { team.getJmsQueueById(id = any()) } returns jmsQueue
 
             val result: List<String> = classUnderTest.validateBody(
                 body = body,
@@ -241,7 +225,6 @@ class TeamValidationServiceTest {
             val body = getFirstTeam().toTeamDTO().copy(
                 jmsQueue = jmsQueue,
             )
-            coEvery { team.getJmsQueueById(id = any()) } returns jmsQueue
 
             val result: List<String> = classUnderTest.validateBody(
                 body = body,
@@ -261,19 +244,6 @@ class TeamValidationServiceTest {
 
             result shouldContainExactly listOf("jmsQueue must be unique")
             coVerify(exactly = 1) { team.isJmsQueueUnique(id = body.uuid, jmsQueue = body.jmsQueue) }
-        }
-
-        @Test
-        fun `should return a list with one error when jmsQueue is not old jmsQueue`() = runBlocking {
-            coEvery { team.getJmsQueueById(id = any()) } returns "jmsQueue"
-            val body = getFirstTeam().toTeamDTO()
-
-            val result: List<String> = classUnderTest.validateBody(
-                body = body,
-            )
-
-            result shouldContainExactly listOf("jmsQueue must be old jmsQueue")
-            coVerify(exactly = 1) { team.getJmsQueueById(id = body.uuid) }
         }
 
         @Test

@@ -21,7 +21,6 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
@@ -402,54 +401,6 @@ class TeamServiceTest {
             result should beInstanceOf<Exception>()
             coVerifySequence {
                 teamRepository.save(entry = getFirstTeam(), repetitionAttempts = ONE_REPETITION_ATTEMPT)
-            }
-        }
-    }
-
-    @Nested
-    inner class GetJmsQueueById {
-        @Test
-        fun `should return a jmsQueue when is in database`() = runBlocking {
-            val (id, _, _, _, jmsQueue) = getFirstTeam()
-            coEvery { teamRepository.getJmsQueueById(id = any()) } returns jmsQueue
-
-            val result: String? = classUnderTest.getJmsQueueById(
-                id = "$id",
-            )
-
-            result shouldBe jmsQueue
-            coVerifySequence {
-                teamRepository.getJmsQueueById(id = id)
-            }
-        }
-
-        @Test
-        fun `should return null when jmsQueue is not in database`() = runBlocking {
-            val id = getFirstTeam().uuid
-            coEvery { teamRepository.getJmsQueueById(id = any()) } returns null
-
-            val result: String? = classUnderTest.getJmsQueueById(
-                id = "$id",
-            )
-
-            result.shouldBeNull()
-            coVerifySequence {
-                teamRepository.getJmsQueueById(id = id)
-            }
-        }
-
-        @Test
-        fun `should throw an exception when error occurs`() = runBlocking {
-            val id = getFirstTeam().uuid
-            coEvery { teamRepository.getJmsQueueById(id = any()) } throws Exception()
-
-            val result = shouldThrow<Exception> {
-                classUnderTest.getJmsQueueById(id = "$id")
-            }
-
-            result should beInstanceOf<Exception>()
-            coVerifySequence {
-                teamRepository.getJmsQueueById(id = id)
             }
         }
     }

@@ -86,10 +86,6 @@ class TeamService(
             }
     }
 
-    suspend fun getJmsQueueById(id: String): String? = id.toUUID { uuid ->
-        teamRepository.getJmsQueueById(id = uuid)
-    }
-
     suspend fun deleteTeamById(id: String): Boolean = id.toUUID { uuid ->
         teamRepository.deleteById(id = uuid)
     }

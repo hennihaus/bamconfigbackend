@@ -18,7 +18,6 @@ import de.hennihaus.utils.validations.oneOf
 import de.hennihaus.utils.validations.unique
 import de.hennihaus.utils.validations.uuid
 import io.konform.validation.Validation
-import io.konform.validation.ValidationBuilder
 import io.konform.validation.jsonschema.enum
 import io.konform.validation.jsonschema.maxLength
 import io.konform.validation.jsonschema.maximum
@@ -148,27 +147,17 @@ class TeamValidationService(
         }
     }
 
-    private suspend fun jmsQueueValidation(body: TeamDTO): Validation<TeamDTO> = coroutineScope {
-        val isJmsQueueUniqueRequest = async {
-            team.isJmsQueueUnique(
-                id = body.uuid,
-                jmsQueue = body.jmsQueue,
-            )
-        }
-        val oldJmsQueueRequest = async {
-            team.getJmsQueueById(
-                id = body.uuid,
-            )
-        }
-        val isJmsQueueUnique = isJmsQueueUniqueRequest.await()
-        val oldJmsQueue = oldJmsQueueRequest.await()
+    private suspend fun jmsQueueValidation(body: TeamDTO): Validation<TeamDTO> {
+        val isJmsQueueUnique = team.isJmsQueueUnique(
+            id = body.uuid,
+            jmsQueue = body.jmsQueue,
+        )
 
-        Validation {
+        return Validation {
             TeamDTO::jmsQueue {
                 minLength(length = JMS_QUEUE_MIN_LENGTH)
                 maxLength(length = JMS_QUEUE_MAX_LENGTH)
                 unique(isUnique = isJmsQueueUnique)
-                oldJmsQueue(oldJmsQueue = oldJmsQueue)
             }
         }
     }
@@ -230,12 +219,6 @@ class TeamValidationService(
                 }
             }
         }
-    }
-
-    private fun ValidationBuilder<String>.oldJmsQueue(oldJmsQueue: String?) = addConstraint(
-        errorMessage = "must be old $oldJmsQueue",
-    ) {
-        oldJmsQueue?.let { jmsQueue -> jmsQueue == it } ?: true
     }
 
     companion object {
