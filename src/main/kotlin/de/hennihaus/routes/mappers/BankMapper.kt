@@ -16,7 +16,6 @@ fun Bank.toBankDTO() = BankDTO(
     isAsync = isAsync,
     isActive = isActive,
     creditConfiguration = creditConfiguration?.toCreditConfigurationDTO(),
-    teamsCount = teamsCount,
 )
 
 fun BankDTO.toBank() = Bank(
@@ -27,7 +26,6 @@ fun BankDTO.toBank() = Bank(
     isAsync = isAsync,
     isActive = isActive,
     creditConfiguration = creditConfiguration?.toCreditConfiguration(),
-    teamsCount = teamsCount,
 )
 
 private fun CreditConfiguration.toCreditConfigurationDTO() = CreditConfigurationDTO(

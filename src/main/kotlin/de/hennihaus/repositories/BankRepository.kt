@@ -100,7 +100,6 @@ class BankRepository {
 
     private fun getBankRelations() = arrayOf(
         BankEntity::creditConfiguration,
-        BankEntity::statistics,
     )
 
     companion object {
