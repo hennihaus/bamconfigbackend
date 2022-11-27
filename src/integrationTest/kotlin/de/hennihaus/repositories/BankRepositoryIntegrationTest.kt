@@ -12,10 +12,9 @@ import de.hennihaus.testutils.containers.ExposedContainer
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldNotBeEmpty
-import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
-import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -109,7 +108,7 @@ class BankRepositoryIntegrationTest : KoinTest {
     @Nested
     inner class Save {
         @Test
-        fun `should save an existing bank with creditConfiguration`() = runBlocking<Unit> {
+        fun `should save an existing bank with creditConfiguration`() = runBlocking {
             val bank = getAsyncBank(
                 uuid = ExposedContainerObjectMother.BANK_UUID,
                 jmsQueue = "NewJmsName",
@@ -123,15 +122,11 @@ class BankRepositoryIntegrationTest : KoinTest {
                 repetitionAttempts = ONE_REPETITION_ATTEMPT,
             )
 
-            result.shouldBeEqualToIgnoringFields(
-                other = bank,
-                property = Bank::teamsCount,
-            )
-            result.teamsCount shouldBeGreaterThan 0L
+            result shouldBe bank
         }
 
         @Test
-        fun `should save an existing bank without creditConfiguration`() = runBlocking<Unit> {
+        fun `should save an existing bank without creditConfiguration`() = runBlocking {
             val bank = getAsyncBank(
                 uuid = ExposedContainerObjectMother.BANK_UUID,
                 jmsQueue = "NewJmsName",
@@ -143,11 +138,7 @@ class BankRepositoryIntegrationTest : KoinTest {
                 repetitionAttempts = ONE_REPETITION_ATTEMPT,
             )
 
-            result.shouldBeEqualToIgnoringFields(
-                other = bank,
-                property = Bank::teamsCount,
-            )
-            result.teamsCount shouldBeGreaterThan 0L
+            result shouldBe bank
         }
     }
 

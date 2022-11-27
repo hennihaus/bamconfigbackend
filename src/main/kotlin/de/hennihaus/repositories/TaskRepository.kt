@@ -214,7 +214,6 @@ class TaskRepository {
         TaskEntity::responses,
         TaskEntity::banks,
         BankEntity::creditConfiguration,
-        BankEntity::statistics,
     )
 
     companion object {

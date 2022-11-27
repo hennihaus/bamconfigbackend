@@ -1543,8 +1543,7 @@
           "thumbnailUrl" : "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
           "isAsync" : false,
           "isActive" : true,
-          "creditConfiguration" : null,
-          "teamsCount" : 100000
+          "creditConfiguration" : null
         }, {
           "uuid" : "bf6981d4-0413-4767-8232-c7179b169bc7",
           "name" : "Deutsche Bank",
@@ -1559,8 +1558,7 @@
             "maxTermInMonths" : 36,
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
-          },
-          "teamsCount" : 100000
+          }
         }, {
           "uuid" : "78eefcd4-2459-412e-857f-60f7c5d531c9",
           "name" : "Sparkasse",
@@ -1575,8 +1573,7 @@
             "maxTermInMonths" : 36,
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
-          },
-          "teamsCount" : 100000
+          }
         } ]
       },
       "Schufa" : {
@@ -1587,8 +1584,7 @@
           "thumbnailUrl" : "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
           "isAsync" : false,
           "isActive" : true,
-          "creditConfiguration" : null,
-          "teamsCount" : 100000
+          "creditConfiguration" : null
         }
       },
       "SyncBank" : {
@@ -1606,8 +1602,7 @@
             "maxTermInMonths" : 36,
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
-          },
-          "teamsCount" : 100000
+          }
         }
       },
       "AsyncBank" : {
@@ -1625,8 +1620,7 @@
             "maxTermInMonths" : 36,
             "minSchufaRating" : "A",
             "maxSchufaRating" : "P"
-          },
-          "teamsCount" : 100000
+          }
         }
       }
     },
@@ -2114,14 +2108,9 @@
           },
           "creditConfiguration" : {
             "$ref" : "#/components/schemas/CreditConfiguration"
-          },
-          "teamsCount" : {
-            "format" : "int64",
-            "minimum" : 0,
-            "type" : "integer"
           }
         },
-        "required" : [ "isActive", "isAsync", "jmsQueue", "name", "teamsCount", "thumbnailUrl", "uuid" ],
+        "required" : [ "isActive", "isAsync", "jmsQueue", "name", "thumbnailUrl", "uuid" ],
         "type" : "object"
       },
       "CreditConfiguration" : {
@@ -2209,8 +2198,7 @@
               "maxTermInMonths" : 36,
               "minSchufaRating" : "A",
               "maxSchufaRating" : "P"
-            },
-            "teamsCount" : 100000
+            }
           } ]
         },
         "properties" : {

@@ -2,11 +2,9 @@ package de.hennihaus.repositories.entities
 
 import de.hennihaus.repositories.tables.BankTable
 import de.hennihaus.repositories.tables.CreditConfigurationTable
-import de.hennihaus.repositories.tables.StatisticTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.sql.SizedIterable
 import java.util.UUID
 
 class BankEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
@@ -18,7 +16,6 @@ class BankEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
     val creditConfiguration: CreditConfigurationEntity? by CreditConfigurationEntity.optionalBackReferencedOn(
         column = CreditConfigurationTable.bankId,
     )
-    val statistics: SizedIterable<StatisticEntity> by StatisticEntity referrersOn StatisticTable.bankId
 
     companion object : UUIDEntityClass<BankEntity>(BankTable)
 }

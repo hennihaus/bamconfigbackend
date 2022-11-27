@@ -15,7 +15,6 @@ fun BankEntity.toBank() = Bank(
     isAsync = isAsync,
     isActive = isActive,
     creditConfiguration = creditConfiguration?.toCreditConfiguration(),
-    teamsCount = statistics.count(),
 )
 
 private fun CreditConfigurationEntity.toCreditConfiguration() = CreditConfiguration(
