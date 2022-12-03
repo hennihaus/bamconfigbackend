@@ -24,6 +24,79 @@
     }
   ],
   "paths": {
+    "/statistics/{uuid}": {
+      "put": {
+        "tags": [
+          "Statistic"
+        ],
+        "operationId": "saveStatistics",
+        "summary": "Creates or updates statistics by bank",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuidPath"
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "../commons/commons.json#/components/responses/204"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Statistic"
+        ],
+        "operationId": "deleteStatistics",
+        "summary": "Deletes statistics by bank",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/uuidPath"
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "../commons/commons.json#/components/responses/204"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/statistics/{limit}": {
+      "post": {
+        "tags": [
+          "Statistic"
+        ],
+        "operationId": "recreateStatistics",
+        "summary": "Recreates statistics for all teams with a limited number of banks",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limitPath"
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "../commons/commons.json#/components/responses/204"
+          },
+          "400": {
+            "$ref": "../commons/commons.json#/components/responses/400"
+          },
+          "500": {
+            "$ref": "../commons/commons.json#/components/responses/500"
+          }
+        }
+      }
+    },
     "/statistics/increment": {
       "patch": {
         "tags": [
@@ -61,6 +134,36 @@
               "$ref": "../schemas/statistic.json#/components/schemas/Statistic"
             }
           }
+        }
+      }
+    },
+    "parameters": {
+      "uuidPath": {
+        "name": "uuid",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "allowReserved": false,
+        "example": "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        }
+      },
+      "limitPath": {
+        "name": "limit",
+        "in": "path",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "allowReserved": false,
+        "example": 5,
+        "schema": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 0
         }
       }
     },

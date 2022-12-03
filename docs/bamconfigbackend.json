@@ -891,6 +891,193 @@
         "tags" : [ "Statistic" ]
       }
     },
+    "/statistics/{uuid}" : {
+      "delete" : {
+        "operationId" : "deleteStatistics",
+        "parameters" : [ {
+          "allowReserved" : false,
+          "example" : "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
+          "explode" : false,
+          "in" : "path",
+          "name" : "uuid",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "204" : {
+            "content" : {
+              "text/plain" : { }
+            },
+            "description" : "No Content"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Deletes statistics by bank",
+        "tags" : [ "Statistic" ]
+      },
+      "put" : {
+        "operationId" : "saveStatistics",
+        "parameters" : [ {
+          "allowReserved" : false,
+          "example" : "8ab8fef5-1239-42d5-a199-7cb41f68fc21",
+          "explode" : false,
+          "in" : "path",
+          "name" : "uuid",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "pattern" : "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "204" : {
+            "content" : {
+              "text/plain" : { }
+            },
+            "description" : "No Content"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Creates or updates statistics by bank",
+        "tags" : [ "Statistic" ]
+      }
+    },
+    "/statistics/{limit}" : {
+      "post" : {
+        "operationId" : "recreateStatistics",
+        "parameters" : [ {
+          "allowReserved" : false,
+          "example" : 5,
+          "explode" : false,
+          "in" : "path",
+          "name" : "limit",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "204" : {
+            "content" : {
+              "text/plain" : { }
+            },
+            "description" : "No Content"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "reasons" : [ {
+                    "exception" : "RequestValidationException",
+                    "message" : "uuid must have valid uuid format"
+                  } ],
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description" : "Invalid Request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "reasons" : [ {
+                    "exception" : "Exception",
+                    "message" : "internal server error"
+                  } ],
+                  "dateTime" : "2022-01-31T07:43:30"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/Errors"
+                }
+              }
+            },
+            "description" : "Internal Server Error"
+          }
+        },
+        "summary" : "Recreates statistics for all teams with a limited number of banks",
+        "tags" : [ "Statistic" ]
+      }
+    },
     "/banks" : {
       "get" : {
         "operationId" : "getAllBanks",
