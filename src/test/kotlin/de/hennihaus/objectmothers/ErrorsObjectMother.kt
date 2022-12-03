@@ -8,6 +8,7 @@ import de.hennihaus.objectmothers.ReasonObjectMother.getInternalServerErrorReaso
 import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidBankReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidCursorReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidIdReason
+import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidLimitReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidQueryReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidStatisticReason
 import de.hennihaus.objectmothers.ReasonObjectMother.getInvalidTaskReason
@@ -22,6 +23,14 @@ object ErrorsObjectMother {
 
     fun getInvalidIdErrors(
         reasons: List<ReasonDTO> = getInvalidIdReasons(),
+        dateTime: ZonedDateTime = ZonedDateTime.now(),
+    ) = ErrorsDTO(
+        reasons = reasons,
+        dateTime = "${dateTime.truncatedTo(ChronoUnit.SECONDS)}",
+    )
+
+    fun getInvalidLimitErrors(
+        reasons: List<ReasonDTO> = getInvalidLimitReasons(),
         dateTime: ZonedDateTime = ZonedDateTime.now(),
     ) = ErrorsDTO(
         reasons = reasons,
@@ -126,6 +135,10 @@ object ErrorsObjectMother {
 
     private fun getInvalidIdReasons() = listOf(
         getInvalidIdReason(),
+    )
+
+    private fun getInvalidLimitReasons() = listOf(
+        getInvalidLimitReason(),
     )
 
     private fun getInvalidTeamReasons() = listOf(

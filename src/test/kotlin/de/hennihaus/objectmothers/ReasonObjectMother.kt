@@ -8,11 +8,13 @@ import de.hennihaus.services.BankService.Companion.BANK_NOT_FOUND_MESSAGE
 import de.hennihaus.services.StatisticService.Companion.STATISTIC_NOT_FOUND_MESSAGE
 import de.hennihaus.services.TaskService.Companion.TASK_NOT_FOUND_MESSAGE
 import de.hennihaus.services.TeamService.Companion.TEAM_NOT_FOUND_MESSAGE
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 
 object ReasonObjectMother {
 
+    const val INVALID_LIMIT_MESSAGE = "limit must be a number"
     const val INVALID_TEAM_MESSAGE = "uuid must have valid uuid format"
     const val INVALID_BANK_MESSAGE = "uuid must have valid uuid format"
     const val INVALID_TASK_MESSAGE = "uuid must have valid uuid format"
@@ -23,6 +25,14 @@ object ReasonObjectMother {
     fun getInvalidIdReason(
         exception: String = UUIDException::class.simpleName!!,
         message: String = UUIDException().message,
+    ) = ReasonDTO(
+        exception = exception,
+        message = message,
+    )
+
+    fun getInvalidLimitReason(
+        exception: String = BadRequestException::class.simpleName!!,
+        message: String = INVALID_LIMIT_MESSAGE,
     ) = ReasonDTO(
         exception = exception,
         message = message,
