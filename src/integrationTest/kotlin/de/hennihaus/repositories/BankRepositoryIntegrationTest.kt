@@ -146,7 +146,7 @@ class BankRepositoryIntegrationTest : KoinTest {
     inner class GetBankIdByName {
         @Test
         fun `should return a bank uuid when bank is found by name`() = runBlocking<Unit> {
-            val name = ExposedContainerObjectMother.PSD_BANK_NAME
+            val name = ExposedContainerObjectMother.BANK_NAME
 
             val result: UUID? = classUnderTest.getBankIdByName(name = name)
 
