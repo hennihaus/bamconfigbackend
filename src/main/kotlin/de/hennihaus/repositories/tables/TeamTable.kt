@@ -8,6 +8,7 @@ import de.hennihaus.repositories.tables.StudentTableDescription.STUDENT_FIRSTNAM
 import de.hennihaus.repositories.tables.StudentTableDescription.STUDENT_LASTNAME_COLUMN
 import de.hennihaus.repositories.tables.StudentTableDescription.STUDENT_LAST_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.StudentTableDescription.STUDENT_UUID_COLUMN
+import de.hennihaus.repositories.tables.TeamTableDescription.TEAM_CREATED_COLUMN
 import de.hennihaus.repositories.tables.TeamTableDescription.TEAM_JMS_QUEUE_COLUMN
 import de.hennihaus.repositories.tables.TeamTableDescription.TEAM_LAST_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.TeamTableDescription.TEAM_PASSWORD_COLUMN
@@ -23,6 +24,7 @@ object TeamTable : UUIDTable(columnName = TEAM_UUID_COLUMN) {
     val username = text(name = TEAM_USERNAME_COLUMN)
     val password = text(name = TEAM_PASSWORD_COLUMN)
     val jmsQueue = text(name = TEAM_JMS_QUEUE_COLUMN)
+    val created = timestamp(name = TEAM_CREATED_COLUMN)
     val lastUpdated = timestamp(name = TEAM_LAST_UPDATED_COLUMN)
 }
 
@@ -46,6 +48,7 @@ object TeamTableDescription {
     const val TEAM_USERNAME_COLUMN = "team_username"
     const val TEAM_PASSWORD_COLUMN = "team_password"
     const val TEAM_JMS_QUEUE_COLUMN = "team_jms_queue"
+    const val TEAM_CREATED_COLUMN = "team_created_timestamp_with_time_zone"
     const val TEAM_LAST_UPDATED_COLUMN = "team_updated_timestamp_with_time_zone"
 }
 

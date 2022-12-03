@@ -19,7 +19,9 @@
           "endpoints",
           "parameters",
           "responses",
-          "banks"
+          "banks",
+          "createdAt",
+          "updatedAt"
         ],
         "properties": {
           "uuid": {
@@ -84,6 +86,14 @@
             },
             "minItems": 0,
             "uniqueItems": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "example": {

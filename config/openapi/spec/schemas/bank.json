@@ -15,7 +15,9 @@
           "jmsQueue",
           "thumbnailUrl",
           "isAsync",
-          "isActive"
+          "isActive",
+          "createdAt",
+          "updatedAt"
         ],
         "properties": {
           "uuid": {
@@ -46,6 +48,14 @@
           },
           "creditConfiguration": {
             "$ref": "#/components/schemas/CreditConfiguration"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },

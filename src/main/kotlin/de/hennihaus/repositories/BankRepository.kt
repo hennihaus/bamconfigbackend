@@ -20,6 +20,7 @@ import java.util.UUID
 @Single
 class BankRepository {
 
+    // TODO: Add timestamps in examples
     suspend fun getById(id: UUID): Bank? = inTransaction {
         BankEntity.findById(id = id)
             ?.load(relations = getBankRelations())

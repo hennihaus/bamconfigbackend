@@ -23,6 +23,7 @@ import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_LAST_U
 import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_UUID_COLUMN
 import de.hennihaus.repositories.tables.TaskParameterTableDescription.TASK_PARAMETER_TABLE
 import de.hennihaus.repositories.tables.TaskResponseTableDescription.TASK_RESPONSE_TABLE
+import de.hennihaus.repositories.tables.TaskTableDescription.TASK_CREATED_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_DESCRIPTION_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_INTEGRATION_STEP_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_IS_OPEN_API_VERBOSE_COLUMN
@@ -40,6 +41,7 @@ object TaskTable : UUIDTable(columnName = TASK_UUID_COLUMN) {
     val title = text(name = TASK_TITLE_COLUMN)
     val description = text(name = TASK_DESCRIPTION_COLUMN)
     val isOpenApiVerbose = bool(name = TASK_IS_OPEN_API_VERBOSE_COLUMN)
+    val created = timestamp(name = TASK_CREATED_COLUMN)
     val lastUpdated = timestamp(name = TASK_LAST_UPDATED_COLUMN)
 }
 
@@ -89,6 +91,7 @@ object TaskTableDescription {
     const val TASK_TITLE_COLUMN = "task_title"
     const val TASK_DESCRIPTION_COLUMN = "task_description"
     const val TASK_IS_OPEN_API_VERBOSE_COLUMN = "task_is_open_api_verbose"
+    const val TASK_CREATED_COLUMN = "task_created_timestamp_with_time_zone"
     const val TASK_LAST_UPDATED_COLUMN = "task_updated_timestamp_with_time_zone"
 }
 

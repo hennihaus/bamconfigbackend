@@ -3,6 +3,7 @@ package de.hennihaus.repositories.tables
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_IS_ACTIVE_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_IS_ASYNC_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_JMS_QUEUE_COLUMN
+import de.hennihaus.repositories.tables.BankTableDescription.BANK_CREATED_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_LAST_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_NAME_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_THUMBNAIL_URL_COLUMN
@@ -24,6 +25,7 @@ object BankTable : UUIDTable(columnName = BANK_UUID_COLUMN) {
     val thumbnailUrl = text(name = BANK_THUMBNAIL_URL_COLUMN)
     val isAsync = bool(name = BANK_IS_ASYNC_COLUMN)
     val isActive = bool(name = BANK_IS_ACTIVE_COLUMN)
+    val created = timestamp(name = BANK_CREATED_COLUMN)
     val lastUpdated = timestamp(name = BANK_LAST_UPDATED_COLUMN)
 }
 
@@ -47,6 +49,7 @@ object BankTableDescription {
     const val BANK_THUMBNAIL_URL_COLUMN = "bank_thumbnail_url"
     const val BANK_IS_ASYNC_COLUMN = "bank_is_async"
     const val BANK_IS_ACTIVE_COLUMN = "bank_is_active"
+    const val BANK_CREATED_COLUMN = "bank_created_timestamp_with_time_zone"
     const val BANK_LAST_UPDATED_COLUMN = "bank_updated_timestamp_with_time_zone"
 }
 
