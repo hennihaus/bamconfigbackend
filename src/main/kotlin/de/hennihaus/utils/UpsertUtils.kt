@@ -1,9 +1,13 @@
 package de.hennihaus.utils
 
+import org.jetbrains.exposed.sql.AbstractQuery
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.autoIncColumnType
+import org.jetbrains.exposed.sql.isAutoInc
 import org.jetbrains.exposed.sql.statements.BatchInsertStatement
+import org.jetbrains.exposed.sql.statements.InsertSelectStatement
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 
@@ -17,6 +21,19 @@ fun <T : Table> T.upsert(
     excludedColumnsFromUpdate = excludedColumnsFromUpdate,
 ).apply {
     upsert(this)
+    execute(transaction = TransactionManager.current())
+}
+
+fun <T : Table> T.upsert(
+    conflictColumns: List<Column<*>>,
+    excludedColumnsFromUpdate: List<Column<*>> = emptyList(),
+    selectQuery: AbstractQuery<*>,
+) = UpsertSelectStatement(
+    table = this,
+    conflictColumns = conflictColumns,
+    excludedColumnsFromUpdate = excludedColumnsFromUpdate,
+    selectQuery = selectQuery,
+).apply {
     execute(transaction = TransactionManager.current())
 }
 
@@ -55,6 +72,30 @@ class UpsertStatement<Key : Any>(
             transaction.buildUpsertStatement(
                 table = table,
                 insertColumns = this@UpsertStatement.values.keys.toList(),
+                conflictColumns = conflictColumns,
+                excludedColumnsFromUpdate = excludedColumnsFromUpdate,
+            )
+        )
+    }
+}
+
+class UpsertSelectStatement(
+    selectQuery: AbstractQuery<*>,
+    private val table: Table,
+    private val conflictColumns: List<Column<*>>,
+    private val excludedColumnsFromUpdate: List<Column<*>>,
+) : InsertSelectStatement(
+    selectQuery = selectQuery,
+    columns = table.columns.filter {
+        !it.columnType.isAutoInc || it.autoIncColumnType?.nextValExpression != null
+    },
+) {
+    override fun prepareSQL(transaction: Transaction) = buildString {
+        append(super.prepareSQL(transaction = transaction))
+        append(
+            transaction.buildUpsertStatement(
+                table = table,
+                insertColumns = this@UpsertSelectStatement.columns,
                 conflictColumns = conflictColumns,
                 excludedColumnsFromUpdate = excludedColumnsFromUpdate,
             )

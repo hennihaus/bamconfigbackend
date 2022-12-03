@@ -14,7 +14,7 @@ import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
 import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithEmptyFields
 import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithNoEmptyFields
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
-import de.hennihaus.objectmothers.ExposedContainerObjectMother.PSD_BANK_NAME
+import de.hennihaus.objectmothers.ExposedContainerObjectMother.BANK_NAME
 import de.hennihaus.objectmothers.TeamQueryObjectMother.getTeamQueryWithNoEmptyFields
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
@@ -113,7 +113,7 @@ class TeamRepositoryIntegrationTest : KoinTest {
                     jmsQueue = ExposedContainerObjectMother.TEAM_JMS_QUEUE,
                     studentFirstname = ExposedContainerObjectMother.STUDENT_FIRSTNAME,
                     studentLastname = ExposedContainerObjectMother.STUDENT_LASTNAME,
-                    banks = listOf(PSD_BANK_NAME),
+                    banks = listOf(BANK_NAME),
                 ),
             )
 
@@ -158,7 +158,7 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 statistics = mapOf(
                     SCHUFA_BANK_NAME to 0L,
                     SYNC_BANK_NAME to 0L,
-                    PSD_BANK_NAME to 1L,
+                    BANK_NAME to 1L,
                 ),
             )
 

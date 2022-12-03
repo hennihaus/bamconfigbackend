@@ -1,6 +1,7 @@
 package de.hennihaus.repositories
 
 import de.hennihaus.bamdatamodel.Statistic
+import de.hennihaus.bamdatamodel.TeamType
 import de.hennihaus.bamdatamodel.objectmothers.StatisticObjectMother.getFirstTeamAsyncBankStatistic
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getZeroStatistics
@@ -9,9 +10,15 @@ import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
 import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithEmptyFields
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
+import de.hennihaus.objectmothers.ExposedContainerObjectMother.BANK_ASYNC_COUNT
+import de.hennihaus.objectmothers.ExposedContainerObjectMother.BANK_SYNC_COUNT
+import de.hennihaus.objectmothers.StatisticObjectMother
 import de.hennihaus.objectmothers.TeamQueryObjectMother.getTeamQueryWithEmptyFields
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
+import de.hennihaus.repositories.entities.TeamEntity
+import de.hennihaus.repositories.mappers.toTeam
+import de.hennihaus.repositories.tables.StatisticTable
 import de.hennihaus.routes.validations.ValidationService.Companion.LIMIT_MAXIMUM
 import de.hennihaus.testutils.containers.ExposedContainer
 import io.kotest.inspectors.forAll
@@ -20,9 +27,14 @@ import io.kotest.inspectors.shouldForAll
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldBeUnique
 import io.kotest.matchers.longs.shouldBeZero
+import io.kotest.matchers.maps.shouldContainKey
+import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -145,6 +157,50 @@ class StatisticRepositoryIntegrationTest : KoinTest {
             )
 
             result.shouldBeEmpty()
+        }
+    }
+
+    @Nested
+    inner class SaveAll {
+        @Test
+        fun `should create for every team a statistic by given bank`() = runBlocking<Unit> {
+            transaction { StatisticTable.deleteAll() }
+            val bankId = ExposedContainerObjectMother.BANK_UUID
+
+            classUnderTest.saveAll(bankId = bankId)
+
+            transaction { TeamEntity.all().map { it.toTeam().statistics } }.forAll {
+                it shouldContainKey ExposedContainerObjectMother.BANK_NAME
+            }
+        }
+    }
+
+    @Nested
+    inner class DeleteAll {
+        @Test
+        fun `should delete all statistics by given bank`() = runBlocking<Unit> {
+            val bankId = ExposedContainerObjectMother.BANK_UUID
+
+            classUnderTest.deleteAll(bankId = bankId)
+
+            transaction { StatisticTable.select { StatisticTable.bankId eq bankId }.count() }.shouldBeZero()
+        }
+    }
+
+    @Nested
+    inner class RecreateAll {
+        @Test
+        fun `should recreate all statistics with a limit of banks for every team`() = runBlocking<Unit> {
+            val limit = StatisticObjectMother.DEFAULT_LIMIT
+
+            classUnderTest.recreateAll(limit = limit)
+
+            transaction { TeamEntity.all().map { it.toTeam() }.filter { it.type == TeamType.REGULAR } }.forAll {
+                it.statistics shouldHaveSize (limit + BANK_SYNC_COUNT).toInt()
+            }
+            transaction { TeamEntity.all().map { it.toTeam() }.filter { it.type == TeamType.EXAMPLE } }.forAll {
+                it.statistics shouldHaveSize (BANK_ASYNC_COUNT + BANK_SYNC_COUNT).toInt()
+            }
         }
     }
 }

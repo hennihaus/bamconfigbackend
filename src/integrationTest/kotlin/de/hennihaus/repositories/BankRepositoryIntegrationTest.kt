@@ -111,6 +111,7 @@ class BankRepositoryIntegrationTest : KoinTest {
         fun `should save an existing bank with creditConfiguration`() = runBlocking {
             val bank = getAsyncBank(
                 uuid = ExposedContainerObjectMother.BANK_UUID,
+                name = ExposedContainerObjectMother.BANK_NAME,
                 jmsQueue = "NewJmsName",
                 creditConfiguration = getCreditConfigurationWithNoEmptyFields(
                     minAmountInEuros = 0,
@@ -129,6 +130,7 @@ class BankRepositoryIntegrationTest : KoinTest {
         fun `should save an existing bank without creditConfiguration`() = runBlocking {
             val bank = getAsyncBank(
                 uuid = ExposedContainerObjectMother.BANK_UUID,
+                name = ExposedContainerObjectMother.BANK_NAME,
                 jmsQueue = "NewJmsName",
                 creditConfiguration = null,
             )
@@ -146,7 +148,7 @@ class BankRepositoryIntegrationTest : KoinTest {
     inner class GetBankIdByName {
         @Test
         fun `should return a bank uuid when bank is found by name`() = runBlocking<Unit> {
-            val name = ExposedContainerObjectMother.PSD_BANK_NAME
+            val name = ExposedContainerObjectMother.BANK_NAME
 
             val result: UUID? = classUnderTest.getBankIdByName(name = name)
 

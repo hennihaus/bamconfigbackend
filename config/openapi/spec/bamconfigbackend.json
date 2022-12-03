@@ -40,6 +40,12 @@
     "/statistics/increment": {
       "$ref": "./paths/statistic.json#/paths/~1statistics~1increment"
     },
+    "/statistics/{uuid}": {
+      "$ref": "./paths/statistic.json#/paths/~1statistics~1{uuid}"
+    },
+    "/statistics/{limit}": {
+      "$ref": "./paths/statistic.json#/paths/~1statistics~1{limit}"
+    },
     "/banks": {
       "$ref": "./paths/bank.json#/paths/~1banks"
     },

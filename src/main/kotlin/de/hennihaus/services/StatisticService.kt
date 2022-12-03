@@ -2,11 +2,29 @@ package de.hennihaus.services
 
 import de.hennihaus.bamdatamodel.Statistic
 import de.hennihaus.repositories.StatisticRepository
+import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
+import de.hennihaus.utils.toUUID
 import io.ktor.server.plugins.NotFoundException
 import org.koin.core.annotation.Single
 
 @Single
 class StatisticService(private val repository: StatisticRepository) {
+
+    suspend fun saveStatistics(bankId: String): Unit = bankId.toUUID { uuid ->
+        repository.saveAll(
+            bankId = uuid,
+        )
+    }
+
+    suspend fun deleteStatistics(bankId: String): Unit = bankId.toUUID { uuid ->
+        repository.deleteAll(
+            bankId = uuid,
+        )
+    }
+
+    suspend fun recreateStatistics(limit: Long): Unit = repository.recreateAll(
+        limit = limit.takeIf { limit > ZERO_REQUESTS } ?: ZERO_REQUESTS,
+    )
 
     suspend fun incrementRequest(statistic: Statistic): Statistic {
         return repository.incrementRequest(entry = statistic)
