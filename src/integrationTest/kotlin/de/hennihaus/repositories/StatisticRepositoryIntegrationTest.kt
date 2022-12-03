@@ -12,6 +12,7 @@ import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithEmpty
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
 import de.hennihaus.objectmothers.ExposedContainerObjectMother.BANK_ASYNC_COUNT
 import de.hennihaus.objectmothers.ExposedContainerObjectMother.BANK_SYNC_COUNT
+import de.hennihaus.objectmothers.StatisticObjectMother
 import de.hennihaus.objectmothers.TeamQueryObjectMother.getTeamQueryWithEmptyFields
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
@@ -190,7 +191,7 @@ class StatisticRepositoryIntegrationTest : KoinTest {
     inner class RecreateAll {
         @Test
         fun `should recreate all statistics with a limit of banks for every team`() = runBlocking<Unit> {
-            val limit = 5L
+            val limit = StatisticObjectMother.DEFAULT_LIMIT
 
             classUnderTest.recreateAll(limit = limit)
 

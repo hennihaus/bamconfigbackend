@@ -3,6 +3,7 @@ package de.hennihaus.services
 import de.hennihaus.bamdatamodel.Statistic
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
 import de.hennihaus.bamdatamodel.objectmothers.StatisticObjectMother.getFirstTeamAsyncBankStatistic
+import de.hennihaus.objectmothers.StatisticObjectMother
 import de.hennihaus.repositories.StatisticRepository
 import de.hennihaus.services.StatisticService.Companion.STATISTIC_NOT_FOUND_MESSAGE
 import io.kotest.assertions.throwables.shouldThrowExactly
@@ -84,7 +85,7 @@ class StatisticServiceTest {
         @Test
         fun `should recreate statistics when limit greater zero`() = runBlocking {
             coEvery { repository.recreateAll(limit = any()) } returns Unit
-            val limit = 5L
+            val limit = StatisticObjectMother.DEFAULT_LIMIT
 
             classUnderTest.recreateStatistics(limit = limit)
 
@@ -104,7 +105,7 @@ class StatisticServiceTest {
         @Test
         fun `should throw an exception when error occurs`() = runBlocking {
             coEvery { repository.recreateAll(limit = any()) } throws Exception()
-            val limit = 5L
+            val limit = StatisticObjectMother.DEFAULT_LIMIT
 
             shouldThrowExactly<Exception> {
                 classUnderTest.recreateStatistics(limit = limit)

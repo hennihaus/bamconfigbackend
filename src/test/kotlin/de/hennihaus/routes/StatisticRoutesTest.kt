@@ -108,7 +108,7 @@ class StatisticRoutesTest {
             coEvery { statisticService.deleteStatistics(bankId = any()) } throws UUIDException()
             val bankId = "invalidUUID"
 
-            val response = testClient.delete(urlString = "/v1/statistics/${bankId}")
+            val response = testClient.delete(urlString = "/v1/statistics/$bankId")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
             response.body<ErrorsDTO>() shouldBe getInvalidIdErrors()
@@ -134,7 +134,7 @@ class StatisticRoutesTest {
         fun `should return 400 and an error response when limit is invalid`() = testApplicationWith(mockModule) {
             val limit = "invalidLimit"
 
-            val response = testClient.post(urlString = "/v1/statistics/${limit}")
+            val response = testClient.post(urlString = "/v1/statistics/$limit")
 
             response shouldHaveStatus HttpStatusCode.BadRequest
             response.body<ErrorsDTO>() shouldBe getInvalidLimitErrors()

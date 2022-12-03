@@ -102,8 +102,7 @@ class StatisticRepository {
     }
 
     private fun deleteStatistics() = StatisticTable.deleteWhere {
-        StatisticTable.bankId inSubQuery (BankTable.slice(column = BankTable.id)
-            .select { BankTable.isAsync eq true })
+        StatisticTable.bankId inSubQuery BankTable.slice(column = BankTable.id).select { BankTable.isAsync eq true }
     }
 
     private fun insertExampleStatistics(now: Instant) {
