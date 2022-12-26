@@ -109,7 +109,7 @@ class TeamRepository(
     suspend fun resetAllTeams(repetitionAttempts: Int): List<UUID> = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {
-        TeamTable.update {
+        TeamTable.update(where = { TeamTable.type neq TeamType.EXAMPLE.name }) {
             with(SqlExpressionBuilder) {
                 it.update(
                     column = password,
