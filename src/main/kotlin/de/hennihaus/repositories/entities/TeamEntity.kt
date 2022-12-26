@@ -9,6 +9,7 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.SizedIterable
+import java.time.Instant
 import java.util.UUID
 
 class TeamEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
@@ -18,6 +19,8 @@ class TeamEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
     val jmsQueue: String by TeamTable.jmsQueue
     val students: SizedIterable<StudentEntity> by StudentEntity referrersOn StudentTable.teamId
     val statistics: SizedIterable<StatisticEntity> by StatisticEntity referrersOn StatisticTable.teamId
+    val createdAt: Instant by TeamTable.created
+    val updatedAt: Instant by TeamTable.updated
 
     companion object : UUIDEntityClass<TeamEntity>(TeamTable)
 }

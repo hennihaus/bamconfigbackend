@@ -15,12 +15,12 @@ import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 fun Application.configureErrorHandling() = install(plugin = StatusPages) {
     exception<Throwable> { call, throwable ->
-        val dateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+        val dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
 
         when (throwable) {
             is UUIDException -> call.respond(
@@ -56,7 +56,7 @@ fun Application.configureErrorHandling() = install(plugin = StatusPages) {
     }
 }
 
-private fun Throwable.toErrorsDTO(dateTime: ZonedDateTime) = ErrorsDTO(
+private fun Throwable.toErrorsDTO(dateTime: LocalDateTime) = ErrorsDTO(
     reasons = listOf(
         ReasonDTO(
             exception = this::class.simpleName ?: ANONYMOUS_OBJECT,
@@ -66,7 +66,7 @@ private fun Throwable.toErrorsDTO(dateTime: ZonedDateTime) = ErrorsDTO(
     dateTime = "$dateTime",
 )
 
-private fun RequestValidationException.toErrorsDTO(dateTime: ZonedDateTime) = ErrorsDTO(
+private fun RequestValidationException.toErrorsDTO(dateTime: LocalDateTime) = ErrorsDTO(
     reasons = this.reasons.map { reason ->
         ReasonDTO(
             exception = this::class.simpleName ?: ANONYMOUS_OBJECT,

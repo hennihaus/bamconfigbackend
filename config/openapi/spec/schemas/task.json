@@ -19,7 +19,8 @@
           "endpoints",
           "parameters",
           "responses",
-          "banks"
+          "banks",
+          "updatedAt"
         ],
         "properties": {
           "uuid": {
@@ -84,6 +85,10 @@
             },
             "minItems": 0,
             "uniqueItems": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "example": {
@@ -141,7 +146,8 @@
                 "maxSchufaRating": "P"
               }
             }
-          ]
+          ],
+          "updatedAt": "2022-12-26T08:49:22"
         }
       },
       "Contact": {

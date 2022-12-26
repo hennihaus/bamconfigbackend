@@ -16,6 +16,8 @@ import de.hennihaus.repositories.entities.TaskEntity
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import java.net.URI
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 fun TaskEntity.toTask() = Task(
     uuid = id.value,
@@ -29,6 +31,7 @@ fun TaskEntity.toTask() = Task(
     parameters = parameters.map { it.toParameter() },
     responses = responses.map { it.toResponse() },
     banks = banks.map { it.toBank() },
+    updatedAt = LocalDateTime.ofInstant(updatedAt, ZoneOffset.UTC.normalized()),
 )
 
 fun ContactEntity.toContact() = Contact(

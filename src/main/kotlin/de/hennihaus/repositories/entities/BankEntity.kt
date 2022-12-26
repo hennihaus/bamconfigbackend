@@ -5,6 +5,7 @@ import de.hennihaus.repositories.tables.CreditConfigurationTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import java.time.Instant
 import java.util.UUID
 
 class BankEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
@@ -16,6 +17,7 @@ class BankEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
     val creditConfiguration: CreditConfigurationEntity? by CreditConfigurationEntity.optionalBackReferencedOn(
         column = CreditConfigurationTable.bankId,
     )
+    val updatedAt: Instant by BankTable.updated
 
     companion object : UUIDEntityClass<BankEntity>(BankTable)
 }

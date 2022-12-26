@@ -9,6 +9,7 @@ import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
 import de.hennihaus.objectmothers.ExposedContainerObjectMother
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.testutils.containers.ExposedContainer
+import io.kotest.extensions.time.withConstantNow
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldNotBeEmpty
@@ -26,6 +27,8 @@ import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -118,10 +121,12 @@ class BankRepositoryIntegrationTest : KoinTest {
                 ),
             )
 
-            val result: Bank = classUnderTest.save(
-                entry = bank,
-                repetitionAttempts = ONE_REPETITION_ATTEMPT,
-            )
+            val result = withConstantNow(now = OffsetDateTime.of(bank.updatedAt, ZoneOffset.UTC)) {
+                classUnderTest.save(
+                    entry = bank,
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+            }
 
             result shouldBe bank
         }
@@ -135,10 +140,12 @@ class BankRepositoryIntegrationTest : KoinTest {
                 creditConfiguration = null,
             )
 
-            val result: Bank = classUnderTest.save(
-                entry = bank,
-                repetitionAttempts = ONE_REPETITION_ATTEMPT,
-            )
+            val result: Bank = withConstantNow(now = OffsetDateTime.of(bank.updatedAt, ZoneOffset.UTC)) {
+                classUnderTest.save(
+                    entry = bank,
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+            }
 
             result shouldBe bank
         }

@@ -15,7 +15,8 @@
           "jmsQueue",
           "thumbnailUrl",
           "isAsync",
-          "isActive"
+          "isActive",
+          "updatedAt"
         ],
         "properties": {
           "uuid": {
@@ -46,6 +47,10 @@
           },
           "creditConfiguration": {
             "$ref": "#/components/schemas/CreditConfiguration"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -105,7 +110,8 @@
             "thumbnailUrl": "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
             "isAsync": false,
             "isActive": true,
-            "creditConfiguration": null
+            "creditConfiguration": null,
+            "updatedAt": "2022-12-26T08:49:22"
           },
           {
             "uuid": "bf6981d4-0413-4767-8232-c7179b169bc7",
@@ -121,7 +127,8 @@
               "maxTermInMonths": 36,
               "minSchufaRating": "A",
               "maxSchufaRating": "P"
-            }
+            },
+            "updatedAt": "2022-12-26T08:49:22"
           },
           {
             "uuid": "78eefcd4-2459-412e-857f-60f7c5d531c9",
@@ -137,7 +144,8 @@
               "maxTermInMonths": 36,
               "minSchufaRating": "A",
               "maxSchufaRating": "P"
-            }
+            },
+            "updatedAt": "2022-12-26T08:49:22"
           }
         ]
       },
@@ -149,7 +157,8 @@
           "thumbnailUrl": "https://www.kskgg.de/content/myif/ksk-gross-gerau/work/filiale/de/home/service/schufa-bonitaetscheck/_jcr_content/par/section/section/imagebox1/image.img.jpg/1597729904274.jpg",
           "isAsync": false,
           "isActive": true,
-          "creditConfiguration": null
+          "creditConfiguration": null,
+          "updatedAt": "2022-12-26T08:49:22"
         }
       },
       "SyncBank": {
@@ -167,7 +176,8 @@
             "maxTermInMonths": 36,
             "minSchufaRating": "A",
             "maxSchufaRating": "P"
-          }
+          },
+          "updatedAt": "2022-12-26T08:49:22"
         }
       },
       "AsyncBank": {
@@ -185,7 +195,8 @@
             "maxTermInMonths": 36,
             "minSchufaRating": "A",
             "maxSchufaRating": "P"
-          }
+          },
+          "updatedAt": "2022-12-26T08:49:22"
         }
       }
     }

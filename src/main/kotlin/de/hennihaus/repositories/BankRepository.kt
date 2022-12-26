@@ -14,7 +14,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
 import java.time.Instant
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Single
@@ -47,7 +47,7 @@ class BankRepository {
     suspend fun save(entry: Bank, repetitionAttempts: Int): Bank = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {
-        val now = ZonedDateTime.now().toInstant()
+        val now = OffsetDateTime.now().toInstant()
 
         entry.saveBank(now = now)
         entry.saveCreditConfiguration()
@@ -76,7 +76,7 @@ class BankRepository {
         bankTable[thumbnailUrl] = "${this@saveBank.thumbnailUrl}"
         bankTable[isAsync] = this@saveBank.isAsync
         bankTable[isActive] = this@saveBank.isActive
-        bankTable[lastUpdated] = now
+        bankTable[updated] = now
     }
 
     private fun Bank.saveCreditConfiguration() {

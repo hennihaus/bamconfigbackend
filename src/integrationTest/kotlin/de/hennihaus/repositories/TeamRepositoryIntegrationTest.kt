@@ -19,15 +19,17 @@ import de.hennihaus.objectmothers.TeamQueryObjectMother.getTeamQueryWithNoEmptyF
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
 import de.hennihaus.testutils.containers.ExposedContainer
+import io.kotest.extensions.time.withConstantNow
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldNotBeEmpty
+import io.kotest.matchers.date.shouldBeBetween
+import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.kotest.matchers.maps.shouldContainValues
 import io.kotest.matchers.maps.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
-import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldHaveLength
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.enum
@@ -43,6 +45,9 @@ import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -162,12 +167,21 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 ),
             )
 
-            val result: Team = classUnderTest.save(
-                entry = team,
-                repetitionAttempts = ONE_REPETITION_ATTEMPT,
-            )
+            val result: Team = withConstantNow(now = OffsetDateTime.of(team.updatedAt, ZoneOffset.UTC)) {
+                classUnderTest.save(
+                    entry = team,
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+            }
 
-            result shouldBe team
+            result.shouldBeEqualToIgnoringFields(
+                other = team,
+                property = Team::createdAt,
+            )
+            result.createdAt.toInstant(ZoneOffset.UTC).shouldBeBetween(
+                fromInstant = Instant.now().minusSeconds(FIVE_SECONDS),
+                toInstant = Instant.now().plusSeconds(FIVE_SECONDS),
+            )
         }
 
         @Test
@@ -179,12 +193,21 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 jmsQueue = "NewJmsQueue",
             )
 
-            val result: Team = classUnderTest.save(
-                entry = team,
-                repetitionAttempts = ONE_REPETITION_ATTEMPT,
-            )
+            val result: Team = withConstantNow(now = OffsetDateTime.of(team.updatedAt, ZoneOffset.UTC)) {
+                classUnderTest.save(
+                    entry = team,
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+            }
 
-            result shouldBe team
+            result.shouldBeEqualToIgnoringFields(
+                other = team,
+                property = Team::createdAt,
+            )
+            result.createdAt.toInstant(ZoneOffset.UTC).shouldBeBetween(
+                fromInstant = Instant.now().minusSeconds(FIVE_SECONDS),
+                toInstant = Instant.now().plusSeconds(FIVE_SECONDS),
+            )
         }
     }
 
@@ -280,5 +303,9 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 it.statistics.shouldContainValues(ZERO_REQUESTS)
             }
         }
+    }
+
+    companion object {
+        private const val FIVE_SECONDS = 5L
     }
 }

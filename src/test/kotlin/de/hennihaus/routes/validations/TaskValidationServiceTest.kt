@@ -111,6 +111,19 @@ class TaskValidationServiceTest {
         }
 
         @Test
+        fun `should return a list with one error when updatedAt is invalid`() = runBlocking {
+            val body = getSchufaTask().toTaskDTO().copy(
+                updatedAt = "invalidLocalDateTime"
+            )
+
+            val result: List<String> = classUnderTest.validateBody(
+                body = body,
+            )
+
+            result shouldContainExactly listOf("updatedAt must be ISO Local Date and Time e.g. '2011-12-03T10:15:30'")
+        }
+
+        @Test
         fun `should return a list with one error when description is too long`() = runBlocking {
             val body = getSchufaTask().toTaskDTO().copy(
                 description = Arb.string(size = TASK_DESCRIPTION_MAX_LENGTH.inc()).single(),

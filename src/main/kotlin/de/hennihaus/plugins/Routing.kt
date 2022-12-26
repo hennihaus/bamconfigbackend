@@ -2,6 +2,7 @@ package de.hennihaus.plugins
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import de.hennihaus.configurations.Configuration.API_VERSION
 import de.hennihaus.routes.registerBankRoutes
 import de.hennihaus.routes.registerBrokerRoutes
@@ -21,6 +22,8 @@ fun Application.configureRouting() {
 
     install(plugin = ContentNegotiation) {
         jackson {
+            registerModule(JavaTimeModule())
+            disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             enable(SerializationFeature.INDENT_OUTPUT)
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         }

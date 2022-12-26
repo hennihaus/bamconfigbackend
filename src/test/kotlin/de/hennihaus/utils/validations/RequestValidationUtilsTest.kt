@@ -8,6 +8,7 @@ import io.kotest.property.Arb
 import io.kotest.property.Exhaustive
 import io.kotest.property.arbitrary.UUIDVersion
 import io.kotest.property.arbitrary.email
+import io.kotest.property.arbitrary.localDateTime
 import io.kotest.property.arbitrary.uuid
 import io.kotest.property.checkAll
 import io.kotest.property.exhaustive.collection
@@ -24,6 +25,8 @@ class RequestValidationUtilsTest {
     data class URLTestResource(val value: String)
 
     data class EmailTestResource(val value: String)
+
+    data class LocalDateTimeTestResource(val value: String)
 
     data class HttpStatusCodeTestResource(val value: Int)
 
@@ -158,6 +161,46 @@ class RequestValidationUtilsTest {
             )
 
             result shouldContainExactly listOf("value must have valid url format")
+        }
+    }
+
+    @Nested
+    inner class LocalDateTime {
+
+        private val classUnderTest = object : ValidationService<LocalDateTimeTestResource, Any> {
+            override suspend fun bodyValidation(body: LocalDateTimeTestResource) = Validation {
+                LocalDateTimeTestResource::value {
+                    localDateTime()
+                }
+            }
+        }
+
+        @Test
+        fun `should return an empty list when localDateTime is valid`() = runBlocking<Unit> {
+            checkAll(genA = Arb.localDateTime()) {
+                val body = LocalDateTimeTestResource(
+                    value = "$it",
+                )
+
+                val result: List<String> = classUnderTest.validateBody(
+                    body = body,
+                )
+
+                result.shouldBeEmpty()
+            }
+        }
+
+        @Test
+        fun `should return a list with one error when localDateTime is invalid`() = runBlocking {
+            val body = LocalDateTimeTestResource(
+                value = "invalidLocalDateTime",
+            )
+
+            val result: List<String> = classUnderTest.validateBody(
+                body = body,
+            )
+
+            result shouldContainExactly listOf("value must be ISO Local Date and Time e.g. '2011-12-03T10:15:30'")
         }
     }
 

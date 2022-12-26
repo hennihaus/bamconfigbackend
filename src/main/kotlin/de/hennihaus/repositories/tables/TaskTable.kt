@@ -3,7 +3,7 @@ package de.hennihaus.repositories.tables
 import de.hennihaus.repositories.tables.ContactTableDescription.CONTACT_EMAIL_COLUMN
 import de.hennihaus.repositories.tables.ContactTableDescription.CONTACT_FIRSTNAME_COLUMN
 import de.hennihaus.repositories.tables.ContactTableDescription.CONTACT_LASTNAME_COLUMN
-import de.hennihaus.repositories.tables.ContactTableDescription.CONTACT_LAST_UPDATED_COLUMN
+import de.hennihaus.repositories.tables.ContactTableDescription.CONTACT_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.ContactTableDescription.CONTACT_UUID_COLUMN
 import de.hennihaus.repositories.tables.EndpointTableDescription.ENDPOINT_DOCS_URL_COLUMN
 import de.hennihaus.repositories.tables.EndpointTableDescription.ENDPOINT_TYPE_COLUMN
@@ -11,23 +11,23 @@ import de.hennihaus.repositories.tables.EndpointTableDescription.ENDPOINT_URL_CO
 import de.hennihaus.repositories.tables.EndpointTableDescription.ENDPOINT_UUID_COLUMN
 import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_DESCRIPTION_COLUMN
 import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_EXAMPLE_COLUMN
-import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_LAST_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_NAME_COLUMN
 import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_TYPE_COLUMN
+import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_UUID_COLUMN
 import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_CONTENT_TYPE_COLUMN
 import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_DESCRIPTION_COLUMN
 import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_EXAMPLE_JSON_COLUMN
 import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_HTTP_STATUS_CODE_COLUMN
-import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_LAST_UPDATED_COLUMN
+import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_UUID_COLUMN
 import de.hennihaus.repositories.tables.TaskParameterTableDescription.TASK_PARAMETER_TABLE
 import de.hennihaus.repositories.tables.TaskResponseTableDescription.TASK_RESPONSE_TABLE
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_DESCRIPTION_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_INTEGRATION_STEP_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_IS_OPEN_API_VERBOSE_COLUMN
-import de.hennihaus.repositories.tables.TaskTableDescription.TASK_LAST_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_TITLE_COLUMN
+import de.hennihaus.repositories.tables.TaskTableDescription.TASK_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_UUID_COLUMN
 import de.hennihaus.repositories.types.jsonb
 import org.jetbrains.exposed.dao.id.UUIDTable
@@ -40,14 +40,14 @@ object TaskTable : UUIDTable(columnName = TASK_UUID_COLUMN) {
     val title = text(name = TASK_TITLE_COLUMN)
     val description = text(name = TASK_DESCRIPTION_COLUMN)
     val isOpenApiVerbose = bool(name = TASK_IS_OPEN_API_VERBOSE_COLUMN)
-    val lastUpdated = timestamp(name = TASK_LAST_UPDATED_COLUMN)
+    val updated = timestamp(name = TASK_UPDATED_COLUMN)
 }
 
 object ContactTable : UUIDTable(columnName = CONTACT_UUID_COLUMN) {
     val firstname = text(name = CONTACT_FIRSTNAME_COLUMN)
     val lastname = text(name = CONTACT_LASTNAME_COLUMN)
     val email = text(name = CONTACT_EMAIL_COLUMN)
-    val lastUpdated = timestamp(name = CONTACT_LAST_UPDATED_COLUMN)
+    val updated = timestamp(name = CONTACT_UPDATED_COLUMN)
 }
 
 object EndpointTable : UUIDTable(columnName = ENDPOINT_UUID_COLUMN) {
@@ -62,7 +62,7 @@ object ParameterTable : UUIDTable(columnName = PARAMETER_UUID_COLUMN) {
     val type = text(name = PARAMETER_TYPE_COLUMN)
     val description = text(name = PARAMETER_DESCRIPTION_COLUMN)
     val example = text(name = PARAMETER_EXAMPLE_COLUMN)
-    val lastUpdated = timestamp(name = PARAMETER_LAST_UPDATED_COLUMN)
+    val updated = timestamp(name = PARAMETER_UPDATED_COLUMN)
 }
 
 object TaskParameterTable : Table(name = TASK_PARAMETER_TABLE) {
@@ -75,7 +75,7 @@ object ResponseTable : UUIDTable(columnName = RESPONSE_UUID_COLUMN) {
     val contentType = text(name = RESPONSE_CONTENT_TYPE_COLUMN)
     val description = text(name = RESPONSE_DESCRIPTION_COLUMN)
     val example = jsonb(name = RESPONSE_EXAMPLE_JSON_COLUMN)
-    val lastUpdated = timestamp(name = RESPONSE_LAST_UPDATED_COLUMN)
+    val updated = timestamp(name = RESPONSE_UPDATED_COLUMN)
 }
 
 object TaskResponseTable : Table(name = TASK_RESPONSE_TABLE) {
@@ -89,7 +89,7 @@ object TaskTableDescription {
     const val TASK_TITLE_COLUMN = "task_title"
     const val TASK_DESCRIPTION_COLUMN = "task_description"
     const val TASK_IS_OPEN_API_VERBOSE_COLUMN = "task_is_open_api_verbose"
-    const val TASK_LAST_UPDATED_COLUMN = "task_updated_timestamp_with_time_zone"
+    const val TASK_UPDATED_COLUMN = "task_updated_timestamp"
 }
 
 object ContactTableDescription {
@@ -97,7 +97,7 @@ object ContactTableDescription {
     const val CONTACT_FIRSTNAME_COLUMN = "contact_firstname"
     const val CONTACT_LASTNAME_COLUMN = "contact_lastname"
     const val CONTACT_EMAIL_COLUMN = "contact_email"
-    const val CONTACT_LAST_UPDATED_COLUMN = "contact_updated_timestamp_with_time_zone"
+    const val CONTACT_UPDATED_COLUMN = "contact_updated_timestamp"
 }
 
 object EndpointTableDescription {
@@ -113,7 +113,7 @@ object ParameterTableDescription {
     const val PARAMETER_TYPE_COLUMN = "parameter_type"
     const val PARAMETER_DESCRIPTION_COLUMN = "parameter_description"
     const val PARAMETER_EXAMPLE_COLUMN = "parameter_example"
-    const val PARAMETER_LAST_UPDATED_COLUMN = "parameter_updated_timestamp_with_time_zone"
+    const val PARAMETER_UPDATED_COLUMN = "parameter_updated_timestamp"
 }
 
 object TaskParameterTableDescription {
@@ -126,7 +126,7 @@ object ResponseTableDescription {
     const val RESPONSE_CONTENT_TYPE_COLUMN = "response_content_type"
     const val RESPONSE_DESCRIPTION_COLUMN = "response_description"
     const val RESPONSE_EXAMPLE_JSON_COLUMN = "response_example_json"
-    const val RESPONSE_LAST_UPDATED_COLUMN = "response_updated_timestamp_with_time_zone"
+    const val RESPONSE_UPDATED_COLUMN = "response_updated_timestamp"
 }
 
 object TaskResponseTableDescription {

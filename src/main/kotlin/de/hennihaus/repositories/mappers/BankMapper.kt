@@ -6,6 +6,8 @@ import de.hennihaus.bamdatamodel.RatingLevel
 import de.hennihaus.repositories.entities.BankEntity
 import de.hennihaus.repositories.entities.CreditConfigurationEntity
 import java.net.URI
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 fun BankEntity.toBank() = Bank(
     uuid = id.value,
@@ -15,6 +17,7 @@ fun BankEntity.toBank() = Bank(
     isAsync = isAsync,
     isActive = isActive,
     creditConfiguration = creditConfiguration?.toCreditConfiguration(),
+    updatedAt = LocalDateTime.ofInstant(updatedAt, ZoneOffset.UTC.normalized()),
 )
 
 private fun CreditConfigurationEntity.toCreditConfiguration() = CreditConfiguration(

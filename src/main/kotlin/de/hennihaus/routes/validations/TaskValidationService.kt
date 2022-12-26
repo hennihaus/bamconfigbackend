@@ -15,6 +15,7 @@ import de.hennihaus.utils.validations.contentType
 import de.hennihaus.utils.validations.email
 import de.hennihaus.utils.validations.httpStatusCode
 import de.hennihaus.utils.validations.json
+import de.hennihaus.utils.validations.localDateTime
 import de.hennihaus.utils.validations.notConst
 import de.hennihaus.utils.validations.oneOf
 import de.hennihaus.utils.validations.unique
@@ -52,6 +53,9 @@ class TaskValidationService(private val task: TaskService) : ValidationService<T
             }
             TaskDTO::description {
                 maxLength(length = TASK_DESCRIPTION_MAX_LENGTH)
+            }
+            TaskDTO::updatedAt {
+                localDateTime()
             }
             validations.forEach {
                 run(validation = it)

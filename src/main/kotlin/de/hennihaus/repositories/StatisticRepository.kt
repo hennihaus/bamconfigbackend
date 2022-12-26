@@ -25,14 +25,14 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
 import java.time.Instant
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Single
 class StatisticRepository {
 
     suspend fun saveAll(bankId: UUID): Unit = inTransaction {
-        val now = ZonedDateTime.now().toInstant()
+        val now = OffsetDateTime.now().toInstant()
 
         StatisticTable.upsert(
             conflictColumns = listOf(
@@ -60,7 +60,7 @@ class StatisticRepository {
     }
 
     suspend fun recreateAll(limit: Long): Unit = inTransaction {
-        val now = ZonedDateTime.now().toInstant()
+        val now = OffsetDateTime.now().toInstant()
 
         deleteStatistics()
         insertExampleStatistics(now = now)
@@ -146,7 +146,7 @@ class StatisticRepository {
         val query = buildString {
             append("INSERT INTO statistic")
             append(" ")
-            append("(bank_uuid, team_uuid, statistic_requests_count, statistic_updated_timestamp_with_time_zone)")
+            append("(bank_uuid, team_uuid, statistic_requests_count, statistic_updated_timestamp)")
             append(" ")
             append(teamQuery.prepareSQL(builder = QueryBuilder(prepared = false)))
             append(" ")

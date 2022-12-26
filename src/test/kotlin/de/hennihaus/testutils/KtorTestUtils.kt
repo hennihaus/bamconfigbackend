@@ -1,6 +1,8 @@
 package de.hennihaus.testutils
 
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.addDeserializer
 import com.fasterxml.jackson.module.kotlin.addSerializer
 import de.hennihaus.models.IntegrationStep
@@ -13,7 +15,7 @@ import io.ktor.serialization.jackson.jackson
 import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.testing.ApplicationTestBuilder
 import org.koin.core.module.Module
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 import io.ktor.server.testing.testApplication as ktorTestApplication
 
 object KtorTestUtils {
@@ -31,7 +33,7 @@ object KtorTestUtils {
                     koinModules = mockModules,
                 )
             }
-            withConstantNow(now = ZonedDateTime.now()) {
+            withConstantNow(now = LocalDateTime.now()) {
                 block()
             }
         }
@@ -42,6 +44,7 @@ val ApplicationTestBuilder.testClient
     get() = createClient {
         install(ContentNegotiation) {
             jackson {
+                registerModule(JavaTimeModule())
                 registerModule(
                     SimpleModule()
                         .addSerializer(kClass = HttpStatusCode::class, serializer = HttpStatusCodeSerializer)
@@ -51,6 +54,7 @@ val ApplicationTestBuilder.testClient
                         .addSerializer(kClass = IntegrationStep::class, serializer = IntegrationStepSerializer)
                         .addDeserializer(kClass = IntegrationStep::class, deserializer = IntegrationStepDeserializer)
                 )
+                disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             }
         }
     }
