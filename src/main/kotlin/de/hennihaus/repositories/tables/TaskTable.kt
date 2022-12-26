@@ -11,9 +11,9 @@ import de.hennihaus.repositories.tables.EndpointTableDescription.ENDPOINT_URL_CO
 import de.hennihaus.repositories.tables.EndpointTableDescription.ENDPOINT_UUID_COLUMN
 import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_DESCRIPTION_COLUMN
 import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_EXAMPLE_COLUMN
-import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_NAME_COLUMN
 import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_TYPE_COLUMN
+import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.ParameterTableDescription.PARAMETER_UUID_COLUMN
 import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_CONTENT_TYPE_COLUMN
 import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_DESCRIPTION_COLUMN
@@ -26,8 +26,8 @@ import de.hennihaus.repositories.tables.TaskResponseTableDescription.TASK_RESPON
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_DESCRIPTION_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_INTEGRATION_STEP_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_IS_OPEN_API_VERBOSE_COLUMN
-import de.hennihaus.repositories.tables.TaskTableDescription.TASK_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_TITLE_COLUMN
+import de.hennihaus.repositories.tables.TaskTableDescription.TASK_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_UUID_COLUMN
 import de.hennihaus.repositories.types.jsonb
 import org.jetbrains.exposed.dao.id.UUIDTable

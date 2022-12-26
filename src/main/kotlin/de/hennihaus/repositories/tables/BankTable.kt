@@ -3,9 +3,9 @@ package de.hennihaus.repositories.tables
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_IS_ACTIVE_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_IS_ASYNC_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_JMS_QUEUE_COLUMN
-import de.hennihaus.repositories.tables.BankTableDescription.BANK_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_NAME_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_THUMBNAIL_URL_COLUMN
+import de.hennihaus.repositories.tables.BankTableDescription.BANK_UPDATED_COLUMN
 import de.hennihaus.repositories.tables.BankTableDescription.BANK_UUID_COLUMN
 import de.hennihaus.repositories.tables.CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MAX_AMOUNT_IN_EUROS_COLUMN
 import de.hennihaus.repositories.tables.CreditConfigurationTableDescription.CREDIT_CONFIGURATION_MAX_SCHUFA_RATING_COLUMN
