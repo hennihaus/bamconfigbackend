@@ -35,8 +35,8 @@ object ExposedContainer {
     private const val FIRST_COLUMN = 1
     private const val FIRST_ROW = 1
     private const val MARKER = "?"
-    private const val CREATED_TIMESTAMP_COLUMN_SUFFIX = "_created_timestamp_with_time_zone"
-    private const val UPDATED_TIMESTAMP_COLUMN_SUFFIX = "_updated_timestamp_with_time_zone"
+    private const val CREATED_TIMESTAMP_COLUMN_SUFFIX = "_created_timestamp"
+    private const val UPDATED_TIMESTAMP_COLUMN_SUFFIX = "_updated_timestamp"
 
     private const val TIMESTAMP_WITH_TIMEZONE_COLUMN_TYPE = "timestamptz"
     private const val BOOLEAN_COLUMN_TYPE = "bool"

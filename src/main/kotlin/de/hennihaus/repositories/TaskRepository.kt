@@ -26,7 +26,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
 import java.time.Instant
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Single
@@ -56,7 +56,7 @@ class TaskRepository {
     suspend fun save(entry: Task, repetitionAttempts: Int): Task = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {
-        val now = ZonedDateTime.now().toInstant()
+        val now = OffsetDateTime.now().toInstant()
 
         entry.saveContact(now = now)
         entry.saveTask(now = now)
@@ -107,7 +107,7 @@ class TaskRepository {
             contactTable[firstname] = contact.firstname
             contactTable[lastname] = contact.lastname
             contactTable[email] = contact.email
-            contactTable[lastUpdated] = now
+            contactTable[updated] = now
         }
         ContactTable.deleteWhere {
             ContactTable.id neq contact.uuid and (
@@ -127,7 +127,7 @@ class TaskRepository {
             taskTable[title] = this@saveTask.title
             taskTable[description] = this@saveTask.description
             taskTable[isOpenApiVerbose] = this@saveTask.isOpenApiVerbose
-            taskTable[lastUpdated] = now
+            taskTable[updated] = now
         }
     }
 
@@ -157,7 +157,7 @@ class TaskRepository {
             parameterTable[type] = parameter.type.name
             parameterTable[description] = parameter.description
             parameterTable[example] = parameter.example
-            parameterTable[lastUpdated] = now
+            parameterTable[updated] = now
         }
         TaskParameterTable.batchUpsert(
             data = parameters,
@@ -187,7 +187,7 @@ class TaskRepository {
             responseTable[contentType] = "${response.contentType}"
             responseTable[description] = response.description
             responseTable[example] = response.example
-            responseTable[lastUpdated] = now
+            responseTable[updated] = now
         }
         TaskResponseTable.batchUpsert(
             data = responses,

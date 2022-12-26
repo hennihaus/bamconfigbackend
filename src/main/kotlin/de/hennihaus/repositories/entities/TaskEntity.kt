@@ -12,6 +12,7 @@ import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.SizedIterable
+import java.time.Instant
 import java.util.UUID
 
 class TaskEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
@@ -24,6 +25,7 @@ class TaskEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
     val parameters: SizedIterable<ParameterEntity> by ParameterEntity via TaskParameterTable
     val responses: SizedIterable<ResponseEntity> by ResponseEntity via TaskResponseTable
     val banks: SizedIterable<BankEntity> by BankEntity referrersOn BankTable.taskId
+    val updatedAt: Instant by TaskTable.updated
 
     companion object : UUIDEntityClass<TaskEntity>(TaskTable)
 }

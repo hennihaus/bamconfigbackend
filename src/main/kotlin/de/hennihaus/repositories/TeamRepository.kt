@@ -29,7 +29,7 @@ import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Property
 import org.koin.core.annotation.Single
 import java.time.Instant
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Single
@@ -66,7 +66,7 @@ class TeamRepository(
     suspend fun save(entry: Team, repetitionAttempts: Int): Team = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {
-        val now = ZonedDateTime.now().toInstant()
+        val now = OffsetDateTime.now().toInstant()
 
         entry.saveTeam(now = now)
         entry.saveStudents(now = now)
@@ -143,7 +143,7 @@ class TeamRepository(
         teamTable[username] = this@saveTeam.username
         teamTable[password] = this@saveTeam.password
         teamTable[jmsQueue] = this@saveTeam.jmsQueue
-        teamTable[lastUpdated] = now
+        teamTable[updated] = now
     }
 
     private fun Team.saveStudents(now: Instant) {
@@ -152,7 +152,7 @@ class TeamRepository(
             studentTable[teamId] = uuid
             studentTable[firstname] = student.firstname
             studentTable[lastname] = student.lastname
-            studentTable[lastUpdated] = now
+            studentTable[updated] = now
         }
         StudentTable.deleteWhere {
             StudentTable.teamId eq uuid and (StudentTable.id notInList students.map { it.uuid })
@@ -171,7 +171,7 @@ class TeamRepository(
             statisticTable[teamId] = uuid
             statisticTable[bankId] = bankIds[bankName] ?: throw IllegalArgumentException(BANK_NAME_NOT_FOUND_MESSAGE)
             statisticTable[requestsCount] = requests
-            statisticTable[lastUpdated] = now
+            statisticTable[updated] = now
         }
         StatisticTable.deleteWhere {
             (StatisticTable.teamId eq uuid).and(

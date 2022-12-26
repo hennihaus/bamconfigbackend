@@ -6,6 +6,8 @@ import de.hennihaus.bamdatamodel.RatingLevel
 import de.hennihaus.models.generated.rest.BankDTO
 import de.hennihaus.models.generated.rest.CreditConfigurationDTO
 import java.net.URI
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 fun Bank.toBankDTO() = BankDTO(
@@ -16,6 +18,7 @@ fun Bank.toBankDTO() = BankDTO(
     isAsync = isAsync,
     isActive = isActive,
     creditConfiguration = creditConfiguration?.toCreditConfigurationDTO(),
+    updatedAt = "${updatedAt.truncatedTo(ChronoUnit.SECONDS)}",
 )
 
 fun BankDTO.toBank() = Bank(
@@ -26,6 +29,7 @@ fun BankDTO.toBank() = Bank(
     isAsync = isAsync,
     isActive = isActive,
     creditConfiguration = creditConfiguration?.toCreditConfiguration(),
+    updatedAt = LocalDateTime.parse(updatedAt),
 )
 
 private fun CreditConfiguration.toCreditConfigurationDTO() = CreditConfigurationDTO(

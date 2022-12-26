@@ -19,6 +19,7 @@ import de.hennihaus.objectmothers.TaskObjectMother.getAsynchronousBankTask
 import de.hennihaus.objectmothers.TaskObjectMother.getDefaultContact
 import de.hennihaus.plugins.initKoin
 import de.hennihaus.testutils.containers.ExposedContainer
+import io.kotest.extensions.time.withConstantNow
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -40,6 +41,8 @@ import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -155,10 +158,12 @@ class TaskRepositoryIntegrationTest : KoinTest {
                 )
             )
 
-            val result: Task = classUnderTest.save(
-                entry = task,
-                repetitionAttempts = ONE_REPETITION_ATTEMPT,
-            )
+            val result: Task = withConstantNow(now = OffsetDateTime.of(task.updatedAt, ZoneOffset.UTC)) {
+                classUnderTest.save(
+                    entry = task,
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+            }
 
             result.shouldBeEqualToIgnoringFields(
                 other = task,
@@ -171,10 +176,12 @@ class TaskRepositoryIntegrationTest : KoinTest {
             val task = getAsynchronousBankTask(uuid = ExposedContainerObjectMother.UNKNOWN_UUID)
             classUnderTest.deleteById(id = getAsynchronousBankTask().uuid)
 
-            val result: Task = classUnderTest.save(
-                entry = task,
-                repetitionAttempts = ONE_REPETITION_ATTEMPT,
-            )
+            val result: Task = withConstantNow(now = OffsetDateTime.of(task.updatedAt, ZoneOffset.UTC)) {
+                classUnderTest.save(
+                    entry = task,
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+            }
 
             result.shouldBeEqualToIgnoringFields(
                 other = task,
