@@ -100,6 +100,32 @@ class TeamValidationServiceTest {
         }
 
         @Test
+        fun `should return a list with one error when createdAt is invalid`() = runBlocking {
+            val body = getFirstTeam().toTeamDTO().copy(
+                createdAt = "invalidLocalDateTime",
+            )
+
+            val result: List<String> = classUnderTest.validateBody(
+                body = body,
+            )
+
+            result shouldContainExactly listOf("createdAt must be ISO Local Date and Time e.g. '2011-12-03T10:15:30'")
+        }
+
+        @Test
+        fun `should return a list with one error when updatedAt is invalid`() = runBlocking {
+            val body = getFirstTeam().toTeamDTO().copy(
+                updatedAt = "invalidLocalDateTime",
+            )
+
+            val result: List<String> = classUnderTest.validateBody(
+                body = body,
+            )
+
+            result shouldContainExactly listOf("updatedAt must be ISO Local Date and Time e.g. '2011-12-03T10:15:30'")
+        }
+
+        @Test
         fun `should return a list with one error when example type is not unique`() = runBlocking {
             coEvery { team.isTypeUnique(id = any(), type = any()) } returns false
             val body = getFirstTeam().toTeamDTO().copy(

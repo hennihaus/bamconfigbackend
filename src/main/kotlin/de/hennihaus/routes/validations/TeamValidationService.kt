@@ -14,6 +14,7 @@ import de.hennihaus.routes.validations.ValidationService.Companion.NAME_MAX_LENG
 import de.hennihaus.routes.validations.ValidationService.Companion.NAME_MIN_LENGTH
 import de.hennihaus.services.BankService
 import de.hennihaus.services.TeamService
+import de.hennihaus.utils.validations.localDateTime
 import de.hennihaus.utils.validations.oneOf
 import de.hennihaus.utils.validations.unique
 import de.hennihaus.utils.validations.uuid
@@ -52,6 +53,12 @@ class TeamValidationService(
         Validation {
             TeamDTO::uuid {
                 uuid()
+            }
+            TeamDTO::createdAt {
+                localDateTime()
+            }
+            TeamDTO::updatedAt {
+                localDateTime()
             }
             validations.forEach {
                 run(validation = it)

@@ -3,6 +3,7 @@ package de.hennihaus.routes.validations
 import de.hennihaus.bamdatamodel.RatingLevel
 import de.hennihaus.models.generated.rest.BankDTO
 import de.hennihaus.models.generated.rest.CreditConfigurationDTO
+import de.hennihaus.utils.validations.localDateTime
 import de.hennihaus.utils.validations.url
 import de.hennihaus.utils.validations.uuid
 import io.konform.validation.Constraint
@@ -29,6 +30,9 @@ class BankValidationService : ValidationService<BankDTO, Any> {
             }
             BankDTO::thumbnailUrl {
                 url()
+            }
+            BankDTO::updatedAt {
+                localDateTime()
             }
             validations.forEach {
                 run(validation = it)
