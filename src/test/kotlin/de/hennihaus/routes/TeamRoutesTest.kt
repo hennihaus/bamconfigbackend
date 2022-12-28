@@ -1,6 +1,7 @@
 package de.hennihaus.routes
 
 import de.hennihaus.bamdatamodel.Team
+import de.hennihaus.bamdatamodel.objectmothers.PaginationObjectMother.PREVIOUS_TEAM_CURSOR_WITH_NO_EMPTY_FIELDS
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
 import de.hennihaus.configurations.RoutesConfiguration.CURSOR_QUERY_PARAMETER
 import de.hennihaus.configurations.RoutesConfiguration.DEFAULT_LIMIT_PARAMETER
@@ -8,7 +9,6 @@ import de.hennihaus.configurations.RoutesConfiguration.LIMIT_QUERY_PARAMETER
 import de.hennihaus.models.cursors.TeamQuery
 import de.hennihaus.models.generated.rest.ErrorsDTO
 import de.hennihaus.models.generated.rest.UniqueDTO
-import de.hennihaus.objectmothers.CursorObjectMother.PREVIOUS_TEAM_CURSOR_WITH_NO_EMPTY_FIELDS
 import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithEmptyFields
 import de.hennihaus.objectmothers.CursorObjectMother.getFirstTeamCursorWithNoEmptyFields
 import de.hennihaus.objectmothers.CursorObjectMother.getPreviousTeamCursorWithNoEmptyFields
