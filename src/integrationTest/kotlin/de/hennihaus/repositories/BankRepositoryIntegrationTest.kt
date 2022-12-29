@@ -3,6 +3,7 @@ package de.hennihaus.repositories
 import de.hennihaus.bamdatamodel.Bank
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
 import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.getCreditConfigurationWithNoEmptyFields
+import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
@@ -27,8 +28,7 @@ import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -121,7 +121,7 @@ class BankRepositoryIntegrationTest : KoinTest {
                 ),
             )
 
-            val result = withConstantNow(now = OffsetDateTime.of(bank.updatedAt, ZoneOffset.UTC)) {
+            val result = withConstantNow(now = bank.updatedAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toOffsetDateTime()) {
                 classUnderTest.save(
                     entry = bank,
                     repetitionAttempts = ONE_REPETITION_ATTEMPT,
@@ -140,7 +140,9 @@ class BankRepositoryIntegrationTest : KoinTest {
                 creditConfiguration = null,
             )
 
-            val result: Bank = withConstantNow(now = OffsetDateTime.of(bank.updatedAt, ZoneOffset.UTC)) {
+            val result: Bank = withConstantNow(
+                now = bank.updatedAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toOffsetDateTime(),
+            ) {
                 classUnderTest.save(
                     entry = bank,
                     repetitionAttempts = ONE_REPETITION_ATTEMPT,

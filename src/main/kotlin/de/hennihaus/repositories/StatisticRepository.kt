@@ -2,6 +2,7 @@ package de.hennihaus.repositories
 
 import de.hennihaus.bamdatamodel.Statistic
 import de.hennihaus.bamdatamodel.TeamType
+import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.repositories.entities.StatisticEntity
 import de.hennihaus.repositories.mappers.toStatistic
 import de.hennihaus.repositories.tables.BankTable
@@ -26,13 +27,14 @@ import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
 import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.UUID
 
 @Single
 class StatisticRepository {
 
     suspend fun saveAll(bankId: UUID): Unit = inTransaction {
-        val now = OffsetDateTime.now().toInstant()
+        val now = OffsetDateTime.now(ZoneId.of(DEFAULT_ZONE_ID)).toInstant()
 
         StatisticTable.upsert(
             conflictColumns = listOf(
@@ -60,7 +62,7 @@ class StatisticRepository {
     }
 
     suspend fun recreateAll(limit: Long): Unit = inTransaction {
-        val now = OffsetDateTime.now().toInstant()
+        val now = OffsetDateTime.now(ZoneId.of(DEFAULT_ZONE_ID)).toInstant()
 
         deleteStatistics()
         insertExampleStatistics(now = now)

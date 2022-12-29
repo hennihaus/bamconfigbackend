@@ -2,6 +2,7 @@ package de.hennihaus.repositories
 
 import de.hennihaus.bamdatamodel.Team
 import de.hennihaus.bamdatamodel.TeamType
+import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.configurations.Configuration.PASSWORD_LENGTH
 import de.hennihaus.models.cursors.TeamCursor
 import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
@@ -30,6 +31,7 @@ import org.koin.core.annotation.Property
 import org.koin.core.annotation.Single
 import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.UUID
 
 @Single
@@ -66,7 +68,7 @@ class TeamRepository(
     suspend fun save(entry: Team, repetitionAttempts: Int): Team = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {
-        val now = OffsetDateTime.now().toInstant()
+        val now = OffsetDateTime.now(ZoneId.of(DEFAULT_ZONE_ID)).toInstant()
 
         entry.saveTeam(now = now)
         entry.saveStudents(now = now)

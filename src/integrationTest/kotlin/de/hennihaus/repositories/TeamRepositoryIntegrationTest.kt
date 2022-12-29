@@ -7,6 +7,7 @@ import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.SYNC_BANK_NAME
 import de.hennihaus.bamdatamodel.objectmothers.StudentObjectMother.getFirstStudent
 import de.hennihaus.bamdatamodel.objectmothers.StudentObjectMother.getSecondStudent
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
+import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.configurations.Configuration.PASSWORD_LENGTH
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
@@ -46,8 +47,7 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
 import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -167,7 +167,9 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 ),
             )
 
-            val result: Team = withConstantNow(now = OffsetDateTime.of(team.updatedAt, ZoneOffset.UTC)) {
+            val result: Team = withConstantNow(
+                now = team.updatedAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toOffsetDateTime(),
+            ) {
                 classUnderTest.save(
                     entry = team,
                     repetitionAttempts = ONE_REPETITION_ATTEMPT,
@@ -178,7 +180,7 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 other = team,
                 property = Team::createdAt,
             )
-            result.createdAt.toInstant(ZoneOffset.UTC).shouldBeBetween(
+            result.createdAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toInstant().shouldBeBetween(
                 fromInstant = Instant.now().minusSeconds(FIVE_SECONDS),
                 toInstant = Instant.now().plusSeconds(FIVE_SECONDS),
             )
@@ -193,7 +195,9 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 jmsQueue = "NewJmsQueue",
             )
 
-            val result: Team = withConstantNow(now = OffsetDateTime.of(team.updatedAt, ZoneOffset.UTC)) {
+            val result: Team = withConstantNow(
+                now = team.updatedAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toOffsetDateTime(),
+            ) {
                 classUnderTest.save(
                     entry = team,
                     repetitionAttempts = ONE_REPETITION_ATTEMPT,
@@ -204,7 +208,7 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 other = team,
                 property = Team::createdAt,
             )
-            result.createdAt.toInstant(ZoneOffset.UTC).shouldBeBetween(
+            result.createdAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toInstant().shouldBeBetween(
                 fromInstant = Instant.now().minusSeconds(FIVE_SECONDS),
                 toInstant = Instant.now().plusSeconds(FIVE_SECONDS),
             )
