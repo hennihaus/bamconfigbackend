@@ -1,5 +1,6 @@
 package de.hennihaus.repositories
 
+import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
 import de.hennihaus.configurations.ExposedConfiguration.ONE_REPETITION_ATTEMPT
@@ -41,8 +42,7 @@ import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -158,7 +158,9 @@ class TaskRepositoryIntegrationTest : KoinTest {
                 )
             )
 
-            val result: Task = withConstantNow(now = OffsetDateTime.of(task.updatedAt, ZoneOffset.UTC)) {
+            val result: Task = withConstantNow(
+                now = task.updatedAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toOffsetDateTime(),
+            ) {
                 classUnderTest.save(
                     entry = task,
                     repetitionAttempts = ONE_REPETITION_ATTEMPT,
@@ -176,7 +178,9 @@ class TaskRepositoryIntegrationTest : KoinTest {
             val task = getAsynchronousBankTask(uuid = ExposedContainerObjectMother.UNKNOWN_UUID)
             classUnderTest.deleteById(id = getAsynchronousBankTask().uuid)
 
-            val result: Task = withConstantNow(now = OffsetDateTime.of(task.updatedAt, ZoneOffset.UTC)) {
+            val result: Task = withConstantNow(
+                now = task.updatedAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toOffsetDateTime(),
+            ) {
                 classUnderTest.save(
                     entry = task,
                     repetitionAttempts = ONE_REPETITION_ATTEMPT,

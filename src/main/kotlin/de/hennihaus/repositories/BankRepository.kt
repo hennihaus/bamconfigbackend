@@ -1,6 +1,7 @@
 package de.hennihaus.repositories
 
 import de.hennihaus.bamdatamodel.Bank
+import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.repositories.entities.BankEntity
 import de.hennihaus.repositories.mappers.toBank
 import de.hennihaus.repositories.tables.BankTable
@@ -15,6 +16,7 @@ import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
 import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.UUID
 
 @Single
@@ -47,7 +49,7 @@ class BankRepository {
     suspend fun save(entry: Bank, repetitionAttempts: Int): Bank = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {
-        val now = OffsetDateTime.now().toInstant()
+        val now = OffsetDateTime.now(ZoneId.of(DEFAULT_ZONE_ID)).toInstant()
 
         entry.saveBank(now = now)
         entry.saveCreditConfiguration()

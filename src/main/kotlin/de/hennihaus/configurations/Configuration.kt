@@ -14,6 +14,7 @@ val defaultModule = module {
 
 object Configuration {
     const val DEFAULT_CONFIG_FILE = "application.conf"
+    const val DEFAULT_ZONE_ID = "Europe/Berlin"
 
     const val ALLOWED_FRONTEND_PROTOCOL = "ktor.cors.frontend.allowedProtocol"
     const val ALLOWED_FRONTEND_HOST = "ktor.cors.frontend.allowedHost"

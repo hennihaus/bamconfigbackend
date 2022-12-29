@@ -1,5 +1,6 @@
 package de.hennihaus.plugins
 
+import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.models.generated.rest.ErrorsDTO
 import de.hennihaus.models.generated.rest.ReasonDTO
 import de.hennihaus.plugins.ErrorMessage.ANONYMOUS_OBJECT
@@ -16,11 +17,12 @@ import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 fun Application.configureErrorHandling() = install(plugin = StatusPages) {
     exception<Throwable> { call, throwable ->
-        val dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+        val dateTime = LocalDateTime.now(ZoneId.of(DEFAULT_ZONE_ID)).truncatedTo(ChronoUnit.SECONDS)
 
         when (throwable) {
             is UUIDException -> call.respond(
