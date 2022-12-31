@@ -174,7 +174,7 @@ class TeamQueryBuilder {
                 e = longLiteral(value = ZERO),
             )
 
-        Sum(expr = expr, _columnType = LongColumnType())
+        Sum(expr = expr, columnType = LongColumnType())
     }
 
     private fun Column<Long>.hasPassed() = Expression.build {
@@ -187,7 +187,7 @@ class TeamQueryBuilder {
                 e = longLiteral(value = ZERO),
             )
 
-        Min(expr = expr, _columnType = LongColumnType())
+        Min(expr = expr, columnType = LongColumnType())
     }
 
     private fun TeamQuery.hasRequestValue() = when {

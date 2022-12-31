@@ -25,7 +25,7 @@ import io.kotest.inspectors.forAll
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldNotBeEmpty
-import io.kotest.matchers.date.shouldBeBetween
+import io.kotest.matchers.date.shouldBeCloseTo
 import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.kotest.matchers.maps.shouldContainValues
 import io.kotest.matchers.maps.shouldNotBeEmpty
@@ -49,6 +49,7 @@ import org.koin.test.junit5.KoinTestExtension
 import java.time.Instant
 import java.time.ZoneId
 import java.util.UUID
+import kotlin.time.Duration.Companion.seconds
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TeamRepositoryIntegrationTest : KoinTest {
@@ -180,9 +181,9 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 other = team,
                 property = Team::createdAt,
             )
-            result.createdAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toInstant().shouldBeBetween(
-                fromInstant = Instant.now().minusSeconds(FIVE_SECONDS),
-                toInstant = Instant.now().plusSeconds(FIVE_SECONDS),
+            result.createdAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toInstant().shouldBeCloseTo(
+                anotherInstant = Instant.now(),
+                duration = 5L.seconds,
             )
         }
 
@@ -208,9 +209,9 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 other = team,
                 property = Team::createdAt,
             )
-            result.createdAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toInstant().shouldBeBetween(
-                fromInstant = Instant.now().minusSeconds(FIVE_SECONDS),
-                toInstant = Instant.now().plusSeconds(FIVE_SECONDS),
+            result.createdAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toInstant().shouldBeCloseTo(
+                anotherInstant = Instant.now(),
+                duration = 5L.seconds,
             )
         }
     }
@@ -307,9 +308,5 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 it.statistics.shouldContainValues(ZERO_REQUESTS)
             }
         }
-    }
-
-    companion object {
-        private const val FIVE_SECONDS = 5L
     }
 }

@@ -21,6 +21,8 @@ import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.CustomStringFunction
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.intParam
@@ -157,7 +159,7 @@ class TeamRepository(
             studentTable[updated] = now
         }
         StudentTable.deleteWhere {
-            StudentTable.teamId eq uuid and (StudentTable.id notInList students.map { it.uuid })
+            teamId eq uuid and (StudentTable.id notInList students.map { it.uuid })
         }
     }
 
@@ -176,9 +178,7 @@ class TeamRepository(
             statisticTable[updated] = now
         }
         StatisticTable.deleteWhere {
-            (StatisticTable.teamId eq uuid).and(
-                op = StatisticTable.bankId notInList bankIds.values,
-            )
+            (teamId eq uuid).and(op = bankId notInList bankIds.values)
         }
     }
 

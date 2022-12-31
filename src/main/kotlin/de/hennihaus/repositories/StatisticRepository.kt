@@ -14,6 +14,8 @@ import de.hennihaus.utils.upsert
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.QueryBuilder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inSubQuery
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -57,7 +59,7 @@ class StatisticRepository {
 
     suspend fun deleteAll(bankId: UUID): Unit = inTransaction {
         StatisticTable.deleteWhere {
-            StatisticTable.bankId eq bankId
+            this.bankId eq bankId
         }
     }
 
@@ -104,7 +106,7 @@ class StatisticRepository {
     }
 
     private fun deleteStatistics() = StatisticTable.deleteWhere {
-        StatisticTable.bankId inSubQuery BankTable.slice(column = BankTable.id).select { BankTable.isAsync eq true }
+        bankId inSubQuery BankTable.slice(column = BankTable.id).select { BankTable.isAsync eq true }
     }
 
     private fun insertExampleStatistics(now: Instant) {
