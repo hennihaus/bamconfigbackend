@@ -23,7 +23,6 @@ import io.mockk.coVerify
 import io.mockk.coVerifySequence
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.DEFAULT_REPETITION_ATTEMPTS
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -195,7 +194,12 @@ class BankServiceTest {
 
             result shouldHaveMessage BankService.BANK_NOT_FOUND_MESSAGE
             coVerify(exactly = 1) { repository.getById(id = testBank.uuid) }
-            coVerify(exactly = 0) { repository.save(entry = any(), repetitionAttempts = DEFAULT_REPETITION_ATTEMPTS) }
+            coVerify(exactly = 0) {
+                repository.save(
+                    entry = any(),
+                    repetitionAttempts = ONE_REPETITION_ATTEMPT,
+                )
+            }
         }
     }
 

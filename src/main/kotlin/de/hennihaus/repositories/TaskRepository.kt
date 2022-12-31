@@ -20,6 +20,10 @@ import de.hennihaus.utils.inTransaction
 import de.hennihaus.utils.upsert
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInList
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.notInSubQuery
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
@@ -145,7 +149,7 @@ class TaskRepository {
             endpointTable[docsUrl] = "${endpoint.docsUrl}"
         }
         EndpointTable.deleteWhere {
-            EndpointTable.taskId eq uuid and (EndpointTable.id notInList endpoints.map { it.uuid })
+            taskId eq uuid and (EndpointTable.id notInList endpoints.map { it.uuid })
         }
     }
 
@@ -169,7 +173,7 @@ class TaskRepository {
             table[parameterId] = parameter.uuid
         }
         TaskParameterTable.deleteWhere {
-            TaskParameterTable.taskId eq uuid and (TaskParameterTable.parameterId notInList parameters.map { it.uuid })
+            taskId eq uuid and (parameterId notInList parameters.map { it.uuid })
         }
         ParameterTable.deleteWhere {
             ParameterTable.id notInSubQuery TaskParameterTable
@@ -199,7 +203,7 @@ class TaskRepository {
             taskResponseTable[responseId] = response.uuid
         }
         TaskResponseTable.deleteWhere {
-            TaskResponseTable.taskId eq uuid and (TaskResponseTable.responseId notInList responses.map { it.uuid })
+            taskId eq uuid and (responseId notInList responses.map { it.uuid })
         }
         ResponseTable.deleteWhere {
             ResponseTable.id notInSubQuery TaskResponseTable
