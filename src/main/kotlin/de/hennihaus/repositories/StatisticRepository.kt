@@ -35,7 +35,7 @@ import java.util.UUID
 @Single
 class StatisticRepository {
 
-    suspend fun saveAll(bankId: UUID): Unit = inTransaction {
+    suspend fun saveAll(bankId: UUID) = inTransaction {
         val now = OffsetDateTime.now(ZoneId.of(DEFAULT_ZONE_ID)).toInstant()
 
         StatisticTable.upsert(
@@ -57,13 +57,13 @@ class StatisticRepository {
         )
     }
 
-    suspend fun deleteAll(bankId: UUID): Unit = inTransaction {
+    suspend fun deleteAll(bankId: UUID) = inTransaction {
         StatisticTable.deleteWhere {
             this.bankId eq bankId
         }
     }
 
-    suspend fun recreateAll(limit: Long): Unit = inTransaction {
+    suspend fun recreateAll(limit: Long) = inTransaction {
         val now = OffsetDateTime.now(ZoneId.of(DEFAULT_ZONE_ID)).toInstant()
 
         deleteStatistics()

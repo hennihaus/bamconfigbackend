@@ -34,7 +34,7 @@ class StatisticServiceTest {
     inner class SaveStatistics {
         @Test
         fun `should save statistics by bank id`() = runBlocking {
-            coEvery { repository.saveAll(bankId = any()) } returns Unit
+            coEvery { repository.saveAll(bankId = any()) } returns mockk()
             val (bankId) = getAsyncBank()
 
             classUnderTest.saveStatistics(bankId = "$bankId")
@@ -59,7 +59,7 @@ class StatisticServiceTest {
     inner class DeleteStatistics {
         @Test
         fun `should delete statistics by bank id`() = runBlocking {
-            coEvery { repository.deleteAll(bankId = any()) } returns Unit
+            coEvery { repository.deleteAll(bankId = any()) } returns 1
             val (bankId) = getAsyncBank()
 
             classUnderTest.deleteStatistics(bankId = "$bankId")

@@ -10,19 +10,19 @@ import org.koin.core.annotation.Single
 @Single
 class StatisticService(private val repository: StatisticRepository) {
 
-    suspend fun saveStatistics(bankId: String): Unit = bankId.toUUID { uuid ->
+    suspend fun saveStatistics(bankId: String) = bankId.toUUID { uuid ->
         repository.saveAll(
             bankId = uuid,
         )
     }
 
-    suspend fun deleteStatistics(bankId: String): Unit = bankId.toUUID { uuid ->
+    suspend fun deleteStatistics(bankId: String) = bankId.toUUID { uuid ->
         repository.deleteAll(
             bankId = uuid,
         )
     }
 
-    suspend fun recreateStatistics(limit: Long): Unit = repository.recreateAll(
+    suspend fun recreateStatistics(limit: Long) = repository.recreateAll(
         limit = limit.takeIf { limit > ZERO_REQUESTS } ?: ZERO_REQUESTS,
     )
 
