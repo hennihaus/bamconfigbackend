@@ -75,6 +75,7 @@ dependencies {
     val mockkVersion: String by project
     val junitVersion: String by project
     val koinVersion: String by project
+    val koinLibrariesVersion: String by project
     val koinAnnotationsVersion: String by project
     val julToSlf4jVersion: String by project
     val konformVersion: String by project
@@ -104,9 +105,9 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
 
     // koin plugins
-    implementation("io.insert-koin:koin-ktor:$koinVersion")
+    implementation("io.insert-koin:koin-ktor:$koinLibrariesVersion")
     compileOnly("io.insert-koin:koin-annotations:$koinAnnotationsVersion")
-    implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
+    implementation("io.insert-koin:koin-logger-slf4j:$koinLibrariesVersion")
     ksp("io.insert-koin:koin-ksp-compiler:$koinAnnotationsVersion")
     testImplementation("io.insert-koin:koin-test:$koinVersion")
     testImplementation("io.insert-koin:koin-test-junit5:$koinVersion")
@@ -194,7 +195,7 @@ testing {
             dependencies {
                 val testcontainersVersion: String by project
 
-                implementation(project)
+                implementation(project())
                 implementation(sourceSets.test.get().output)
                 implementation("org.testcontainers:testcontainers:$testcontainersVersion")
                 implementation("org.testcontainers:junit-jupiter:$testcontainersVersion")

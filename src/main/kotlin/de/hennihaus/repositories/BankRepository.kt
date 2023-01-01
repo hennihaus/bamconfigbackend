@@ -10,6 +10,7 @@ import de.hennihaus.utils.inTransaction
 import de.hennihaus.utils.upsert
 import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.dao.with
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
@@ -82,9 +83,7 @@ class BankRepository {
     }
 
     private fun Bank.saveCreditConfiguration() {
-        CreditConfigurationTable.deleteWhere {
-            CreditConfigurationTable.bankId eq uuid
-        }
+        CreditConfigurationTable.deleteWhere { bankId eq uuid }
         creditConfiguration?.let {
             CreditConfigurationTable.upsert(
                 conflictColumns = listOf(CreditConfigurationTable.bankId),

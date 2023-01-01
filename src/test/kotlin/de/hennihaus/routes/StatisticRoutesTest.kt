@@ -66,7 +66,7 @@ class StatisticRoutesTest {
     inner class SaveStatistics {
         @Test
         fun `should return 204 and no content when saving statistics`() = testApplicationWith(mockModule) {
-            coEvery { statisticService.saveStatistics(bankId = any()) } returns Unit
+            coEvery { statisticService.saveStatistics(bankId = any()) } returns mockk()
             val bankId = BankObjectMother.ASYNC_BANK_UUID
 
             val response = testClient.put(urlString = "/v1/statistics/$bankId")
@@ -93,7 +93,7 @@ class StatisticRoutesTest {
     inner class DeleteStatistics {
         @Test
         fun `should return 204 and no content when deleting statistics`() = testApplicationWith(mockModule) {
-            coEvery { statisticService.deleteStatistics(bankId = any()) } returns Unit
+            coEvery { statisticService.deleteStatistics(bankId = any()) } returns 1
             val bankId = BankObjectMother.ASYNC_BANK_UUID
 
             val response = testClient.delete(urlString = "/v1/statistics/$bankId")
