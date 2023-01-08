@@ -4,7 +4,7 @@ import de.hennihaus.bamdatamodel.TeamType
 import de.hennihaus.configurations.RoutesConfiguration.DEFAULT_LIMIT_PARAMETER
 import de.hennihaus.configurations.RoutesConfiguration.LIMIT_QUERY_PARAMETER
 import de.hennihaus.models.cursors.TeamQuery
-import de.hennihaus.models.generated.rest.QueryDTO
+import de.hennihaus.models.generated.rest.TeamQueryDTO
 import de.hennihaus.routes.TeamRoutes.BANKS_QUERY_PARAMETER
 import de.hennihaus.routes.TeamRoutes.HAS_PASSED_QUERY_PARAMETER
 import de.hennihaus.routes.TeamRoutes.JMS_QUEUE_PARAMETER
@@ -17,7 +17,7 @@ import de.hennihaus.routes.TeamRoutes.TYPE_QUERY_PARAMETER
 import de.hennihaus.routes.TeamRoutes.USERNAME_PARAMETER
 import io.ktor.http.Parameters
 
-fun TeamQuery.toTeamQueryDTO() = QueryDTO(
+fun TeamQuery.toTeamQueryDTO() = TeamQueryDTO(
     limit = limit,
     type = type?.name,
     username = username,
@@ -31,7 +31,7 @@ fun TeamQuery.toTeamQueryDTO() = QueryDTO(
     banks = banks,
 )
 
-fun Parameters.toTeamQueryDTO() = QueryDTO(
+fun Parameters.toTeamQueryDTO() = TeamQueryDTO(
     limit = get(name = LIMIT_QUERY_PARAMETER)?.toIntOrNull() ?: DEFAULT_LIMIT_PARAMETER,
     type = get(name = TYPE_QUERY_PARAMETER),
     username = get(name = USERNAME_PARAMETER),

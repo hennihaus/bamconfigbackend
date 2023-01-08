@@ -1,9 +1,9 @@
 package de.hennihaus.routes.validations
 
 import de.hennihaus.bamdatamodel.TeamType
-import de.hennihaus.models.generated.rest.QueryDTO
 import de.hennihaus.models.generated.rest.StudentDTO
 import de.hennihaus.models.generated.rest.TeamDTO
+import de.hennihaus.models.generated.rest.TeamQueryDTO
 import de.hennihaus.routes.validations.BankValidationService.Companion.BANK_NAME_MAX_LENGTH
 import de.hennihaus.routes.validations.BankValidationService.Companion.BANK_NAME_MIN_LENGTH
 import de.hennihaus.routes.validations.ValidationService.Companion.JMS_QUEUE_MAX_LENGTH
@@ -35,7 +35,7 @@ import org.koin.core.annotation.Single
 class TeamValidationService(
     private val team: TeamService,
     private val bank: BankService,
-) : ValidationService<TeamDTO, QueryDTO> {
+) : ValidationService<TeamDTO, TeamQueryDTO> {
 
     override suspend fun bodyValidation(body: TeamDTO): Validation<TeamDTO> = coroutineScope {
         val asyncValidations = listOf(
@@ -66,28 +66,28 @@ class TeamValidationService(
         }
     }
 
-    override suspend fun urlValidation(query: QueryDTO): Validation<QueryDTO> = coroutineScope {
+    override suspend fun urlValidation(query: TeamQueryDTO): Validation<TeamQueryDTO> = coroutineScope {
         val asyncValidations = listOf(
             async { banksValidation(query = query) },
         )
         val validations = asyncValidations.awaitAll()
 
         Validation {
-            QueryDTO::limit {
+            TeamQueryDTO::limit {
                 minimum(minimumInclusive = LIMIT_MINIMUM)
                 maximum(maximumInclusive = LIMIT_MAXIMUM)
             }
-            QueryDTO::type ifPresent {
+            TeamQueryDTO::type ifPresent {
                 enum<TeamType>()
             }
-            QueryDTO::password ifPresent {
+            TeamQueryDTO::password ifPresent {
                 minLength(length = TEAM_PASSWORD_MIN_LENGTH)
                 maxLength(length = TEAM_PASSWORD_MAX_LENGTH)
             }
-            QueryDTO::minRequests ifPresent {
+            TeamQueryDTO::minRequests ifPresent {
                 minimum(minimumInclusive = TEAM_MIN_REQUESTS)
             }
-            QueryDTO::maxRequests ifPresent {
+            TeamQueryDTO::maxRequests ifPresent {
                 minimum(
                     minimumInclusive = if (query.minRequests is Long && query.minRequests >= TEAM_MIN_REQUESTS) {
                         query.minRequests
@@ -205,7 +205,7 @@ class TeamValidationService(
         }
     }
 
-    private suspend fun banksValidation(query: QueryDTO): Validation<QueryDTO> = coroutineScope {
+    private suspend fun banksValidation(query: TeamQueryDTO): Validation<TeamQueryDTO> = coroutineScope {
         val bankNameExistsRequests = query.banks?.map { name ->
             async {
                 name to bank.hasName(name = name)
@@ -217,7 +217,7 @@ class TeamValidationService(
             ?: emptyList()
 
         Validation {
-            QueryDTO::banks ifPresent {
+            TeamQueryDTO::banks ifPresent {
                 uniqueItems(unique = true)
                 onEach {
                     minLength(length = BANK_NAME_MIN_LENGTH)
