@@ -19,7 +19,7 @@
             "$ref": "../commons/commons.json#/components/schemas/Pagination"
           },
           "query": {
-            "$ref": "#/components/schemas/Query"
+            "$ref": "#/components/schemas/TeamQuery"
           },
           "items": {
             "type": "array",
@@ -228,7 +228,7 @@
           }
         }
       },
-      "Query": {
+      "TeamQuery": {
         "type": "object",
         "required": [
           "limit"

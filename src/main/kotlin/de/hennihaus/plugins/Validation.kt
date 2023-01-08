@@ -2,10 +2,10 @@ package de.hennihaus.plugins
 
 import de.hennihaus.configurations.Configuration.API_VERSION
 import de.hennihaus.models.generated.rest.BankDTO
-import de.hennihaus.models.generated.rest.QueryDTO
 import de.hennihaus.models.generated.rest.StatisticDTO
 import de.hennihaus.models.generated.rest.TaskDTO
 import de.hennihaus.models.generated.rest.TeamDTO
+import de.hennihaus.models.generated.rest.TeamQueryDTO
 import de.hennihaus.routes.TeamRoutes.TEAMS_PATH
 import de.hennihaus.routes.mappers.toNativeCursor
 import de.hennihaus.routes.mappers.toTeamQueryDTO
@@ -41,8 +41,8 @@ fun Application.configureValidation() {
     }
     install(plugin = UrlValidation) {
         validate(path = "/$TEAMS_PATH") {
-            it.parameters.toTeamQueryDTO().validateUrlWithService<QueryDTO, TeamValidationService>()
-            it.parameters.toNativeCursor()?.validateCursorWithService<QueryDTO, TeamValidationService>()
+            it.parameters.toTeamQueryDTO().validateUrlWithService<TeamQueryDTO, TeamValidationService>()
+            it.parameters.toNativeCursor()?.validateCursorWithService<TeamQueryDTO, TeamValidationService>()
         }
     }
 }

@@ -2195,7 +2195,7 @@
             "$ref" : "#/components/schemas/Pagination"
           },
           "query" : {
-            "$ref" : "#/components/schemas/Query"
+            "$ref" : "#/components/schemas/TeamQuery"
           },
           "items" : {
             "items" : {
@@ -2209,7 +2209,7 @@
         "required" : [ "items", "pagination", "query" ],
         "type" : "object"
       },
-      "Query" : {
+      "TeamQuery" : {
         "properties" : {
           "limit" : {
             "maximum" : 1000,

@@ -8,8 +8,8 @@ import de.hennihaus.models.cursors.TeamCursor
 import de.hennihaus.models.cursors.TeamPagination
 import de.hennihaus.models.cursors.TeamQuery
 import de.hennihaus.models.generated.rest.PaginationDTO
-import de.hennihaus.models.generated.rest.QueryDTO
 import de.hennihaus.models.generated.rest.TeamDTO
+import de.hennihaus.models.generated.rest.TeamQueryDTO
 import de.hennihaus.objectmothers.CursorObjectMother.FIRST_TEAM_CURSOR_WITH_EMPTY_FIELDS
 import de.hennihaus.objectmothers.CursorObjectMother.FIRST_TEAM_CURSOR_WITH_NO_EMPTY_FIELDS
 import de.hennihaus.objectmothers.CursorObjectMother.LAST_TEAM_CURSOR_WITH_EMPTY_FIELDS
@@ -68,7 +68,7 @@ object PaginationObjectMother {
 
     fun getTeamPaginationDTOWithNoEmptyFields(
         pagination: PaginationDTO = getPaginationDTOWithNoEmptyFields(),
-        query: QueryDTO = getTeamQueryWithNoEmptyFields().toTeamQueryDTO(),
+        query: TeamQueryDTO = getTeamQueryWithNoEmptyFields().toTeamQueryDTO(),
         items: List<TeamDTO> = getTeamItems().map { it.toTeamDTO() },
     ) = TeamPaginationDTO(
         pagination = pagination,
@@ -78,7 +78,7 @@ object PaginationObjectMother {
 
     fun getTeamPaginationDTOWithEmptyFields(
         pagination: PaginationDTO = getPaginationDTOWithEmptyFields(),
-        query: QueryDTO = getTeamQueryWithEmptyFields().toTeamQueryDTO(),
+        query: TeamQueryDTO = getTeamQueryWithEmptyFields().toTeamQueryDTO(),
         items: List<TeamDTO> = getTeamItems().map { it.toTeamDTO() },
     ) = TeamPaginationDTO(
         pagination = pagination,
