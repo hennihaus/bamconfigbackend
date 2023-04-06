@@ -18,6 +18,23 @@
       "description": "Base-URL"
     }
   ],
+  "tags": [
+    {
+      "name": "Team"
+    },
+    {
+      "name": "Statistic"
+    },
+    {
+      "name": "Bank"
+    },
+    {
+      "name": "Task"
+    },
+    {
+      "name": "Broker"
+    }
+  ],
   "paths": {
     "/teams": {
       "$ref": "./paths/team.json#/paths/~1teams"
