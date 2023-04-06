@@ -37,6 +37,12 @@ jobs:
           node-version: '18.x'
           registry-url: 'https://npm.pkg.github.com'
 
+      - name: Lint API
+        uses: stoplightio/spectral-action@v0
+        with:
+          file_glob: 'config/openapi/spec/bamconfigbackend.json'
+          spectral_ruleset: 'config/openapi/spectral/.spectral.json'
+
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
         env:
