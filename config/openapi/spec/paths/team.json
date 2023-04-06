@@ -20,7 +20,8 @@
   ],
   "tags": [
     {
-      "name": "Team"
+      "name": "Team",
+      "description": "An entity to administrate teams and distribute them to different banks (many-to-many)."
     }
   ],
   "paths": {

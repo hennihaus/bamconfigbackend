@@ -20,7 +20,8 @@
   ],
   "tags": [
     {
-      "name": "Bank"
+      "name": "Bank",
+      "description": "An entity to configure bank credit limits when they are called by teams."
     }
   ],
   "paths": {

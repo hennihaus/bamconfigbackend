@@ -20,7 +20,8 @@
   ],
   "tags": [
     {
-      "name": "Broker"
+      "name": "Broker",
+      "description": "Endpoints to administrate ActiveMQ."
     }
   ],
   "paths": {

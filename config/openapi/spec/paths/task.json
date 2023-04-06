@@ -20,7 +20,8 @@
   ],
   "tags": [
     {
-      "name": "Task"
+      "name": "Task",
+      "description": "An entity with an overview for teams which banks are active and which ones they have to call."
     }
   ],
   "paths": {
