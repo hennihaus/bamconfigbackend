@@ -9,7 +9,21 @@
     "oas3"
   ],
   "rules": {
-    "contact-properties": "error",
+    "contact-properties": {
+      "description": "Contact object must have 'name', 'url' and 'email'.",
+      "recommended": false,
+      "given": "$.info.contact",
+      "then": [
+        {
+          "field": "name",
+          "function": "truthy"
+        },
+        {
+          "field": "email",
+          "function": "truthy"
+        }
+      ]
+    },
     "duplicated-entry-in-enum": "error",
     "info-contact": "error",
     "info-description": "error",
