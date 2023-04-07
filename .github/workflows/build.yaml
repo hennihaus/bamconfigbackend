@@ -14,6 +14,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      checks: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -36,6 +37,12 @@ jobs:
         with:
           node-version: '18.x'
           registry-url: 'https://npm.pkg.github.com'
+
+      - name: Lint API
+        uses: stoplightio/spectral-action@v0.8.10
+        with:
+          file_glob: 'config/openapi/spec/bamconfigbackend.json'
+          spectral_ruleset: 'config/openapi/spectral/.spectral.json'
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon

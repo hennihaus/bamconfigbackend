@@ -38,6 +38,7 @@
             "last": "eyJwb3NpdGlvbiI6IiIsImRpcmVjdGlvbiI6IkRFU0NFTkRJTkciLCJxdWVyeUhhc2giOi03ODk2NDQ0MDYsInF1ZXJ5Ijp7ImxpbWl0IjoxMCwidHlwZSI6bnVsbCwidXNlcm5hbWUiOm51bGwsInBhc3N3b3JkIjpudWxsLCJqbXNRdWV1ZSI6bnVsbCwiaGFzUGFzc2VkIjpudWxsLCJtaW5SZXF1ZXN0cyI6bnVsbCwibWF4UmVxdWVzdHMiOm51bGwsInN0dWRlbnRGaXJzdG5hbWUiOm51bGwsInN0dWRlbnRMYXN0bmFtZSI6bnVsbCwiYmFua3MiOm51bGx9fQ=="
           },
           "query": {
+            "limit": 10,
             "type": "REGULAR",
             "username": "Beispielteam",
             "password": "OOfKqWksmA",

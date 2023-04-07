@@ -20,7 +20,8 @@
   ],
   "tags": [
     {
-      "name": "Statistic"
+      "name": "Statistic",
+      "description": "An entity to inspect how many times a team has called a bank (many-to-many)."
     }
   ],
   "paths": {

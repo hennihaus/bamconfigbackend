@@ -5,6 +5,7 @@
       "email" : "jan-hendrik.hausner@outlook.com",
       "name" : "Jan-Hendrik Hausner"
     },
+    "description" : "API managing entities, swagger files and broker in bam.",
     "license" : {
       "name" : "Apache 2.0",
       "url" : "https://github.com/hennihaus/bamconfigbackend/blob/master/LICENSE"
@@ -15,6 +16,22 @@
   "servers" : [ {
     "description" : "Base-URL",
     "url" : "http://localhost:8080/v1"
+  } ],
+  "tags" : [ {
+    "description" : "An entity to configure bank credit limits when they are called by teams.",
+    "name" : "Bank"
+  }, {
+    "description" : "Endpoints to administrate ActiveMQ.",
+    "name" : "Broker"
+  }, {
+    "description" : "An entity to inspect how many times a team has called a bank (many-to-many).",
+    "name" : "Statistic"
+  }, {
+    "description" : "An entity with an overview for teams which banks are active and which ones they have to call.",
+    "name" : "Task"
+  }, {
+    "description" : "An entity to administrate teams and distribute them to different banks (many-to-many).",
+    "name" : "Team"
   } ],
   "paths" : {
     "/teams" : {
@@ -34,7 +51,7 @@
           "style" : "form"
         }, {
           "allowReserved" : false,
-          "example" : "10",
+          "example" : 10,
           "explode" : false,
           "in" : "query",
           "name" : "limit",
@@ -1741,7 +1758,7 @@
       },
       "limitParameter" : {
         "allowReserved" : false,
-        "example" : "10",
+        "example" : 10,
         "explode" : false,
         "in" : "query",
         "name" : "limit",
@@ -2146,6 +2163,7 @@
             "last" : "eyJwb3NpdGlvbiI6IiIsImRpcmVjdGlvbiI6IkRFU0NFTkRJTkciLCJxdWVyeUhhc2giOi03ODk2NDQ0MDYsInF1ZXJ5Ijp7ImxpbWl0IjoxMCwidHlwZSI6bnVsbCwidXNlcm5hbWUiOm51bGwsInBhc3N3b3JkIjpudWxsLCJqbXNRdWV1ZSI6bnVsbCwiaGFzUGFzc2VkIjpudWxsLCJtaW5SZXF1ZXN0cyI6bnVsbCwibWF4UmVxdWVzdHMiOm51bGwsInN0dWRlbnRGaXJzdG5hbWUiOm51bGwsInN0dWRlbnRMYXN0bmFtZSI6bnVsbCwiYmFua3MiOm51bGx9fQ=="
           },
           "query" : {
+            "limit" : 10,
             "type" : "REGULAR",
             "username" : "Beispielteam",
             "password" : "OOfKqWksmA",
@@ -2529,7 +2547,7 @@
           "uuid" : "4ff1f9cb-e65d-4c8f-908a-d036700b757e",
           "title" : "Asynchrone Banken",
           "description" : "<p>Es existieren eine Reihe bereits vorgegebener asynchroner Banken, welche per JMS erreichbar sind. Um die Banken zu erreichen, müssen Sie im VPN der Hochschule sein und den Port in der URL mit angeben. Sie kommunizieren nicht direkt mit den Banken, sondern mit einem ActiveMQ-Broker als Middleware. Die Messages an den Broker sind Textnachrichten, die als JSON strukturiert sind. Die Message entspricht also einem JSON-Objekt mit den Parametern als einzelne Key-Value-Pairs (siehe unten). Ein Error-Handling wie in den synchronen Services gibt es nicht. Sie übernehmen daher die Anfragegrenzen aus der internen Konfiguration der Banken. Die Rückgabewert der Banken enthält neben einem Zinsatz für den gewünschten Kredit zwischen 0 und 10% vom Datentyp Double die Request ID der Anfrage. Eine Bank hört auf einer Queue des Broker nach Nachrichten für diese Bank (Bei der Sparkasse z.B. „sparkasse“). Sie entnehmen die Antworten der Banken auf ihrer Team-Queue, z.B. ResponseQueueTeam01.</p><p>Beispiel Textnachricht Request: {\\\"requestId\\\": \\\"123\\\",\\\"amountInEuros\\\": 20000,\\\"termInMonths\\\": 12,\\\"ratingLevel\\\": \\\"B\\\",\\\"delayInMilliseconds\\\": 0,\\\"username\\\": \\\"Team01\\\",\\\"password\\\": \\\"123456\\\"}</p><p>Beispiel Textnachricht Response: {\\\"requestId\\\":\\\"123\\\",\\\"lendingRate\\\":2.738343644690228}</p>",
-          "integrationStep" : "3",
+          "integrationStep" : 3,
           "isOpenApiVerbose" : false,
           "contact" : {
             "uuid" : "ba16bd92-9e64-4de6-916f-d0c4ea91a530",
