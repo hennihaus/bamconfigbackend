@@ -27,7 +27,7 @@
         "style": "form",
         "explode": false,
         "allowReserved": false,
-        "example": "10",
+        "example": 10,
         "schema": {
           "type": "integer",
           "format": "int64",
