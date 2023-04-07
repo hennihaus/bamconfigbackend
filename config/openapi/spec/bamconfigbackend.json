@@ -20,24 +20,24 @@
   ],
   "tags": [
     {
-      "name": "Team",
-      "description": "An entity to administrate teams and distribute them to different banks (many-to-many)."
+      "name": "Bank",
+      "description": "An entity to configure bank credit limits when they are called by teams."
+    },
+    {
+      "name": "Broker",
+      "description": "Endpoints to administrate ActiveMQ."
     },
     {
       "name": "Statistic",
       "description": "An entity to inspect how many times a team has called a bank (many-to-many)."
     },
     {
-      "name": "Bank",
-      "description": "An entity to configure bank credit limits when they are called by teams."
-    },
-    {
       "name": "Task",
       "description": "An entity with an overview for teams which banks are active and which ones they have to call."
     },
     {
-      "name": "Broker",
-      "description": "Endpoints to administrate ActiveMQ."
+      "name": "Team",
+      "description": "An entity to administrate teams and distribute them to different banks (many-to-many)."
     }
   ],
   "paths": {
