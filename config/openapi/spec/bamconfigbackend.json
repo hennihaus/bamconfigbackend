@@ -2,6 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "BAM Business Integration - ConfigBackend API",
+    "description": "API managing entities, swagger files and broker in bam",
     "contact": {
       "name": "Jan-Hendrik Hausner",
       "email": "jan-hendrik.hausner@outlook.com"
