@@ -46,5 +46,16 @@
     "oas3-unused-component": "error",
     "oas3-valid-media-example": "error",
     "oas3-valid-schema-example": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.json#/components/examples/Banks/value/0/creditConfiguration",
+        "*.json#/components/examples/Schufa/value/creditConfiguration"
+      ],
+      "rules": {
+        "oas3-valid-media-example": "off"
+      }
+    }
+  ]
 }
