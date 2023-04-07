@@ -5,7 +5,7 @@
       "email" : "jan-hendrik.hausner@outlook.com",
       "name" : "Jan-Hendrik Hausner"
     },
-    "description" : "API managing entities, swagger files and broker in bam",
+    "description" : "API managing entities, swagger files and broker in bam.",
     "license" : {
       "name" : "Apache 2.0",
       "url" : "https://github.com/hennihaus/bamconfigbackend/blob/master/LICENSE"
