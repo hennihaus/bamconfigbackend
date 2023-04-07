@@ -70,6 +70,15 @@
       "rules": {
         "oas3-valid-media-example": "off"
       }
+    },
+    {
+      "files": [
+        "*.json#/components/schemas/Task/example/endpoints/0/url",
+        "*.json#/components/schemas/Task/example/parameters/0/example"
+      ],
+      "rules": {
+        "oas3-valid-schema-example": "off"
+      }
     }
   ]
 }
