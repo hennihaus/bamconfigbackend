@@ -79,6 +79,14 @@
       "rules": {
         "oas3-valid-schema-example": "off"
       }
+    },
+    {
+      "files": [
+        "*.json#/paths/~1statistics~1{limit}"
+      ],
+      "rules": {
+        "path-params": "off"
+      }
     }
   ]
 }
