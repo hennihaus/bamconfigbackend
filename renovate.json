@@ -3,5 +3,8 @@
   "extends": [
     "config:recommended"
   ],
-  "dependencyDashboard": true
+  "dependencyDashboard": true,
+  "major": {
+    "dependencyDashboardApproval": true
+  }
 }
