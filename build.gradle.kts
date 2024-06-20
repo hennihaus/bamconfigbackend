@@ -230,13 +230,6 @@ tasks {
     withType(GenerateTask::class) {
         inputSpec.set("$projectDir/config/openapi/spec/bamconfigbackend.json")
         skipValidateSpec.set(false)
-        globalProperties.set(
-            mapOf(
-                "models" to "",
-                "modelDocs" to "false",
-                "apis" to "false",
-            )
-        )
     }
 
     val kotlinTypeMappings = mapOf(
@@ -264,24 +257,23 @@ tasks {
         modelNameSuffix.set("DTO")
         typeMappings.set(kotlinTypeMappings)
         importMappings.set(kotlinImportMappings)
+        globalProperties.set(
+            mapOf(
+                "models" to "",
+                "modelDocs" to "false",
+                "apis" to "false",
+            )
+        )
     }
 
     val generateTypescriptDataModel by registering(GenerateTask::class) {
-        generatorName.set("typescript-angular")
+        generatorName.set("typescript-fetch")
         outputDir.set("$buildDir/bamconfigbackend/typescript")
         templateDir.set("$projectDir/config/openapi/typescript")
         configFile.set("$projectDir/config/openapi/typescript/config.json")
         typeMappings.set(
             mapOf(
                 "set" to "Array",
-            )
-        )
-        supportingFilesConstrainedTo.set(
-            listOf(
-                "package.json",
-                "tsconfig.json",
-                "models.ts",
-                "index.ts",
             )
         )
     }
