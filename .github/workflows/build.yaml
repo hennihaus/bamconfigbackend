@@ -55,7 +55,7 @@ jobs:
           add: './docs/bamconfigbackend.json'
 
       - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@1.40.0
+        uses: anothrNick/github-tag-action@1.71.0
         id: tag-version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
