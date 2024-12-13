@@ -54,6 +54,7 @@ jobs:
           DEFAULT_BUMP: minor
           RELEASE_BRANCHES: master
           PRERELEASE_SUFFIX: beta
+          GIT_API_TAGGING: false
 
       - name: Update Typescript package version
         run: npm version ${{ steps.tag-version.outputs.new_tag }} --prefix ./build/${GITHUB_REPOSITORY#*/}/typescript
