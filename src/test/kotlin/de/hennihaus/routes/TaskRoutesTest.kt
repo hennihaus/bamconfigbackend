@@ -77,6 +77,7 @@ class TaskRoutesTest {
 
             val response = testClient.get(urlString = "/v1/tasks")
 
+            println(response.bodyAsText())
             response shouldHaveStatus HttpStatusCode.OK
             response.body<List<Task>>().shouldContainExactly(
                 getSchufaTask(),
