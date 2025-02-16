@@ -39,7 +39,7 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
 
       - name: Lint API
-        uses: stoplightio/spectral-action@v0.8.10
+        uses: stoplightio/spectral-action@v0.8.11
         with:
           file_glob: 'config/openapi/spec/bamconfigbackend.json'
           spectral_ruleset: 'config/openapi/spectral/.spectral.json'
