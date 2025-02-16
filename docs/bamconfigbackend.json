@@ -2239,7 +2239,6 @@
             "type" : "string"
           },
           "username" : {
-            "default" : "",
             "minLength" : 0,
             "type" : "string"
           },
@@ -2249,7 +2248,6 @@
             "type" : "string"
           },
           "jmsQueue" : {
-            "default" : "",
             "minLength" : 0,
             "type" : "string"
           },

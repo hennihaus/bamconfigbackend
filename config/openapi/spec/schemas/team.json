@@ -246,8 +246,7 @@
           },
           "username": {
             "type": "string",
-            "minLength": 0,
-            "default": ""
+            "minLength": 0
           },
           "password": {
             "type": "string",
@@ -256,8 +255,7 @@
           },
           "jmsQueue": {
             "type": "string",
-            "minLength": 0,
-            "default": ""
+            "minLength": 0
           },
           "hasPassed": {
             "type": "boolean"
