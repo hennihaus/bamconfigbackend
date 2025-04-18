@@ -69,7 +69,7 @@
                   "message": "uuid must have valid uuid format"
                 }
               ],
-              "dateTime": "2022-01-31T07:43:30"
+              "dateTime": "2022-01-31T07:43:30Z"
             }
           }
         }
@@ -88,7 +88,7 @@
                   "message": "resource not found"
                 }
               ],
-              "dateTime": "2022-01-31T07:43:30"
+              "dateTime": "2022-01-31T07:43:30Z"
             }
           }
         }
@@ -107,7 +107,7 @@
                   "message": "could not serialize access due to concurrent update"
                 }
               ],
-              "dateTime": "2022-01-31T07:43:30"
+              "dateTime": "2022-01-31T07:43:30Z"
             }
           }
         }
@@ -126,7 +126,7 @@
                   "message": "internal server error"
                 }
               ],
-              "dateTime": "2022-01-31T07:43:30"
+              "dateTime": "2022-01-31T07:43:30Z"
             }
           }
         }

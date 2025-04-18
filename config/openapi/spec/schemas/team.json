@@ -92,8 +92,8 @@
                 "Commerzbank": 0
               },
               "hasPassed": false,
-              "createdAt": "2022-12-26T08:49:22",
-              "updatedAt": "2022-12-26T08:49:22"
+              "createdAt": "2022-12-26T08:49:22Z",
+              "updatedAt": "2022-12-26T08:49:22Z"
             }
           ]
         }
@@ -200,8 +200,8 @@
             "Commerzbank": 0
           },
           "hasPassed": false,
-          "createdAt": "2022-12-26T08:49:22",
-          "updatedAt": "2022-12-26T08:49:22"
+          "createdAt": "2022-12-26T08:49:22Z",
+          "updatedAt": "2022-12-26T08:49:22Z"
         }
       },
       "Student": {

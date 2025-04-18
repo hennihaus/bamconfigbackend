@@ -3,12 +3,11 @@ package de.hennihaus.repositories.mappers
 import de.hennihaus.bamdatamodel.Bank
 import de.hennihaus.bamdatamodel.CreditConfiguration
 import de.hennihaus.bamdatamodel.RatingLevel
-import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.repositories.entities.BankEntity
 import de.hennihaus.repositories.entities.CreditConfigurationEntity
 import java.net.URI
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 fun BankEntity.toBank() = Bank(
     uuid = id.value,
@@ -18,7 +17,7 @@ fun BankEntity.toBank() = Bank(
     isAsync = isAsync,
     isActive = isActive,
     creditConfiguration = creditConfiguration?.toCreditConfiguration(),
-    updatedAt = LocalDateTime.ofInstant(updatedAt, ZoneId.of(DEFAULT_ZONE_ID)),
+    updatedAt = OffsetDateTime.ofInstant(updatedAt, ZoneOffset.UTC),
 )
 
 private fun CreditConfigurationEntity.toCreditConfiguration() = CreditConfiguration(

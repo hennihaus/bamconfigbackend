@@ -8,7 +8,7 @@ import io.kotest.property.Arb
 import io.kotest.property.Exhaustive
 import io.kotest.property.arbitrary.UUIDVersion
 import io.kotest.property.arbitrary.email
-import io.kotest.property.arbitrary.localDateTime
+import io.kotest.property.arbitrary.offsetDateTime
 import io.kotest.property.arbitrary.uuid
 import io.kotest.property.checkAll
 import io.kotest.property.exhaustive.collection
@@ -26,7 +26,7 @@ class RequestValidationUtilsTest {
 
     data class EmailTestResource(val value: String)
 
-    data class LocalDateTimeTestResource(val value: String)
+    data class OffsetDateTimeTestResource(val value: String)
 
     data class HttpStatusCodeTestResource(val value: Int)
 
@@ -165,20 +165,20 @@ class RequestValidationUtilsTest {
     }
 
     @Nested
-    inner class LocalDateTime {
+    inner class OffsetDateTime {
 
-        private val classUnderTest = object : ValidationService<LocalDateTimeTestResource, Any> {
-            override suspend fun bodyValidation(body: LocalDateTimeTestResource) = Validation {
-                LocalDateTimeTestResource::value {
-                    localDateTime()
+        private val classUnderTest = object : ValidationService<OffsetDateTimeTestResource, Any> {
+            override suspend fun bodyValidation(body: OffsetDateTimeTestResource) = Validation {
+                OffsetDateTimeTestResource::value {
+                    offsetDateTime()
                 }
             }
         }
 
         @Test
-        fun `should return an empty list when localDateTime is valid`() = runBlocking<Unit> {
-            checkAll(genA = Arb.localDateTime()) {
-                val body = LocalDateTimeTestResource(
+        fun `should return an empty list when offsetDateTime is valid`() = runBlocking<Unit> {
+            checkAll(genA = Arb.offsetDateTime()) {
+                val body = OffsetDateTimeTestResource(
                     value = "$it",
                 )
 
@@ -191,9 +191,9 @@ class RequestValidationUtilsTest {
         }
 
         @Test
-        fun `should return a list with one error when localDateTime is invalid`() = runBlocking {
-            val body = LocalDateTimeTestResource(
-                value = "invalidLocalDateTime",
+        fun `should return a list with one error when offsetDateTime is invalid`() = runBlocking {
+            val body = OffsetDateTimeTestResource(
+                value = "invalidOffsetDateTime",
             )
 
             val result: List<String> = classUnderTest.validateBody(

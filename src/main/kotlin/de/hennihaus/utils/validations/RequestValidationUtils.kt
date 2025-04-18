@@ -15,7 +15,7 @@ import org.apache.commons.validator.routines.EmailValidator
 import org.apache.commons.validator.routines.UrlValidator
 import java.io.ByteArrayInputStream
 import java.io.ObjectInputStream
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.Base64
 import java.util.UUID
 
@@ -45,10 +45,10 @@ fun ValidationBuilder<String>.email(): Constraint<String> = addConstraint(
     EmailValidator.getInstance(true).isValid(it)
 }
 
-fun ValidationBuilder<String>.localDateTime(): Constraint<String> = addConstraint(
-    errorMessage = "must be ISO Local Date and Time e.g. '2011-12-03T10:15:30'",
+fun ValidationBuilder<String>.offsetDateTime(): Constraint<String> = addConstraint(
+    errorMessage = "must be ISO Local Date, Time and UTC e.g. '2011-12-03T10:15:30Z'",
 ) {
-    runCatching { LocalDateTime.parse(it) }.map { true }.getOrElse { false }
+    runCatching { OffsetDateTime.parse(it) }.map { true }.getOrElse { false }
 }
 
 fun ValidationBuilder<Int>.httpStatusCode(): Constraint<Int> = enum(

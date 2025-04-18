@@ -1,6 +1,5 @@
 package de.hennihaus.repositories
 
-import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.models.Parameter
 import de.hennihaus.models.Task
 import de.hennihaus.repositories.entities.BankEntity
@@ -32,7 +31,7 @@ import org.jetbrains.exposed.sql.update
 import org.koin.core.annotation.Single
 import java.time.Instant
 import java.time.OffsetDateTime
-import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.UUID
 
 @Single
@@ -62,7 +61,7 @@ class TaskRepository {
     suspend fun save(entry: Task, repetitionAttempts: Int): Task = inTransaction(
         repetitionAttempts = repetitionAttempts,
     ) {
-        val now = OffsetDateTime.now(ZoneId.of(DEFAULT_ZONE_ID)).toInstant()
+        val now = OffsetDateTime.now(ZoneOffset.UTC).toInstant()
 
         entry.saveContact(now = now)
         entry.saveTask(now = now)

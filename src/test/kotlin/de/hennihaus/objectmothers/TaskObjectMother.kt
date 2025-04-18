@@ -4,7 +4,7 @@ import de.hennihaus.bamdatamodel.Bank
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getAsyncBank
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSchufaBank
 import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.getSyncBank
-import de.hennihaus.bamdatamodel.objectmothers.DateTimeObjectMother.DEFAULT_LOCAL_DATE_TIME
+import de.hennihaus.bamdatamodel.objectmothers.DateTimeObjectMother.DEFAULT_OFFSET_DATE_TIME
 import de.hennihaus.models.Contact
 import de.hennihaus.models.Endpoint
 import de.hennihaus.models.IntegrationStep
@@ -28,7 +28,7 @@ import de.hennihaus.objectmothers.ResponseObjectMother.getInternalServerErrorRes
 import de.hennihaus.objectmothers.ResponseObjectMother.getJmsResponse
 import de.hennihaus.objectmothers.ResponseObjectMother.getNotFoundResponse
 import de.hennihaus.objectmothers.ResponseObjectMother.getSchufaOkResponse
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
@@ -62,7 +62,7 @@ object TaskObjectMother {
         parameters: List<Parameter> = getSchufaParameters(),
         responses: List<Response> = getSchufaResponses(),
         banks: List<Bank> = getSchufaBanks(),
-        updatedAt: LocalDateTime = LocalDateTime.parse(DEFAULT_LOCAL_DATE_TIME),
+        updatedAt: OffsetDateTime = OffsetDateTime.parse(DEFAULT_OFFSET_DATE_TIME),
     ) = Task(
         uuid = uuid,
         title = title,
@@ -88,7 +88,7 @@ object TaskObjectMother {
         parameters: List<Parameter> = getSynchronousBankParameters(),
         responses: List<Response> = getSynchronousBankResponses(),
         banks: List<Bank> = getSynchronousBanks(),
-        updatedAt: LocalDateTime = LocalDateTime.parse(DEFAULT_LOCAL_DATE_TIME),
+        updatedAt: OffsetDateTime = OffsetDateTime.parse(DEFAULT_OFFSET_DATE_TIME),
     ) = Task(
         uuid = uuid,
         title = title,
@@ -114,7 +114,7 @@ object TaskObjectMother {
         parameters: List<Parameter> = getAsynchronousBankParameters(),
         responses: List<Response> = getAsynchronousBankResponses(),
         banks: List<Bank> = getAsynchronousBanks(),
-        updatedAt: LocalDateTime = LocalDateTime.parse(DEFAULT_LOCAL_DATE_TIME),
+        updatedAt: OffsetDateTime = OffsetDateTime.parse(DEFAULT_OFFSET_DATE_TIME),
     ) = Task(
         uuid = uuid,
         title = title,

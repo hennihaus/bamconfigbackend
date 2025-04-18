@@ -7,7 +7,7 @@ import de.hennihaus.models.cursors.TeamPagination
 import de.hennihaus.models.generated.rest.StudentDTO
 import de.hennihaus.models.generated.rest.TeamDTO
 import de.hennihaus.models.generated.rest.TeamsDTO
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
@@ -39,8 +39,8 @@ fun TeamDTO.toTeam() = Team(
     students = students.map { it.toStudent() },
     statistics = statistics,
     hasPassed = hasPassed,
-    createdAt = LocalDateTime.parse(createdAt),
-    updatedAt = LocalDateTime.parse(updatedAt),
+    createdAt = OffsetDateTime.parse(createdAt),
+    updatedAt = OffsetDateTime.parse(updatedAt),
 )
 
 private fun Student.toStudentDTO() = StudentDTO(
