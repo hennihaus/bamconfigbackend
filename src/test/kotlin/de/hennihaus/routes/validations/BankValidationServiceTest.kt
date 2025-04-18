@@ -88,14 +88,14 @@ class BankValidationServiceTest {
         @Test
         fun `should return a list with one error when updatedAt is invalid`() = runBlocking {
             val body = getSchufaBank().toBankDTO().copy(
-                updatedAt = "invalidLocalDateTime",
+                updatedAt = "invalidOffsetDateTime",
             )
 
             val result: List<String> = classUnderTest.validateBody(
                 body = body,
             )
 
-            result shouldContainExactly listOf("updatedAt must be ISO Local Date and Time e.g. '2011-12-03T10:15:30'")
+            result shouldContainExactly listOf("updatedAt must be ISO Local Date, Time and UTC e.g. '2011-12-03T10:15:30Z'")
         }
 
         @Test

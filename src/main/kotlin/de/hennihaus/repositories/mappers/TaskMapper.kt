@@ -1,6 +1,5 @@
 package de.hennihaus.repositories.mappers
 
-import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.models.Contact
 import de.hennihaus.models.Endpoint
 import de.hennihaus.models.EndpointType
@@ -17,8 +16,8 @@ import de.hennihaus.repositories.entities.TaskEntity
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import java.net.URI
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 fun TaskEntity.toTask() = Task(
     uuid = id.value,
@@ -32,7 +31,7 @@ fun TaskEntity.toTask() = Task(
     parameters = parameters.map { it.toParameter() },
     responses = responses.map { it.toResponse() },
     banks = banks.map { it.toBank() },
-    updatedAt = LocalDateTime.ofInstant(updatedAt, ZoneId.of(DEFAULT_ZONE_ID)),
+    updatedAt = OffsetDateTime.ofInstant(updatedAt, ZoneOffset.UTC),
 )
 
 fun ContactEntity.toContact() = Contact(

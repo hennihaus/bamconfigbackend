@@ -111,7 +111,7 @@
             "isAsync": false,
             "isActive": true,
             "creditConfiguration": null,
-            "updatedAt": "2022-12-26T08:49:22"
+            "updatedAt": "2022-12-26T08:49:22Z"
           },
           {
             "uuid": "bf6981d4-0413-4767-8232-c7179b169bc7",
@@ -128,7 +128,7 @@
               "minSchufaRating": "A",
               "maxSchufaRating": "P"
             },
-            "updatedAt": "2022-12-26T08:49:22"
+            "updatedAt": "2022-12-26T08:49:22Z"
           },
           {
             "uuid": "78eefcd4-2459-412e-857f-60f7c5d531c9",
@@ -145,7 +145,7 @@
               "minSchufaRating": "A",
               "maxSchufaRating": "P"
             },
-            "updatedAt": "2022-12-26T08:49:22"
+            "updatedAt": "2022-12-26T08:49:22Z"
           }
         ]
       },
@@ -158,7 +158,7 @@
           "isAsync": false,
           "isActive": true,
           "creditConfiguration": null,
-          "updatedAt": "2022-12-26T08:49:22"
+          "updatedAt": "2022-12-26T08:49:22Z"
         }
       },
       "SyncBank": {
@@ -177,7 +177,7 @@
             "minSchufaRating": "A",
             "maxSchufaRating": "P"
           },
-          "updatedAt": "2022-12-26T08:49:22"
+          "updatedAt": "2022-12-26T08:49:22Z"
         }
       },
       "AsyncBank": {
@@ -196,7 +196,7 @@
             "minSchufaRating": "A",
             "maxSchufaRating": "P"
           },
-          "updatedAt": "2022-12-26T08:49:22"
+          "updatedAt": "2022-12-26T08:49:22Z"
         }
       }
     }
