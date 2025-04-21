@@ -7,7 +7,6 @@ import de.hennihaus.bamdatamodel.objectmothers.BankObjectMother.SYNC_BANK_NAME
 import de.hennihaus.bamdatamodel.objectmothers.StudentObjectMother.getFirstStudent
 import de.hennihaus.bamdatamodel.objectmothers.StudentObjectMother.getSecondStudent
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getFirstTeam
-import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.configurations.Configuration.PASSWORD_LENGTH
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_HOST
 import de.hennihaus.configurations.ExposedConfiguration.DATABASE_PORT
@@ -47,7 +46,6 @@ import org.koin.test.KoinTest
 import org.koin.test.inject
 import org.koin.test.junit5.KoinTestExtension
 import java.time.Instant
-import java.time.ZoneId
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
@@ -168,9 +166,7 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 ),
             )
 
-            val result: Team = withConstantNow(
-                now = team.updatedAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toOffsetDateTime(),
-            ) {
+            val result: Team = withConstantNow(now = team.updatedAt) {
                 classUnderTest.save(
                     entry = team,
                     repetitionAttempts = ONE_REPETITION_ATTEMPT,
@@ -181,7 +177,7 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 other = team,
                 property = Team::createdAt,
             )
-            result.createdAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toInstant().shouldBeCloseTo(
+            result.createdAt.toInstant().shouldBeCloseTo(
                 anotherInstant = Instant.now(),
                 duration = 5L.seconds,
             )
@@ -196,9 +192,7 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 jmsQueue = "NewJmsQueue",
             )
 
-            val result: Team = withConstantNow(
-                now = team.updatedAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toOffsetDateTime(),
-            ) {
+            val result: Team = withConstantNow(now = team.updatedAt) {
                 classUnderTest.save(
                     entry = team,
                     repetitionAttempts = ONE_REPETITION_ATTEMPT,
@@ -209,7 +203,7 @@ class TeamRepositoryIntegrationTest : KoinTest {
                 other = team,
                 property = Team::createdAt,
             )
-            result.createdAt.atZone(ZoneId.of(DEFAULT_ZONE_ID)).toInstant().shouldBeCloseTo(
+            result.createdAt.toInstant().shouldBeCloseTo(
                 anotherInstant = Instant.now(),
                 duration = 5L.seconds,
             )
