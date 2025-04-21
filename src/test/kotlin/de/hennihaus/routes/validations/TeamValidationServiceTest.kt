@@ -109,7 +109,9 @@ class TeamValidationServiceTest {
                 body = body,
             )
 
-            result shouldContainExactly listOf("createdAt must be ISO Local Date, Time and UTC e.g. '2011-12-03T10:15:30Z'")
+            result shouldContainExactly listOf(
+                "createdAt must be ISO Local Date, Time and UTC e.g. '2011-12-03T10:15:30Z'",
+            )
         }
 
         @Test
@@ -122,7 +124,9 @@ class TeamValidationServiceTest {
                 body = body,
             )
 
-            result shouldContainExactly listOf("updatedAt must be ISO Local Date, Time and UTC e.g. '2011-12-03T10:15:30Z'")
+            result shouldContainExactly listOf(
+                "updatedAt must be ISO Local Date, Time and UTC e.g. '2011-12-03T10:15:30Z'",
+            )
         }
 
         @Test
