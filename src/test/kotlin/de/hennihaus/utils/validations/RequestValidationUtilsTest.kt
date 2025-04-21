@@ -231,7 +231,7 @@ class RequestValidationUtilsTest {
         }
 
         @Test
-        fun `should return a list with one error when email is invalid`() = runBlocking<Unit> {
+        fun `should return a list with one error when email is invalid`() = runBlocking {
             val body = EmailTestResource(
                 value = "invalidEmail",
             )
