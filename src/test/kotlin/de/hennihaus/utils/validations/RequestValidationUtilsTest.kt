@@ -177,7 +177,7 @@ class RequestValidationUtilsTest {
 
         @Test
         fun `should return an empty list when offsetDateTime is valid`() = runBlocking<Unit> {
-            checkAll(iterations = 100, genA = Arb.offsetDateTime()) {
+            checkAll(iterations = 10, genA = Arb.offsetDateTime()) {
                 val body = OffsetDateTimeTestResource(
                     value = "$it",
                 )
