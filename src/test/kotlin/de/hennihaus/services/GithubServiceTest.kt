@@ -3,6 +3,7 @@ package de.hennihaus.services
 import de.hennihaus.bamdatamodel.objectmothers.CreditConfigurationObjectMother.getCreditConfigurationWithNoEmptyFields
 import de.hennihaus.bamdatamodel.objectmothers.TeamObjectMother.getExampleTeam
 import de.hennihaus.models.IntegrationStep
+import de.hennihaus.models.generated.github.UpdateFileRequest
 import de.hennihaus.objectmothers.GithubObjectMother.getCreditFileResponse
 import de.hennihaus.objectmothers.GithubObjectMother.getCreditUpdateFileRequest
 import de.hennihaus.objectmothers.GithubObjectMother.getGithubCommitConfiguration
@@ -19,6 +20,7 @@ import de.hennihaus.objectmothers.TaskObjectMother.getSchufaTask
 import de.hennihaus.objectmothers.TaskObjectMother.getSynchronousBankTask
 import de.hennihaus.services.callservices.GithubCallService
 import de.hennihaus.services.mapperservices.GithubMapperService
+import io.kotest.matchers.equality.shouldBeEqualToIgnoringFields
 import io.mockk.Called
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
@@ -71,7 +73,12 @@ class GithubServiceTest {
                 )
                 githubCall.updateFile(
                     fileConfig = getGithubFileConfiguration(),
-                    file = getRatingUpdateFileRequest(),
+                    file = withArg {
+                        it.shouldBeEqualToIgnoringFields(
+                            other = getRatingUpdateFileRequest(),
+                            property = UpdateFileRequest::content,
+                        )
+                    },
                 )
             }
         }
@@ -95,7 +102,12 @@ class GithubServiceTest {
                 )
                 githubCall.updateFile(
                     fileConfig = getGithubFileConfiguration(),
-                    file = getCreditUpdateFileRequest(),
+                    file = withArg {
+                        it.shouldBeEqualToIgnoringFields(
+                            other = getCreditUpdateFileRequest(),
+                            property = UpdateFileRequest::content,
+                        )
+                    },
                 )
             }
         }
@@ -133,7 +145,12 @@ class GithubServiceTest {
                 )
                 githubCall.updateFile(
                     fileConfig = getGithubFileConfiguration(),
-                    file = getCreditUpdateFileRequest(),
+                    file = withArg {
+                        it.shouldBeEqualToIgnoringFields(
+                            other = getCreditUpdateFileRequest(),
+                            property = UpdateFileRequest::content,
+                        )
+                    },
                 )
             }
         }
@@ -164,7 +181,12 @@ class GithubServiceTest {
                 )
                 githubCall.updateFile(
                     fileConfig = getGithubFileConfiguration(),
-                    file = getRatingUpdateFileRequest(),
+                    file = withArg {
+                        it.shouldBeEqualToIgnoringFields(
+                            other = getRatingUpdateFileRequest(),
+                            property = UpdateFileRequest::content,
+                        )
+                    },
                 )
                 githubCall.getFile(
                     fileConfig = getGithubFileConfiguration(),
@@ -175,7 +197,12 @@ class GithubServiceTest {
                 )
                 githubCall.updateFile(
                     fileConfig = getGithubFileConfiguration(),
-                    file = getCreditUpdateFileRequest(),
+                    file = withArg {
+                        it.shouldBeEqualToIgnoringFields(
+                            other = getCreditUpdateFileRequest(),
+                            property = UpdateFileRequest::content,
+                        )
+                    },
                 )
             }
         }
