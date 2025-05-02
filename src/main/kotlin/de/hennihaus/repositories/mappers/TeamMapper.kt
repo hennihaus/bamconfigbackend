@@ -3,13 +3,12 @@ package de.hennihaus.repositories.mappers
 import de.hennihaus.bamdatamodel.Student
 import de.hennihaus.bamdatamodel.Team
 import de.hennihaus.bamdatamodel.TeamType
-import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.repositories.StatisticRepository.Companion.ZERO_REQUESTS
 import de.hennihaus.repositories.entities.StatisticEntity
 import de.hennihaus.repositories.entities.StudentEntity
 import de.hennihaus.repositories.entities.TeamEntity
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 fun TeamEntity.toTeam() = Team(
     uuid = id.value,
@@ -20,8 +19,8 @@ fun TeamEntity.toTeam() = Team(
     students = students.map { it.toStudent() },
     statistics = statistics.associate { it.toPair() },
     hasPassed = statistics.filter { it.bank.isActive }.all { it.requestsCount > ZERO_REQUESTS },
-    createdAt = LocalDateTime.ofInstant(createdAt, ZoneId.of(DEFAULT_ZONE_ID)),
-    updatedAt = LocalDateTime.ofInstant(updatedAt, ZoneId.of(DEFAULT_ZONE_ID)),
+    createdAt = OffsetDateTime.ofInstant(createdAt, ZoneOffset.UTC),
+    updatedAt = OffsetDateTime.ofInstant(updatedAt, ZoneOffset.UTC),
 )
 
 private fun StudentEntity.toStudent() = Student(

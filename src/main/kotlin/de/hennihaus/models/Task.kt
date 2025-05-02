@@ -1,7 +1,7 @@
 package de.hennihaus.models
 
 import de.hennihaus.bamdatamodel.Bank
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 data class Task(
@@ -15,5 +15,5 @@ data class Task(
     val parameters: List<Parameter>,
     val responses: List<Response>,
     val banks: List<Bank>,
-    val updatedAt: LocalDateTime,
+    val updatedAt: OffsetDateTime,
 )

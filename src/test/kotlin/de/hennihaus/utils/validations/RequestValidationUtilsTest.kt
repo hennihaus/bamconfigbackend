@@ -15,6 +15,7 @@ import io.kotest.property.exhaustive.collection
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.time.ZoneOffset
 import io.ktor.http.ContentType as KtorContentType
 import io.ktor.http.HttpStatusCode as KtorHttpStatusCode
 
@@ -26,7 +27,7 @@ class RequestValidationUtilsTest {
 
     data class EmailTestResource(val value: String)
 
-    data class LocalDateTimeTestResource(val value: String)
+    data class OffsetDateTimeTestResource(val value: String)
 
     data class HttpStatusCodeTestResource(val value: Int)
 
@@ -165,21 +166,21 @@ class RequestValidationUtilsTest {
     }
 
     @Nested
-    inner class LocalDateTime {
+    inner class OffsetDateTime {
 
-        private val classUnderTest = object : ValidationService<LocalDateTimeTestResource, Any> {
-            override suspend fun bodyValidation(body: LocalDateTimeTestResource) = Validation {
-                LocalDateTimeTestResource::value {
-                    localDateTime()
+        private val classUnderTest = object : ValidationService<OffsetDateTimeTestResource, Any> {
+            override suspend fun bodyValidation(body: OffsetDateTimeTestResource) = Validation {
+                OffsetDateTimeTestResource::value {
+                    offsetDateTime()
                 }
             }
         }
 
         @Test
-        fun `should return an empty list when localDateTime is valid`() = runBlocking<Unit> {
+        fun `should return an empty list when offsetDateTime is valid`() = runBlocking<Unit> {
             checkAll(genA = Arb.localDateTime()) {
-                val body = LocalDateTimeTestResource(
-                    value = "$it",
+                val body = OffsetDateTimeTestResource(
+                    value = "${it.atOffset(ZoneOffset.UTC)}",
                 )
 
                 val result: List<String> = classUnderTest.validateBody(
@@ -191,16 +192,16 @@ class RequestValidationUtilsTest {
         }
 
         @Test
-        fun `should return a list with one error when localDateTime is invalid`() = runBlocking {
-            val body = LocalDateTimeTestResource(
-                value = "invalidLocalDateTime",
+        fun `should return a list with one error when offsetDateTime is invalid`() = runBlocking {
+            val body = OffsetDateTimeTestResource(
+                value = "invalidOffsetDateTime",
             )
 
             val result: List<String> = classUnderTest.validateBody(
                 body = body,
             )
 
-            result shouldContainExactly listOf("value must be ISO Local Date and Time e.g. '2011-12-03T10:15:30'")
+            result shouldContainExactly listOf("value must be ISO Local Date, Time and UTC e.g. '2011-12-03T10:15:30Z'")
         }
     }
 
@@ -231,7 +232,7 @@ class RequestValidationUtilsTest {
         }
 
         @Test
-        fun `should return a list with one error when email is invalid`() = runBlocking<Unit> {
+        fun `should return a list with one error when email is invalid`() = runBlocking {
             val body = EmailTestResource(
                 value = "invalidEmail",
             )

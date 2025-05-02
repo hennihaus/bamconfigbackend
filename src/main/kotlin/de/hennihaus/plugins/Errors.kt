@@ -1,6 +1,5 @@
 package de.hennihaus.plugins
 
-import de.hennihaus.configurations.Configuration.DEFAULT_ZONE_ID
 import de.hennihaus.models.generated.rest.ErrorsDTO
 import de.hennihaus.models.generated.rest.ReasonDTO
 import de.hennihaus.plugins.ErrorMessage.ANONYMOUS_OBJECT
@@ -16,13 +15,13 @@ import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
 fun Application.configureErrorHandling() = install(plugin = StatusPages) {
     exception<Throwable> { call, throwable ->
-        val dateTime = LocalDateTime.now(ZoneId.of(DEFAULT_ZONE_ID)).truncatedTo(ChronoUnit.SECONDS)
+        val dateTime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
 
         when (throwable) {
             is UUIDException -> call.respond(
@@ -58,7 +57,7 @@ fun Application.configureErrorHandling() = install(plugin = StatusPages) {
     }
 }
 
-private fun Throwable.toErrorsDTO(dateTime: LocalDateTime) = ErrorsDTO(
+private fun Throwable.toErrorsDTO(dateTime: OffsetDateTime) = ErrorsDTO(
     reasons = listOf(
         ReasonDTO(
             exception = this::class.simpleName ?: ANONYMOUS_OBJECT,
@@ -68,7 +67,7 @@ private fun Throwable.toErrorsDTO(dateTime: LocalDateTime) = ErrorsDTO(
     dateTime = "$dateTime",
 )
 
-private fun RequestValidationException.toErrorsDTO(dateTime: LocalDateTime) = ErrorsDTO(
+private fun RequestValidationException.toErrorsDTO(dateTime: OffsetDateTime) = ErrorsDTO(
     reasons = this.reasons.map { reason ->
         ReasonDTO(
             exception = this::class.simpleName ?: ANONYMOUS_OBJECT,

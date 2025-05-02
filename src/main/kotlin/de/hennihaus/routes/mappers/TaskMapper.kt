@@ -18,7 +18,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.plugins.NotFoundException
 import java.net.URI
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
@@ -49,7 +49,7 @@ fun TaskDTO.toTask() = Task(
     parameters = parameters.map { it.toParameter() },
     responses = responses.map { it.toResponse() },
     banks = banks.map { it.toBank() },
-    updatedAt = LocalDateTime.parse(updatedAt),
+    updatedAt = OffsetDateTime.parse(updatedAt),
 )
 
 private fun Contact.toContactDTO() = ContactDTO(
