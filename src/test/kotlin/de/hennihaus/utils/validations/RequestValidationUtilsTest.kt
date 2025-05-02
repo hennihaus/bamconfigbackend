@@ -8,6 +8,7 @@ import io.kotest.property.Arb
 import io.kotest.property.Exhaustive
 import io.kotest.property.arbitrary.UUIDVersion
 import io.kotest.property.arbitrary.email
+import io.kotest.property.arbitrary.localDateTime
 import io.kotest.property.arbitrary.uuid
 import io.kotest.property.checkAll
 import io.kotest.property.exhaustive.collection
@@ -177,15 +178,17 @@ class RequestValidationUtilsTest {
 
         @Test
         fun `should return an empty list when offsetDateTime is valid`() = runBlocking<Unit> {
-            val body = OffsetDateTimeTestResource(
-                value = java.time.OffsetDateTime.now(ZoneOffset.UTC).toString(),
-            )
+            checkAll(genA = Arb.localDateTime()) {
+                val body = OffsetDateTimeTestResource(
+                    value = "${it.atOffset(ZoneOffset.UTC)}",
+                )
 
-            val result: List<String> = classUnderTest.validateBody(
-                body = body
-            )
+                val result: List<String> = classUnderTest.validateBody(
+                    body = body,
+                )
 
-            result.shouldBeEmpty()
+                result.shouldBeEmpty()
+            }
         }
 
         @Test
