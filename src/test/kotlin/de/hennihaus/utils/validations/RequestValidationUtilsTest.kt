@@ -198,7 +198,7 @@ class RequestValidationUtilsTest {
                 body = body,
             )
 
-            result shouldContainExactly listOf("value must be ISO Local Date and Time e.g. '2011-12-03T10:15:30'")
+            result shouldContainExactly listOf("value must be ISO Local Date, Time and UTC e.g. '2011-12-03T10:15:30Z'")
         }
     }
 
