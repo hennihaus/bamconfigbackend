@@ -40,9 +40,6 @@ object BrokerContainer {
     private const val ACTIVE_MQ_USERNAME_ENV = "test"
     private const val ACTIVE_MQ_PASSWORD_ENV_VARIABLE = "ACTIVE_MQ_PASSWORD"
     private const val ACTIVE_MQ_PASSWORD_ENV = "test"
-    // Cap the broker heap so the JVM doesn't fail to reserve its default 1G on memory-constrained CI runners.
-    private const val ACTIVE_MQ_MEMORY_ENV_VARIABLE = "ACTIVEMQ_OPTS_MEMORY"
-    private const val ACTIVE_MQ_MEMORY_ENV = "-Xms32M -Xmx256M"
     private const val HTTP_OK = 200
     private const val STARTUP_TIMEOUT_MINUTES = 2L
 
@@ -124,8 +121,7 @@ object BrokerContainer {
     private fun startBrokerContainer() = GenericContainer<Nothing>("$IMAGE_NAME:$IMAGE_VERSION").apply {
         env = listOf(
             "$ACTIVE_MQ_USERNAME_ENV_VARIABLE=$ACTIVE_MQ_USERNAME_ENV",
-            "$ACTIVE_MQ_PASSWORD_ENV_VARIABLE=$ACTIVE_MQ_PASSWORD_ENV",
-            "$ACTIVE_MQ_MEMORY_ENV_VARIABLE=$ACTIVE_MQ_MEMORY_ENV"
+            "$ACTIVE_MQ_PASSWORD_ENV_VARIABLE=$ACTIVE_MQ_PASSWORD_ENV"
         )
         exposedPorts = listOf(
             ACTIVE_MQ_PORT
