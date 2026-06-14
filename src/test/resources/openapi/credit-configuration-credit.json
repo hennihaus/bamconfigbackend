@@ -6,7 +6,7 @@
       "name": "Jan-Hendrik Hausner",
       "email": "jan-hendrik.hausner@outlook.com"
     },
-    "description": "<p>Synchrone-Bank-Beschreibung (\"2. Integrationsschritt\")</p>",
+    "description": "Synchrone-Bank-Beschreibung (\"2. Integrationsschritt\")\n",
     "license": {
       "name": "Apache 2.0",
       "url": "https://github.com/hennihaus/bambankrest/blob/master/LICENSE"

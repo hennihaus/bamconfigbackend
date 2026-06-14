@@ -1,5 +1,6 @@
 package de.hennihaus.repositories.mappers
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.hennihaus.models.Contact
 import de.hennihaus.models.Endpoint
 import de.hennihaus.models.EndpointType
@@ -23,6 +24,7 @@ fun TaskEntity.toTask() = Task(
     uuid = id.value,
     title = title,
     description = description,
+    descriptionDelta = jacksonObjectMapper().readTree(descriptionDelta).toString(),
     integrationStep = IntegrationStep.values().find { it.value == integrationStep }
         ?: throw IllegalArgumentException("No enum constant $integrationStep in IntegrationStep found"),
     isOpenApiVerbose = isOpenApiVerbose,

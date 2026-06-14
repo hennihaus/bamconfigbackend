@@ -24,6 +24,7 @@ import de.hennihaus.repositories.tables.ResponseTableDescription.RESPONSE_UUID_C
 import de.hennihaus.repositories.tables.TaskParameterTableDescription.TASK_PARAMETER_TABLE
 import de.hennihaus.repositories.tables.TaskResponseTableDescription.TASK_RESPONSE_TABLE
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_DESCRIPTION_COLUMN
+import de.hennihaus.repositories.tables.TaskTableDescription.TASK_DESCRIPTION_DELTA_JSON_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_INTEGRATION_STEP_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_IS_OPEN_API_VERBOSE_COLUMN
 import de.hennihaus.repositories.tables.TaskTableDescription.TASK_TITLE_COLUMN
@@ -39,6 +40,7 @@ object TaskTable : UUIDTable(columnName = TASK_UUID_COLUMN) {
     val integrationStep = integer(name = TASK_INTEGRATION_STEP_COLUMN)
     val title = text(name = TASK_TITLE_COLUMN)
     val description = text(name = TASK_DESCRIPTION_COLUMN)
+    val descriptionDelta = jsonb(name = TASK_DESCRIPTION_DELTA_JSON_COLUMN)
     val isOpenApiVerbose = bool(name = TASK_IS_OPEN_API_VERBOSE_COLUMN)
     val updated = timestamp(name = TASK_UPDATED_COLUMN)
 }
@@ -88,6 +90,7 @@ object TaskTableDescription {
     const val TASK_INTEGRATION_STEP_COLUMN = "task_integration_step"
     const val TASK_TITLE_COLUMN = "task_title"
     const val TASK_DESCRIPTION_COLUMN = "task_description"
+    const val TASK_DESCRIPTION_DELTA_JSON_COLUMN = "task_description_delta"
     const val TASK_IS_OPEN_API_VERBOSE_COLUMN = "task_is_open_api_verbose"
     const val TASK_UPDATED_COLUMN = "task_updated_timestamp"
 }

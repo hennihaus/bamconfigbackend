@@ -18,3 +18,12 @@ fun <T> ValidationBuilder<T>.unique(isUnique: Boolean, errorMessage: String = "m
         isUnique
     }
 }
+
+fun ValidationBuilder<String>.endsWith(suffix: String): Constraint<String> {
+    return addConstraint(
+        errorMessage = "must end with {0}",
+        templateValues = arrayOf(suffix.let { "'$it'" }),
+    ) {
+        it.endsWith(suffix)
+    }
+}

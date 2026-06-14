@@ -36,15 +36,21 @@ object TaskObjectMother {
 
     const val DEFAULT_SCHUFA_UUID = "72255554-d295-4684-9ff8-8d262849bb3d"
     const val DEFAULT_SCHUFA_TITLE = "Schufa-Auskunft"
-    const val DEFAULT_SCHUFA_DESCRIPTION = "<p>Schufa-Auskunft-Beschreibung (\"1. Integrationsschritt\")</p>"
+    const val DEFAULT_SCHUFA_DESCRIPTION = "Schufa-Auskunft-Beschreibung (\"1. Integrationsschritt\")\n"
+    const val DEFAULT_SCHUFA_DESCRIPTION_DELTA =
+        """{"ops":[{"insert":"Schufa-Auskunft-Beschreibung (\"1. Integrationsschritt\")\n"}]}"""
 
     const val DEFAULT_SYNC_BANK_UUID = "e2aba7e5-9bb8-458b-a927-8e672b1370f2"
     const val DEFAULT_SYNC_BANK_TITLE = "Deutsche Bank"
-    const val DEFAULT_SYNC_BANK_DESCRIPTION = "<p>Synchrone-Bank-Beschreibung (\"2. Integrationsschritt\")</p>"
+    const val DEFAULT_SYNC_BANK_DESCRIPTION = "Synchrone-Bank-Beschreibung (\"2. Integrationsschritt\")\n"
+    const val DEFAULT_SYNC_BANK_DESCRIPTION_DELTA =
+        """{"ops":[{"insert":"Synchrone-Bank-Beschreibung (\"2. Integrationsschritt\")\n"}]}"""
 
     const val DEFAULT_ASYNC_BANK_UUID = "4ff1f9cb-e65d-4c8f-908a-d036700b757e"
     const val DEFAULT_ASYNC_BANK_TITLE = "Asynchrone Banken"
-    const val DEFAULT_ASYNC_BANK_DESCRIPTION = "<p>Asynchrone-Bank-Beschreibung (\"3. Integrationsschritt\")</p>"
+    const val DEFAULT_ASYNC_BANK_DESCRIPTION = "Asynchrone-Bank-Beschreibung (\"3. Integrationsschritt\")\n"
+    const val DEFAULT_ASYNC_BANK_DESCRIPTION_DELTA =
+        """{"ops":[{"insert":"Asynchrone-Bank-Beschreibung (\"3. Integrationsschritt\")\n"}]}"""
 
     const val DEFAULT_CONTACT_UUID = "ba16bd92-9e64-4de6-916f-d0c4ea91a530"
     const val DEFAULT_CONTACT_FIRSTNAME = "Jan-Hendrik"
@@ -55,6 +61,7 @@ object TaskObjectMother {
         uuid: UUID = UUID.fromString(DEFAULT_SCHUFA_UUID),
         title: String = DEFAULT_SCHUFA_TITLE,
         description: String = DEFAULT_SCHUFA_DESCRIPTION,
+        descriptionDelta: String = DEFAULT_SCHUFA_DESCRIPTION_DELTA,
         integrationStep: IntegrationStep = IntegrationStep.SCHUFA_STEP,
         isOpenApiVerbose: Boolean = true,
         contact: Contact = getDefaultContact(),
@@ -67,6 +74,7 @@ object TaskObjectMother {
         uuid = uuid,
         title = title,
         description = description,
+        descriptionDelta = descriptionDelta,
         integrationStep = integrationStep,
         isOpenApiVerbose = isOpenApiVerbose,
         contact = contact,
@@ -81,6 +89,7 @@ object TaskObjectMother {
         uuid: UUID = UUID.fromString(DEFAULT_SYNC_BANK_UUID),
         title: String = DEFAULT_SYNC_BANK_TITLE,
         description: String = DEFAULT_SYNC_BANK_DESCRIPTION,
+        descriptionDelta: String = DEFAULT_SYNC_BANK_DESCRIPTION_DELTA,
         integrationStep: IntegrationStep = IntegrationStep.SYNC_BANK_STEP,
         isOpenApiVerbose: Boolean = true,
         contact: Contact = getDefaultContact(),
@@ -93,6 +102,7 @@ object TaskObjectMother {
         uuid = uuid,
         title = title,
         description = description,
+        descriptionDelta = descriptionDelta,
         integrationStep = integrationStep,
         isOpenApiVerbose = isOpenApiVerbose,
         contact = contact,
@@ -107,6 +117,7 @@ object TaskObjectMother {
         uuid: UUID = UUID.fromString(DEFAULT_ASYNC_BANK_UUID),
         title: String = DEFAULT_ASYNC_BANK_TITLE,
         description: String = DEFAULT_ASYNC_BANK_DESCRIPTION,
+        descriptionDelta: String = DEFAULT_ASYNC_BANK_DESCRIPTION_DELTA,
         integrationStep: IntegrationStep = IntegrationStep.ASYNC_BANK_STEP,
         isOpenApiVerbose: Boolean = false,
         contact: Contact = getDefaultContact(),
@@ -119,6 +130,7 @@ object TaskObjectMother {
         uuid = uuid,
         title = title,
         description = description,
+        descriptionDelta = descriptionDelta,
         integrationStep = integrationStep,
         isOpenApiVerbose = isOpenApiVerbose,
         contact = contact,

@@ -1,11 +1,14 @@
 package de.hennihaus.testutils
 
+import com.fasterxml.jackson.annotation.JsonRawValue
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import de.hennihaus.models.IntegrationStep
 import de.hennihaus.plugins.ErrorMessage.INTEGRATION_STEP_NOT_FOUND_MESSAGE
 import io.ktor.http.ContentType
@@ -78,4 +81,17 @@ object IntegrationStepDeserializer : JsonDeserializer<IntegrationStep>() {
                 message = INTEGRATION_STEP_NOT_FOUND_MESSAGE,
             )
     }
+}
+
+object DescriptionDeltaDeserializer : JsonDeserializer<String>() {
+    override fun deserialize(parser: JsonParser?, ctxt: DeserializationContext?): String {
+        val node = parser?.readValueAsTree<JsonNode>()
+        return "$node"
+    }
+}
+
+interface TaskMixin {
+    @get:JsonRawValue
+    @get:JsonDeserialize(using = DescriptionDeltaDeserializer::class)
+    val descriptionDelta: String
 }

@@ -8,6 +8,7 @@ data class Task(
     val uuid: UUID,
     val title: String,
     val description: String,
+    val descriptionDelta: String,
     val integrationStep: IntegrationStep,
     val isOpenApiVerbose: Boolean,
     val contact: Contact,
