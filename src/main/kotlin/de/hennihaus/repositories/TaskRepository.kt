@@ -131,6 +131,7 @@ class TaskRepository {
             taskTable[integrationStep] = this@saveTask.integrationStep.value
             taskTable[title] = this@saveTask.title
             taskTable[description] = this@saveTask.description
+            taskTable[descriptionDelta] = this@saveTask.descriptionDelta
             taskTable[isOpenApiVerbose] = this@saveTask.isOpenApiVerbose
             taskTable[updated] = now
         }

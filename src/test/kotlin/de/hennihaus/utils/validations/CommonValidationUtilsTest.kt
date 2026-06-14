@@ -14,6 +14,8 @@ class CommonValidationUtilsTest {
 
     data class UniqueTestResource(val value: String)
 
+    data class EndsWithTestResource(val value: String)
+
     @Nested
     inner class NotConst {
 
@@ -137,6 +139,55 @@ class CommonValidationUtilsTest {
             )
 
             result shouldContainExactly listOf("value must be unique")
+        }
+    }
+
+    @Nested
+    inner class EndsWith {
+        private lateinit var classUnderTest: ValidationService<EndsWithTestResource, Any>
+
+        @Test
+        fun `should return an empty list when values ends with suffix`() = runBlocking<Unit> {
+            classUnderTest = object : ValidationService<EndsWithTestResource, Any> {
+                override suspend fun bodyValidation(body: EndsWithTestResource): Validation<EndsWithTestResource> {
+                    return Validation {
+                        EndsWithTestResource::value {
+                            endsWith(suffix = "\n")
+                        }
+                    }
+                }
+            }
+            val body = EndsWithTestResource(
+                value = "Test\n",
+            )
+
+            val result: List<String> = classUnderTest.validateBody(
+                body = body,
+            )
+
+            result.shouldBeEmpty()
+        }
+
+        @Test
+        fun `should return a list with one error when value does not end with suffix`() = runBlocking {
+            classUnderTest = object : ValidationService<EndsWithTestResource, Any> {
+                override suspend fun bodyValidation(body: EndsWithTestResource): Validation<EndsWithTestResource> {
+                    return Validation {
+                        EndsWithTestResource::value {
+                            endsWith(suffix = "\n")
+                        }
+                    }
+                }
+            }
+            val body = EndsWithTestResource(
+                value = "\nTest"
+            )
+
+            val result: List<String> = classUnderTest.validateBody(
+                body = body,
+            )
+
+            result shouldContainExactly listOf("value must end with '\n'")
         }
     }
 }

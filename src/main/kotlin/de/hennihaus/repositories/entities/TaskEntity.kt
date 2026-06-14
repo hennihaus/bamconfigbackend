@@ -18,6 +18,7 @@ import java.util.UUID
 class TaskEntity(uuid: EntityID<UUID>) : UUIDEntity(id = uuid) {
     val title: String by TaskTable.title
     val description: String by TaskTable.description
+    val descriptionDelta: String by TaskTable.descriptionDelta
     val integrationStep: Int by TaskTable.integrationStep
     val isOpenApiVerbose: Boolean by TaskTable.isOpenApiVerbose
     val contact: ContactEntity by ContactEntity referencedOn TaskTable.contactId

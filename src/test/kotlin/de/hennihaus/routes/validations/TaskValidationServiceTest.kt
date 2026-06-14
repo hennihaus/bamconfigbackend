@@ -128,7 +128,7 @@ class TaskValidationServiceTest {
         @Test
         fun `should return a list with one error when description is too long`() = runBlocking {
             val body = getSchufaTask().toTaskDTO().copy(
-                description = Arb.string(size = TASK_DESCRIPTION_MAX_LENGTH.inc()).single(),
+                description = Arb.string(size = TASK_DESCRIPTION_MAX_LENGTH.inc()).single().plus("\n"),
             )
 
             val result: List<String> = classUnderTest.validateBody(
@@ -136,6 +136,66 @@ class TaskValidationServiceTest {
             )
 
             result shouldContainExactly listOf("description must have at most $TASK_DESCRIPTION_MAX_LENGTH characters")
+        }
+
+        @Test
+        fun `should return a list with one error when description does not end with newline`() = runBlocking {
+            val body = getSchufaTask().toTaskDTO().copy(
+                description = Arb.string(size = TASK_DESCRIPTION_MAX_LENGTH).single(),
+            )
+
+            val result: List<String> = classUnderTest.validateBody(
+                body = body,
+            )
+
+            result shouldContainExactly listOf("description must end with '\n'")
+        }
+
+        @Test
+        fun `should return a list with one error when description delta has no properties`() = runBlocking {
+            val body = getSchufaTask().toTaskDTO().copy(
+                descriptionDelta = emptyMap(),
+            )
+
+            val result: List<String> = classUnderTest.validateBody(
+                body = body,
+            )
+
+            result shouldContainExactly listOf("descriptionDelta must have at least 1 properties")
+        }
+
+        @Test
+        fun `should return a list with one error when description delta has key != ops`() = runBlocking {
+            val body = getSchufaTask().toTaskDTO().copy(
+                descriptionDelta = mapOf(
+                    "ops1" to setOf("Test"),
+                ),
+            )
+
+            val result: List<String> = classUnderTest.validateBody(
+                body = body,
+            )
+
+            result shouldContainExactly listOf(
+                "descriptionDelta.ops1.key must be 'ops'"
+            )
+        }
+
+        @Test
+        fun `should return a list with one error when description delta has no values`() = runBlocking {
+            val body = getSchufaTask().toTaskDTO().copy(
+                descriptionDelta = mapOf(
+                    "ops" to emptySet(),
+                ),
+            )
+
+            val result: List<String> = classUnderTest.validateBody(
+                body = body,
+            )
+
+            result shouldContainExactly listOf(
+                "descriptionDelta.ops must have at least 1 items"
+            )
         }
 
         @Test

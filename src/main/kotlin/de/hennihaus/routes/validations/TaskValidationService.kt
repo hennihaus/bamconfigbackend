@@ -13,6 +13,7 @@ import de.hennihaus.routes.validations.ValidationService.Companion.NAME_MIN_LENG
 import de.hennihaus.services.TaskService
 import de.hennihaus.utils.validations.contentType
 import de.hennihaus.utils.validations.email
+import de.hennihaus.utils.validations.endsWith
 import de.hennihaus.utils.validations.httpStatusCode
 import de.hennihaus.utils.validations.json
 import de.hennihaus.utils.validations.notConst
@@ -22,9 +23,12 @@ import de.hennihaus.utils.validations.unique
 import de.hennihaus.utils.validations.url
 import de.hennihaus.utils.validations.uuid
 import io.konform.validation.Validation
+import io.konform.validation.jsonschema.const
 import io.konform.validation.jsonschema.enum
 import io.konform.validation.jsonschema.maxLength
+import io.konform.validation.jsonschema.minItems
 import io.konform.validation.jsonschema.minLength
+import io.konform.validation.jsonschema.minProperties
 import io.konform.validation.jsonschema.uniqueItems
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -53,6 +57,18 @@ class TaskValidationService(private val task: TaskService) : ValidationService<T
             }
             TaskDTO::description {
                 maxLength(length = TASK_DESCRIPTION_MAX_LENGTH)
+                endsWith(suffix = "\n")
+            }
+            TaskDTO::descriptionDelta {
+                minProperties(minSize = TASK_DESCRIPTION_DELTA_MIN_PROPERTIES)
+            }
+            TaskDTO::descriptionDelta onEach {
+                Map.Entry<String, Set<Any>>::key {
+                    const(expected = "ops")
+                }
+                Map.Entry<String, Set<Any>>::value {
+                    minItems(minSize = 1)
+                }
             }
             TaskDTO::updatedAt {
                 offsetDateTime()
@@ -189,6 +205,7 @@ class TaskValidationService(private val task: TaskService) : ValidationService<T
         const val TASK_TITLE_MIN_LENGTH = 6
         const val TASK_TITLE_MAX_LENGTH = 50
         const val TASK_DESCRIPTION_MAX_LENGTH = 2_000
+        const val TASK_DESCRIPTION_DELTA_MIN_PROPERTIES = 1
 
         const val PARAMETER_DESCRIPTION_MAX_LENGTH = 100
         const val PARAMETER_EXAMPLE_MIN_LENGTH = 1

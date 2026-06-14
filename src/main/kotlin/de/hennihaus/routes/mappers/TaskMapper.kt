@@ -1,5 +1,7 @@
 package de.hennihaus.routes.mappers
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import de.hennihaus.models.Contact
 import de.hennihaus.models.Endpoint
 import de.hennihaus.models.EndpointType
@@ -26,6 +28,7 @@ fun Task.toTaskDTO() = TaskDTO(
     uuid = "$uuid",
     title = title,
     description = description,
+    descriptionDelta = jacksonObjectMapper().readValue(content = descriptionDelta),
     integrationStep = integrationStep.value,
     isOpenApiVerbose = isOpenApiVerbose,
     contact = contact.toContactDTO(),
@@ -40,6 +43,7 @@ fun TaskDTO.toTask() = Task(
     uuid = UUID.fromString(uuid),
     title = title,
     description = description,
+    descriptionDelta = jacksonObjectMapper().writeValueAsString(descriptionDelta),
     integrationStep = IntegrationStep.values().find { it.value == integrationStep } ?: throw NotFoundException(
         message = INTEGRATION_STEP_NOT_FOUND_MESSAGE,
     ),

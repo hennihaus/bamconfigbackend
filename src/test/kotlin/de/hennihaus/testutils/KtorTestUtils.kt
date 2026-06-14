@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.addDeserializer
 import com.fasterxml.jackson.module.kotlin.addSerializer
 import de.hennihaus.models.IntegrationStep
+import de.hennihaus.models.Task
 import de.hennihaus.module
 import io.kotest.extensions.time.withConstantNow
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -55,6 +56,7 @@ val ApplicationTestBuilder.testClient
                         .addSerializer(kClass = IntegrationStep::class, serializer = IntegrationStepSerializer)
                         .addDeserializer(kClass = IntegrationStep::class, deserializer = IntegrationStepDeserializer)
                 )
+                addMixIn(Task::class.java, TaskMixin::class.java)
                 disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             }
         }
