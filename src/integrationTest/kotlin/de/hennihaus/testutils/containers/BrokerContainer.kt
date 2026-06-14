@@ -22,8 +22,11 @@ import io.ktor.http.Parameters
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.jackson.jackson
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
 import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.containers.wait.strategy.Wait
+import java.time.Duration
 
 object BrokerContainer {
 
@@ -37,6 +40,8 @@ object BrokerContainer {
     private const val ACTIVE_MQ_USERNAME_ENV = "test"
     private const val ACTIVE_MQ_PASSWORD_ENV_VARIABLE = "ACTIVE_MQ_PASSWORD"
     private const val ACTIVE_MQ_PASSWORD_ENV = "test"
+    private const val HTTP_OK = 200
+    private const val STARTUP_TIMEOUT_MINUTES = 2L
 
     /**
      * ActiveMQ mock configurations
@@ -121,7 +126,16 @@ object BrokerContainer {
         exposedPorts = listOf(
             ACTIVE_MQ_PORT
         )
-        setWaitStrategy(Wait.forListeningPort())
+        // Surface broker stdout/stderr in CI so a crash/OOM is visible instead of a bare "connection refused".
+        withLogConsumer(Slf4jLogConsumer(LoggerFactory.getLogger("bambroker")))
+        // Wait until the broker actually answers HTTP, not just until the TCP port is bound.
+        setWaitStrategy(
+            Wait.forHttp(getQueuesUrl())
+                .forPort(ACTIVE_MQ_PORT)
+                .withBasicCredentials(ACTIVE_MQ_USERNAME_ENV, ACTIVE_MQ_PASSWORD_ENV)
+                .forStatusCode(HTTP_OK)
+                .withStartupTimeout(Duration.ofMinutes(STARTUP_TIMEOUT_MINUTES))
+        )
         start()
     }
 
