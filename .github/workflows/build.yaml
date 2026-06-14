@@ -10,7 +10,6 @@ on:
 
 jobs:
   build:
-    # Pinned to 22.04 to test whether the ubuntu-latest (24.04) / cgroup v2 upgrade breaks the old broker container.
     runs-on: ubuntu-22.04
     permissions:
       contents: write
