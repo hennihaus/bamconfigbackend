@@ -117,11 +117,12 @@ class TaskServiceTest {
     @Nested
     inner class PatchTask {
         @Test
-        fun `should just update six fields from a task`() = runBlocking {
+        fun `should just update seven fields from a task`() = runBlocking {
             val id = "${getAsynchronousBankTask().uuid}"
             val task = getSchufaTask(
                 title = getAsynchronousBankTask().title,
                 description = getAsynchronousBankTask().description,
+                descriptionDelta = getAsynchronousBankTask().descriptionDelta,
                 isOpenApiVerbose = getAsynchronousBankTask().isOpenApiVerbose,
                 contact = getAsynchronousBankTask().contact,
                 parameters = getAsynchronousBankTask().parameters,
