@@ -99,6 +99,7 @@ class TaskService(
     private fun Task.patchTask(new: Task) = copy(
         title = new.title,
         description = new.description,
+        descriptionDelta = new.descriptionDelta,
         isOpenApiVerbose = new.isOpenApiVerbose,
         contact = new.contact,
         parameters = parameters.map { old ->
